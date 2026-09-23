@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2023",
+      "DOM",
+      "ES2022.Intl"
+    ],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": false,
+    "verbatimModuleSyntax": true,
+    "types": []
+  },
+  "include": [
+    "src/contracts/domain.ts",
+    "src/contracts/schema.ts",
+    "src/contracts/tools.ts",
+    "src/server/domain/**/*.ts",
+    "src/server/db/demo-fixtures.ts",
+    "tests/domain/type-assertions.ts"
+  ]
+}

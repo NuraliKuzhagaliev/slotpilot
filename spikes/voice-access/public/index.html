@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SlotPilot — Voice access check</title>
+  <meta name="description" content="SlotPilot development stage 0. A real AssemblyAI voice integration check with a server-side demo catalogue.">
+  <link rel="stylesheet" href="/style.css"><script type="module" src="/app.mjs"></script>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="/" aria-label="SlotPilot home"><span class="brand-mark" aria-hidden="true">S<span>↗</span></span><strong>SlotPilot<span class="brand-dot">.</span></strong></a><div class="top-meta"><span class="tag">DEVELOPMENT / 00</span><span class="local"><i></i> Local access probe</span></div></header>
+<main class="shell">
+  <div class="page-heading"><div><div class="eyebrow">VOICE-FIRST SERVICE BOOKING</div><h1>First, make the conversation work.</h1><p>Real audio. A real server tool. A clear foundation for what comes next.</p></div><div class="branch-clock"><span>BRANCH TIME · ASIA/ALMATY</span><strong id="branch-time">Connecting to local server…</strong></div></div>
+  <section class="setup-notice" id="setup-notice" role="status" hidden></section>
+  <section class="auth-strip" aria-label="Demo sign-in">
+    <div><span class="small-label">PRIVATE DEVELOPMENT SESSION</span><p id="auth-status">Sign in with your generated demo credentials.</p></div>
+    <form id="login-form"><label class="sr-only" for="username">Username</label><select id="username" name="username" autocomplete="username"><option value="client">client</option><option value="admin">admin</option></select><label class="sr-only" for="password">Demo password</label><input id="password" name="password" type="password" placeholder="Password from .env.local" autocomplete="current-password" required><button class="button small dark" id="login-button" type="submit">Sign in <span aria-hidden="true">↗</span></button></form><button class="button small secondary" id="logout" type="button" hidden>Sign out</button>
+  </section>
+  <div id="error" class="error-box" role="alert" hidden></div>
+  <div class="workspace">
+    <section class="voice-card" aria-labelledby="voice-title">
+      <div class="card-top"><span class="section-label">01 / LIVE VOICE</span><span class="pill"><i id="connection-dot"></i><span id="connection-status" aria-live="polite">Not connected</span></span></div>
+      <div class="voice-center"><div class="voice-orbit" id="voice-orbit" aria-hidden="true"><div class="orbit-line outer"></div><div class="orbit-line inner"></div><div class="voice-core"><div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><span class="orbit-point"></span></div><span class="mini-badge">ASSEMBLYAI VOICE AGENT API</span><h2 id="voice-title">Meet your voice administrator.</h2><p class="voice-description" id="voice-hint">Ask about a service. Interrupt naturally.<br>Watch the server return the facts.</p></div>
+      <div class="voice-action"><label class="consent"><input id="consent" type="checkbox"><span>I understand that microphone audio is sent to AssemblyAI.<br><small>Use fictional details. Provider-side recordings may be retained.</small></span></label><button class="button start" id="start" type="button" disabled><span class="mic-symbol" aria-hidden="true">◉</span><span id="start-label">Start voice check</span><span class="key-hint" aria-hidden="true">↗</span></button><div class="voice-foot"><span>English voice</span><span id="session-limit">Limited session</span><span>No booking is created</span></div></div>
+      <div class="try-prompt"><span>TRY SAYING</span><p>“What services do you offer for a petrol sedan?”</p></div>
+    </section>
+    <aside class="right-column">
+      <section class="readiness-card" aria-labelledby="readiness-title"><div class="card-top"><span class="section-label">02 / CONNECTION EVIDENCE</span><span id="progress">0 / 5</span></div><h2 id="readiness-title">Observe, don’t assume.</h2><p class="subtle">These indicators change only when events are received.</p><div class="checks"><div class="check" id="check-mic"><span class="check-icon">1</span><div><strong>Microphone access</strong><small>Actual device permission and audio setup</small></div><span class="check-status">Waiting</span></div><div class="check" id="check-provider"><span class="check-icon">2</span><div><strong>Provider connected</strong><small>AssemblyAI session.ready</small></div><span class="check-status">Waiting</span></div><div class="check" id="check-audio"><span class="check-icon">3</span><div><strong>Audio &amp; transcript</strong><small>Audio frames plus a final user transcript</small></div><span class="check-status">Waiting</span></div><div class="check" id="check-tool"><span class="check-icon">4</span><div><strong>Server tool round-trip</strong><small>get_services → server → tool.result</small></div><span class="check-status">Waiting</span></div><div class="check" id="check-interruption"><span class="check-icon">5</span><div><strong>Interruption signal</strong><small>Interrupted reply and local playback clear</small></div><span class="check-status">Waiting</span></div></div><div class="manual-checks"><label><input id="heard-audio" type="checkbox" disabled> I actually heard the agent’s response.</label><label><input id="heard-stop" type="checkbox" disabled> I verified playback stopped when I interrupted.</label></div><p id="gate-status" class="gate-status">Live verification is still required.</p><button class="text-button" id="export-report" type="button">Export this check’s evidence <span aria-hidden="true">↓</span></button></section>
+      <section class="scope-card"><span class="section-label">WHAT THIS BUILD DOES</span><h3>A voice integration check.<br>Not the booking app yet.</h3><p>Scheduling, PostgreSQL, confirmations, admin and demo-reset arrive in the next implementation stages. Nothing is silently simulated.</p><div class="scope-tags"><span>Demo data</span><span>Read-only tool</span><span>Loopback only</span></div></section>
+    </aside>
+  </div>
+  <div class="lower-grid">
+    <section class="transcript-card"><div class="card-top"><span class="section-label">03 / CONVERSATION</span><span class="subtle">In this tab only</span></div><h2>Live transcript</h2><div id="transcript" class="transcript" role="log" aria-label="Conversation transcript" aria-live="polite"><p class="empty-state">Your conversation will appear here.<br>Partial user transcripts are not confirmations.</p></div></section>
+    <section class="catalog-card"><div class="card-top"><span class="section-label">04 / SERVER FACTS</span><span class="demo-badge">Demo data</span></div><h2>Service catalogue</h2><div class="catalog-controls"><label class="sr-only" for="vehicle">Demo vehicle</label><select id="vehicle"><option value="">All demo vehicles</option></select><button class="button small secondary" id="catalog-check" type="button" disabled>Check server</button></div><p class="subtle" id="catalog-note">The manual check tests the backend, not the voice round-trip.</p><div id="catalog" class="catalog"><p class="empty-state">Load the catalogue with a server check<br>or ask the voice agent about services.</p></div></section>
+  </div>
+  <details class="event-panel" id="event-panel"><summary>Technical events <span id="event-count">0 events</span><span class="subtle">No tokens, audio payloads or contact details</span></summary><div class="events" id="events"></div></details>
+  <footer><span>SlotPilot / Development foundation</span><span>Stage 0 · Fictional service data · Not a live car service</span></footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,422 @@
+{
+  "get_services": {
+    "type": "object",
+    "properties": {
+      "vehicleId": {
+        "type": "string",
+        "enum": [
+          "sedan-petrol",
+          "crossover-petrol",
+          "ev-demo"
+        ]
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  },
+  "update_request": {
+    "type": "object",
+    "properties": {
+      "patch": {
+        "type": "object",
+        "properties": {
+          "serviceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "oil-change",
+                "brake-check",
+                "diagnostics",
+                "tire-service"
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 3,
+            "uniqueItems": true
+          },
+          "addServiceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "oil-change",
+                "brake-check",
+                "diagnostics",
+                "tire-service"
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 3,
+            "uniqueItems": true
+          },
+          "removeServiceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "oil-change",
+                "brake-check",
+                "diagnostics",
+                "tire-service"
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 3,
+            "uniqueItems": true
+          },
+          "vehicleId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "sedan-petrol",
+                  "crossover-petrol",
+                  "ev-demo"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "allowedDates": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 10,
+                  "maxLength": 10,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                  "format": "date"
+                },
+                "minItems": 1,
+                "maxItems": 7,
+                "uniqueItems": true
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "arrivalNotBefore": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 5,
+                "maxLength": 5,
+                "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "readyNoLaterThan": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 5,
+                "maxLength": 5,
+                "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxBudgetKzt": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 3000000000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "allowedBranchIds": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "centre",
+                    "north"
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 2,
+                "uniqueItems": true
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "preferredBranchId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "centre",
+                  "north"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rankingPreference": {
+            "type": "string",
+            "enum": [
+              "earliest_ready",
+              "cheapest"
+            ]
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "expectedRequestVersion": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 9007199254740991
+      }
+    },
+    "required": [
+      "patch",
+      "expectedRequestVersion"
+    ],
+    "additionalProperties": false
+  },
+  "find_options": {
+    "type": "object",
+    "properties": {
+      "expectedRequestVersion": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 9007199254740991
+      }
+    },
+    "required": [
+      "expectedRequestVersion"
+    ],
+    "additionalProperties": false
+  },
+  "prepare_booking": {
+    "type": "object",
+    "properties": {
+      "optionId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "expectedRequestVersion": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 9007199254740991
+      }
+    },
+    "required": [
+      "optionId",
+      "expectedRequestVersion"
+    ],
+    "additionalProperties": false
+  },
+  "confirm_booking": {
+    "type": "object",
+    "properties": {
+      "actionId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "confirmationRef": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      }
+    },
+    "required": [
+      "actionId",
+      "confirmationRef"
+    ],
+    "additionalProperties": false
+  },
+  "get_booking": {
+    "anyOf": [
+      {
+        "type": "object",
+        "properties": {
+          "bookingId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          }
+        },
+        "required": [
+          "bookingId"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "actionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          }
+        },
+        "required": [
+          "actionId"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  },
+  "prepare_change": {
+    "anyOf": [
+      {
+        "type": "object",
+        "properties": {
+          "changeType": {
+            "const": "reschedule",
+            "type": "string"
+          },
+          "bookingId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "expectedBookingVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "optionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "expectedRequestVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "changeType",
+          "bookingId",
+          "expectedBookingVersion",
+          "optionId",
+          "expectedRequestVersion"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "changeType": {
+            "const": "cancel",
+            "type": "string"
+          },
+          "bookingId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "expectedBookingVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "changeType",
+          "bookingId",
+          "expectedBookingVersion"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  },
+  "reschedule_booking": {
+    "type": "object",
+    "properties": {
+      "actionId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "confirmationRef": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      }
+    },
+    "required": [
+      "actionId",
+      "confirmationRef"
+    ],
+    "additionalProperties": false
+  },
+  "cancel_booking": {
+    "type": "object",
+    "properties": {
+      "actionId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "confirmationRef": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      }
+    },
+    "required": [
+      "actionId",
+      "confirmationRef"
+    ],
+    "additionalProperties": false
+  },
+  "create_callback_request": {
+    "type": "object",
+    "properties": {
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      },
+      "expectedRequestVersion": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 9007199254740991
+      }
+    },
+    "required": [
+      "reason",
+      "expectedRequestVersion"
+    ],
+    "additionalProperties": false
+  }
+}

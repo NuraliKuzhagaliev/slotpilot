@@ -1,0 +1,320 @@
+
+> slotpilot@0.1.0 test
+> node --test tests/*.test.mjs
+
+TAP version 13
+# Subtest: catalogue matches the four prices and durations from the specification
+ok 1 - catalogue matches the four prices and durations from the specification
+  ---
+  duration_ms: 4.057534
+  type: 'test'
+  ...
+# Subtest: central-demo catalogue values total 37,000 KZT and 120 minutes including one reserve
+ok 2 - central-demo catalogue values total 37,000 KZT and 120 minutes including one reserve
+  ---
+  duration_ms: 0.355066
+  type: 'test'
+  ...
+# Subtest: catalogue response explicitly declares demo and disabled scheduling
+ok 3 - catalogue response explicitly declares demo and disabled scheduling
+  ---
+  duration_ms: 0.18937
+  type: 'test'
+  ...
+# Subtest: petrol and electric demo compatibility is different
+ok 4 - petrol and electric demo compatibility is different
+  ---
+  duration_ms: 0.216
+  type: 'test'
+  ...
+# Subtest: callers cannot mutate the shared catalogue
+ok 5 - callers cannot mutate the shared catalogue
+  ---
+  duration_ms: 0.35057
+  type: 'test'
+  ...
+# Subtest: branch date crosses midnight by Asia/Almaty, not by the machine timezone
+ok 6 - branch date crosses midnight by Asia/Almaty, not by the machine timezone
+  ---
+  duration_ms: 18.445841
+  type: 'test'
+  ...
+# Subtest: tool parameters and runtime validation use the same vehicle enum
+ok 7 - tool parameters and runtime validation use the same vehicle enum
+  ---
+  duration_ms: 0.47925
+  type: 'test'
+  ...
+# Subtest: tool rejects unknown vehicles and null vehicle IDs
+ok 8 - tool rejects unknown vehicles and null vehicle IDs
+  ---
+  duration_ms: 0.306484
+  type: 'test'
+  ...
+# Subtest: tool rejects owner or role spoofing and unknown operation names
+ok 9 - tool rejects owner or role spoofing and unknown operation names
+  ---
+  duration_ms: 0.469857
+  type: 'test'
+  ...
+# Subtest: tool rejects malformed call IDs and string arguments
+ok 10 - tool rejects malformed call IDs and string arguments
+  ---
+  duration_ms: 0.433122
+  type: 'test'
+  ...
+# Subtest: empty credentials do not enable a default demo account
+ok 11 - empty credentials do not enable a default demo account
+  ---
+  duration_ms: 0.507472
+  type: 'test'
+  ...
+# Subtest: authentication compares strings with different lengths safely
+ok 12 - authentication compares strings with different lengths safely
+  ---
+  duration_ms: 0.572739
+  type: 'test'
+  ...
+# Subtest: server assigns the role and a unique probe identity
+ok 13 - server assigns the role and a unique probe identity
+  ---
+  duration_ms: 0.939192
+  type: 'test'
+  ...
+# Subtest: expired and logged-out cookies cannot be reused
+ok 14 - expired and logged-out cookies cannot be reused
+  ---
+  duration_ms: 0.569273
+  type: 'test'
+  ...
+# Subtest: limiter rejects exhaustion and allows the next time window
+ok 15 - limiter rejects exhaustion and allows the next time window
+  ---
+  duration_ms: 0.307856
+  type: 'test'
+  ...
+# Subtest: configuration rejects unsafe durations, short passwords and duplicate role passwords
+ok 16 - configuration rejects unsafe durations, short passwords and duplicate role passwords
+  ---
+  duration_ms: 0.376137
+  type: 'test'
+  ...
+# Subtest: inline session uses one function tool, English and no stored-agent ID
+ok 17 - inline session uses one function tool, English and no stored-agent ID
+  ---
+  duration_ms: 0.516206
+  type: 'test'
+  ...
+# Subtest: mint token calls only the documented endpoint with server credentials and limits
+ok 18 - mint token calls only the documented endpoint with server credentials and limits
+  ---
+  duration_ms: 21.3202
+  type: 'test'
+  ...
+# Subtest: missing key fails before any provider request; there is no voice mock fallback
+ok 19 - missing key fails before any provider request; there is no voice mock fallback
+  ---
+  duration_ms: 0.453763
+  type: 'test'
+  ...
+# Subtest: provider errors cannot leak their response body or the key
+ok 20 - provider errors cannot leak their response body or the key
+  ---
+  duration_ms: 0.622613
+  type: 'test'
+  ...
+# Subtest: network failures and malformed provider token replies are reported honestly
+ok 21 - network failures and malformed provider token replies are reported honestly
+  ---
+  duration_ms: 0.732556
+  type: 'test'
+  ...
+# Subtest: static UI loads, secrets are not served, and status makes no provider request
+ok 22 - static UI loads, secrets are not served, and status makes no provider request
+  ---
+  duration_ms: 59.770251
+  type: 'test'
+  ...
+# Subtest: tokens and tools require an authenticated session
+ok 23 - tokens and tools require an authenticated session
+  ---
+  duration_ms: 11.007566
+  type: 'test'
+  ...
+# Subtest: cross-origin mutation and untrusted Host are denied
+ok 24 - cross-origin mutation and untrusted Host are denied
+  ---
+  duration_ms: 6.804045
+  type: 'test'
+  ...
+# Subtest: demo login sets an HttpOnly SameSite=Strict cookie; missing key produces a real error
+ok 25 - demo login sets an HttpOnly SameSite=Strict cookie; missing key produces a real error
+  ---
+  duration_ms: 7.017741
+  type: 'test'
+  ...
+# Subtest: catalogue checks are server results bound to the authenticated probe
+ok 26 - catalogue checks are server results bound to the authenticated probe
+  ---
+  duration_ms: 5.452391
+  type: 'test'
+  ...
+# Subtest: repeated tool calls return the identical result; a changed payload is rejected
+ok 27 - repeated tool calls return the identical result; a changed payload is rejected
+  ---
+  duration_ms: 8.827955
+  type: 'test'
+  ...
+# Subtest: role and owner injection are rejected; unavailable write tools cannot be called
+ok 28 - role and owner injection are rejected; unavailable write tools cannot be called
+  ---
+  duration_ms: 5.013691
+  type: 'test'
+  ...
+# Subtest: local provider fixture verifies token mapping, server-only key and required consent
+ok 29 - local provider fixture verifies token mapping, server-only key and required consent
+  ---
+  duration_ms: 6.293348
+  type: 'test'
+  ...
+# Subtest: token rate limit applies to the user across fresh logins
+ok 30 - token rate limit applies to the user across fresh logins
+  ---
+  duration_ms: 5.314117
+  type: 'test'
+  ...
+# Subtest: logout revokes the cookie and credentials never appear in normal responses
+ok 31 - logout revokes the cookie and credentials never appear in normal responses
+  ---
+  duration_ms: 5.330331
+  type: 'test'
+  ...
+# Subtest: tool.result waits until reply.done even when the backend responds immediately
+ok 32 - tool.result waits until reply.done even when the backend responds immediately
+  ---
+  duration_ms: 5.683395
+  type: 'test'
+  ...
+# Subtest: a backend response after reply.done is sent without requiring a second done event
+ok 33 - a backend response after reply.done is sent without requiring a second done event
+  ---
+  duration_ms: 0.521963
+  type: 'test'
+  ...
+# Subtest: interruption drops queued results
+ok 34 - interruption drops queued results
+  ---
+  duration_ms: 0.400364
+  type: 'test'
+  ...
+# Subtest: interruption drops an in-flight result and does not update the screen
+ok 35 - interruption drops an in-flight result and does not update the screen
+  ---
+  duration_ms: 0.514753
+  type: 'test'
+  ...
+# Subtest: a new user turn invalidates read-only catalogue results
+ok 36 - a new user turn invalidates read-only catalogue results
+  ---
+  duration_ms: 0.657675
+  type: 'test'
+  ...
+# Subtest: reply.started closes the idle sending window
+ok 37 - reply.started closes the idle sending window
+  ---
+  duration_ms: 0.37773
+  type: 'test'
+  ...
+# Subtest: duplicate tool.call is executed only once in a connection
+ok 38 - duplicate tool.call is executed only once in a connection
+  ---
+  duration_ms: 0.471299
+  type: 'test'
+  ...
+# Subtest: tool failure is an is_error result, not invented business success
+ok 39 - tool failure is an is_error result, not invented business success
+  ---
+  duration_ms: 0.50602
+  type: 'test'
+  ...
+# Subtest: closing the controller makes late tool results inert
+ok 40 - closing the controller makes late tool results inert
+  ---
+  duration_ms: 1.18082
+  type: 'test'
+  ...
+# Subtest: partial user text replaces the same item instead of being concatenated
+ok 41 - partial user text replaces the same item instead of being concatenated
+  ---
+  duration_ms: 0.460202
+  type: 'test'
+  ...
+# Subtest: only a final user transcript is final, and trimmed agent text keeps its interruption flag
+ok 42 - only a final user transcript is final, and trimmed agent text keeps its interruption flag
+  ---
+  duration_ms: 0.148159
+  type: 'test'
+  ...
+# Subtest: PCM conversion clamps values and writes little-endian PCM16
+ok 43 - PCM conversion clamps values and writes little-endian PCM16
+  ---
+  duration_ms: 0.302499
+  type: 'test'
+  ...
+# Subtest: 48 kHz capture is resampled to 24 kHz across audio chunks
+ok 44 - 48 kHz capture is resampled to 24 kHz across audio chunks
+  ---
+  duration_ms: 2.594766
+  type: 'test'
+  ...
+# Subtest: 44.1 kHz chunk boundaries retain the fractional resampling position
+ok 45 - 44.1 kHz chunk boundaries retain the fractional resampling position
+  ---
+  duration_ms: 10.34946
+  type: 'test'
+  ...
+# Subtest: playback resampling produces 48 kHz frames from 24 kHz speech
+ok 46 - playback resampling produces 48 kHz frames from 24 kHz speech
+  ---
+  duration_ms: 0.158575
+  type: 'test'
+  ...
+# Subtest: playback clear silences all queued audio rather than just resetting a timestamp
+ok 47 - playback clear silences all queued audio rather than just resetting a timestamp
+  ---
+  duration_ms: 0.313815
+  type: 'test'
+  ...
+# Subtest: playback underflow is silence and overflow is bounded
+ok 48 - playback underflow is silence and overflow is bounded
+  ---
+  duration_ms: 0.149261
+  type: 'test'
+  ...
+# Subtest: Stop sends session.end synchronously and waits for session.ended before closing
+ok 49 - Stop sends session.end synchronously and waits for session.ended before closing
+  ---
+  duration_ms: 14.489656
+  type: 'test'
+  ...
+# Subtest: Stop closes after a bounded timeout when no end acknowledgment arrives
+ok 50 - Stop closes after a bounded timeout when no end acknowledgment arrives
+  ---
+  duration_ms: 20.583879
+  type: 'test'
+  ...
+# Subtest: Stop during connection closes without sending a frame to an unopened socket
+ok 51 - Stop during connection closes without sending a frame to an unopened socket
+  ---
+  duration_ms: 0.310611
+  type: 'test'
+  ...
+1..51
+# tests 51
+# suites 0
+# pass 51
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 200.670653

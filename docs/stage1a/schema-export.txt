@@ -1,0 +1,7 @@
+
+> slotpilot@0.2.0 contracts:export
+> node --experimental-strip-types scripts/export-contracts.mjs
+
+(node:1170) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Exported 26 domain schemas, 10 tool input schemas and 32 runtime examples.

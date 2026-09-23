@@ -1,0 +1,119 @@
+{
+  "demoData": true,
+  "persistence": "none",
+  "clock": "2026-09-23T05:00:00.000Z",
+  "timeZone": "Asia/Almaty",
+  "rows": [
+    {
+      "step": "1. Oil change / Centre",
+      "branch": "centre",
+      "date": "2026-09-24",
+      "start": "15:00",
+      "ready": "15:45",
+      "minutes": 45,
+      "priceKzt": 15000
+    },
+    {
+      "step": "2. Old start, with three services (REJECTED)",
+      "branch": "centre",
+      "date": "2026-09-24",
+      "start": "15:00",
+      "ready": "17:00",
+      "minutes": 120,
+      "priceKzt": 37000
+    },
+    {
+      "step": "3. Another branch (CONSENT REQUIRED)",
+      "branch": "north",
+      "date": "2026-09-24",
+      "start": "14:00",
+      "ready": "16:00",
+      "minutes": 120,
+      "priceKzt": 37000
+    },
+    {
+      "step": "4. After scripted branch consent (PROPOSAL ONLY)",
+      "branch": "north",
+      "date": "2026-09-24",
+      "start": "14:00",
+      "ready": "16:00",
+      "minutes": 120,
+      "priceKzt": 37000
+    }
+  ],
+  "previousOptionComparison": {
+    "previousOptionId": "option-614bb82a-9b9b-4cdd-a9f3-e9dc8824a518",
+    "stillFits": false,
+    "newReadyAt": "2026-09-24T12:00:00.000Z",
+    "totalDurationMinutes": 120,
+    "totalPriceKzt": 37000,
+    "reasons": [
+      {
+        "code": "AFTER_DEADLINE",
+        "message": "Finishes at 17:00, after 16:00."
+      }
+    ]
+  },
+  "finalRequest": {
+    "requestId": "engine-demo",
+    "ownerId": "demo-client",
+    "namespace": "offline-demo",
+    "requestVersion": 4,
+    "stateRevision": 5,
+    "constraints": {
+      "serviceIds": [
+        "brake-check",
+        "diagnostics",
+        "oil-change"
+      ],
+      "vehicleId": "sedan-petrol",
+      "allowedDates": [
+        "2026-09-24"
+      ],
+      "arrivalNotBefore": "14:00",
+      "readyNoLaterThan": "16:00",
+      "maxBudgetKzt": 40000,
+      "allowedBranchIds": [
+        "centre",
+        "north"
+      ],
+      "preferredBranchId": null,
+      "rankingPreference": "earliest_ready"
+    },
+    "stage": "offered",
+    "options": [
+      {
+        "branchId": "north",
+        "date": "2026-09-24",
+        "startAt": "2026-09-24T09:00:00.000Z",
+        "readyAt": "2026-09-24T11:00:00.000Z",
+        "timeZone": "Asia/Almaty",
+        "serviceIds": [
+          "brake-check",
+          "diagnostics",
+          "oil-change"
+        ],
+        "vehicleId": "sedan-petrol",
+        "totalPriceKzt": 37000,
+        "totalDurationMinutes": 120,
+        "currency": "KZT",
+        "optionId": "option-51558b70-14b7-4ef1-a708-29eb1a381a33",
+        "requestId": "engine-demo",
+        "requestVersion": 4,
+        "calendarRevision": 1,
+        "technicianId": "north-universal-tech",
+        "bayId": "north-universal-bay",
+        "expiresAt": "2026-09-23T05:02:00.000Z",
+        "explanations": [
+          "All specified hard constraints are satisfied.",
+          "One compatible technician and bay cover the entire visit.",
+          "Includes one 15-minute visit buffer; demo consumables are already included in the price.",
+          "Ranked by your preference, then earliest ready time and deterministic resource tie-breakers."
+        ]
+      }
+    ],
+    "preparedAction": null,
+    "bookingId": null
+  },
+  "bookingCreated": false
+}

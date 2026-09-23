@@ -1,0 +1,6 @@
+7 verbose title npm view next version
+8 verbose argv "view" "next" "version" "--fetch-retries" "0" "--fetch-timeout" "9000"
+15 error code EAI_AGAIN
+16 error syscall getaddrinfo
+17 error errno EAI_AGAIN
+18 error request to https://registry.npmjs.org/next failed, reason: getaddrinfo EAI_AGAIN registry.npmjs.org

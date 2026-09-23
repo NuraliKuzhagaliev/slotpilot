@@ -1,0 +1,5491 @@
+{
+  "ActionSchema": {
+    "type": "object",
+    "properties": {
+      "actionId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "requestId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "actionType": {
+        "type": "string",
+        "enum": [
+          "create",
+          "reschedule",
+          "cancel"
+        ]
+      },
+      "requestVersion": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 9007199254740991
+      },
+      "expectedBookingVersion": {
+        "anyOf": [
+          {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "bookingId": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "snapshot": {
+        "type": "object",
+        "properties": {
+          "branchId": {
+            "type": "string",
+            "enum": [
+              "centre",
+              "north"
+            ]
+          },
+          "date": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "format": "date"
+          },
+          "startAt": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 35,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+            "format": "date-time"
+          },
+          "readyAt": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 35,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+            "format": "date-time"
+          },
+          "timeZone": {
+            "const": "Asia/Almaty",
+            "type": "string"
+          },
+          "serviceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "oil-change",
+                "brake-check",
+                "diagnostics",
+                "tire-service"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 3,
+            "uniqueItems": true
+          },
+          "vehicleId": {
+            "type": "string",
+            "enum": [
+              "sedan-petrol",
+              "crossover-petrol",
+              "ev-demo"
+            ]
+          },
+          "totalPriceKzt": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3000000000
+          },
+          "totalDurationMinutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1815
+          },
+          "currency": {
+            "const": "KZT",
+            "type": "string"
+          },
+          "optionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "requestId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "requestVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "calendarRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "technicianId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "bayId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "expiresAt": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 35,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+            "format": "date-time"
+          },
+          "explanations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            "minItems": 1,
+            "maxItems": 8
+          }
+        },
+        "required": [
+          "branchId",
+          "date",
+          "startAt",
+          "readyAt",
+          "timeZone",
+          "serviceIds",
+          "vehicleId",
+          "totalPriceKzt",
+          "totalDurationMinutes",
+          "currency",
+          "optionId",
+          "requestId",
+          "requestVersion",
+          "calendarRevision",
+          "technicianId",
+          "bayId",
+          "expiresAt",
+          "explanations"
+        ],
+        "additionalProperties": false
+      },
+      "createdAt": {
+        "type": "string",
+        "minLength": 20,
+        "maxLength": 35,
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+        "format": "date-time"
+      },
+      "expiresAt": {
+        "type": "string",
+        "minLength": 20,
+        "maxLength": 35,
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+        "format": "date-time"
+      },
+      "result": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "bookingId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              },
+              "ownerId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              },
+              "requestId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              },
+              "bookingVersion": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "confirmed",
+                  "cancelled"
+                ]
+              },
+              "snapshot": {
+                "type": "object",
+                "properties": {
+                  "branchId": {
+                    "type": "string",
+                    "enum": [
+                      "centre",
+                      "north"
+                    ]
+                  },
+                  "date": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 10,
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                    "format": "date"
+                  },
+                  "startAt": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 35,
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                    "format": "date-time"
+                  },
+                  "readyAt": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 35,
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                    "format": "date-time"
+                  },
+                  "timeZone": {
+                    "const": "Asia/Almaty",
+                    "type": "string"
+                  },
+                  "serviceIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "oil-change",
+                        "brake-check",
+                        "diagnostics",
+                        "tire-service"
+                      ]
+                    },
+                    "minItems": 1,
+                    "maxItems": 3,
+                    "uniqueItems": true
+                  },
+                  "vehicleId": {
+                    "type": "string",
+                    "enum": [
+                      "sedan-petrol",
+                      "crossover-petrol",
+                      "ev-demo"
+                    ]
+                  },
+                  "totalPriceKzt": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 3000000000
+                  },
+                  "totalDurationMinutes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1815
+                  },
+                  "currency": {
+                    "const": "KZT",
+                    "type": "string"
+                  },
+                  "optionId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  "requestId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  "requestVersion": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "calendarRevision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "technicianId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  "bayId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  "expiresAt": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 35,
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                    "format": "date-time"
+                  },
+                  "explanations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    },
+                    "minItems": 1,
+                    "maxItems": 8
+                  }
+                },
+                "required": [
+                  "branchId",
+                  "date",
+                  "startAt",
+                  "readyAt",
+                  "timeZone",
+                  "serviceIds",
+                  "vehicleId",
+                  "totalPriceKzt",
+                  "totalDurationMinutes",
+                  "currency",
+                  "optionId",
+                  "requestId",
+                  "requestVersion",
+                  "calendarRevision",
+                  "technicianId",
+                  "bayId",
+                  "expiresAt",
+                  "explanations"
+                ],
+                "additionalProperties": false
+              },
+              "createdAt": {
+                "type": "string",
+                "minLength": 20,
+                "maxLength": 35,
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "minLength": 20,
+                "maxLength": 35,
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "bookingId",
+              "ownerId",
+              "requestId",
+              "bookingVersion",
+              "status",
+              "snapshot",
+              "createdAt",
+              "updatedAt"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "ownerId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      }
+    },
+    "required": [
+      "actionId",
+      "requestId",
+      "actionType",
+      "requestVersion",
+      "expectedBookingVersion",
+      "bookingId",
+      "snapshot",
+      "createdAt",
+      "expiresAt",
+      "result",
+      "ownerId"
+    ],
+    "additionalProperties": false
+  },
+  "AppStateSchema": {
+    "type": "object",
+    "properties": {
+      "schemaVersion": {
+        "const": 1,
+        "type": "number"
+      },
+      "generation": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "seedAt": {
+        "type": "string",
+        "minLength": 20,
+        "maxLength": 35,
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+        "format": "date-time"
+      },
+      "calendarRevision": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 9007199254740991
+      },
+      "requests": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "ownerId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "namespace": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "requestVersion": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "stateRevision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "constraints": {
+              "type": "object",
+              "properties": {
+                "serviceIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "oil-change",
+                      "brake-check",
+                      "diagnostics",
+                      "tire-service"
+                    ]
+                  },
+                  "minItems": 0,
+                  "maxItems": 3,
+                  "uniqueItems": true
+                },
+                "vehicleId": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "sedan-petrol",
+                        "crossover-petrol",
+                        "ev-demo"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "allowedDates": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 10,
+                        "maxLength": 10,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "format": "date"
+                      },
+                      "minItems": 1,
+                      "maxItems": 7,
+                      "uniqueItems": true
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "arrivalNotBefore": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 5,
+                      "maxLength": 5,
+                      "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "readyNoLaterThan": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 5,
+                      "maxLength": 5,
+                      "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "maxBudgetKzt": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 3000000000
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "allowedBranchIds": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "centre",
+                          "north"
+                        ]
+                      },
+                      "minItems": 1,
+                      "maxItems": 2,
+                      "uniqueItems": true
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "preferredBranchId": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "centre",
+                        "north"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "rankingPreference": {
+                  "type": "string",
+                  "enum": [
+                    "earliest_ready",
+                    "cheapest"
+                  ]
+                }
+              },
+              "required": [
+                "serviceIds",
+                "vehicleId",
+                "allowedDates",
+                "arrivalNotBefore",
+                "readyNoLaterThan",
+                "maxBudgetKzt",
+                "allowedBranchIds",
+                "preferredBranchId",
+                "rankingPreference"
+              ],
+              "additionalProperties": false
+            },
+            "stage": {
+              "type": "string",
+              "enum": [
+                "collecting",
+                "searching",
+                "offered",
+                "awaiting_confirmation",
+                "executing",
+                "booked",
+                "reconciling"
+              ]
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "branchId": {
+                    "type": "string",
+                    "enum": [
+                      "centre",
+                      "north"
+                    ]
+                  },
+                  "date": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 10,
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                    "format": "date"
+                  },
+                  "startAt": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 35,
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                    "format": "date-time"
+                  },
+                  "readyAt": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 35,
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                    "format": "date-time"
+                  },
+                  "timeZone": {
+                    "const": "Asia/Almaty",
+                    "type": "string"
+                  },
+                  "serviceIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "oil-change",
+                        "brake-check",
+                        "diagnostics",
+                        "tire-service"
+                      ]
+                    },
+                    "minItems": 1,
+                    "maxItems": 3,
+                    "uniqueItems": true
+                  },
+                  "vehicleId": {
+                    "type": "string",
+                    "enum": [
+                      "sedan-petrol",
+                      "crossover-petrol",
+                      "ev-demo"
+                    ]
+                  },
+                  "totalPriceKzt": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 3000000000
+                  },
+                  "totalDurationMinutes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1815
+                  },
+                  "currency": {
+                    "const": "KZT",
+                    "type": "string"
+                  },
+                  "optionId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  "requestId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  "requestVersion": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "calendarRevision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "technicianId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  "bayId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  "expiresAt": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 35,
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                    "format": "date-time"
+                  },
+                  "explanations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    },
+                    "minItems": 1,
+                    "maxItems": 8
+                  }
+                },
+                "required": [
+                  "branchId",
+                  "date",
+                  "startAt",
+                  "readyAt",
+                  "timeZone",
+                  "serviceIds",
+                  "vehicleId",
+                  "totalPriceKzt",
+                  "totalDurationMinutes",
+                  "currency",
+                  "optionId",
+                  "requestId",
+                  "requestVersion",
+                  "calendarRevision",
+                  "technicianId",
+                  "bayId",
+                  "expiresAt",
+                  "explanations"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0,
+              "maxItems": 3
+            },
+            "preparedAction": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "actionId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "pattern": "^[A-Za-z0-9_.:-]+$"
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "pattern": "^[A-Za-z0-9_.:-]+$"
+                    },
+                    "actionType": {
+                      "type": "string",
+                      "enum": [
+                        "create",
+                        "reschedule",
+                        "cancel"
+                      ]
+                    },
+                    "requestVersion": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "expectedBookingVersion": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "bookingId": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200,
+                          "pattern": "^[A-Za-z0-9_.:-]+$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "snapshot": {
+                      "type": "object",
+                      "properties": {
+                        "branchId": {
+                          "type": "string",
+                          "enum": [
+                            "centre",
+                            "north"
+                          ]
+                        },
+                        "date": {
+                          "type": "string",
+                          "minLength": 10,
+                          "maxLength": 10,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                          "format": "date"
+                        },
+                        "startAt": {
+                          "type": "string",
+                          "minLength": 20,
+                          "maxLength": 35,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                          "format": "date-time"
+                        },
+                        "readyAt": {
+                          "type": "string",
+                          "minLength": 20,
+                          "maxLength": 35,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                          "format": "date-time"
+                        },
+                        "timeZone": {
+                          "const": "Asia/Almaty",
+                          "type": "string"
+                        },
+                        "serviceIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "oil-change",
+                              "brake-check",
+                              "diagnostics",
+                              "tire-service"
+                            ]
+                          },
+                          "minItems": 1,
+                          "maxItems": 3,
+                          "uniqueItems": true
+                        },
+                        "vehicleId": {
+                          "type": "string",
+                          "enum": [
+                            "sedan-petrol",
+                            "crossover-petrol",
+                            "ev-demo"
+                          ]
+                        },
+                        "totalPriceKzt": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 3000000000
+                        },
+                        "totalDurationMinutes": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 1815
+                        },
+                        "currency": {
+                          "const": "KZT",
+                          "type": "string"
+                        },
+                        "optionId": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200,
+                          "pattern": "^[A-Za-z0-9_.:-]+$"
+                        },
+                        "requestId": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200,
+                          "pattern": "^[A-Za-z0-9_.:-]+$"
+                        },
+                        "requestVersion": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "calendarRevision": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "technicianId": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200,
+                          "pattern": "^[A-Za-z0-9_.:-]+$"
+                        },
+                        "bayId": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200,
+                          "pattern": "^[A-Za-z0-9_.:-]+$"
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "minLength": 20,
+                          "maxLength": 35,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                          "format": "date-time"
+                        },
+                        "explanations": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 500
+                          },
+                          "minItems": 1,
+                          "maxItems": 8
+                        }
+                      },
+                      "required": [
+                        "branchId",
+                        "date",
+                        "startAt",
+                        "readyAt",
+                        "timeZone",
+                        "serviceIds",
+                        "vehicleId",
+                        "totalPriceKzt",
+                        "totalDurationMinutes",
+                        "currency",
+                        "optionId",
+                        "requestId",
+                        "requestVersion",
+                        "calendarRevision",
+                        "technicianId",
+                        "bayId",
+                        "expiresAt",
+                        "explanations"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 35,
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                      "format": "date-time"
+                    },
+                    "expiresAt": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 35,
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "actionId",
+                    "requestId",
+                    "actionType",
+                    "requestVersion",
+                    "expectedBookingVersion",
+                    "bookingId",
+                    "snapshot",
+                    "createdAt",
+                    "expiresAt"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "bookingId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "requestId",
+            "ownerId",
+            "namespace",
+            "requestVersion",
+            "stateRevision",
+            "constraints",
+            "stage",
+            "options",
+            "preparedAction",
+            "bookingId"
+          ],
+          "additionalProperties": false
+        },
+        "maxProperties": 10000,
+        "propertyNames": {
+          "minLength": 1,
+          "maxLength": 200,
+          "not": {
+            "enum": [
+              "__proto__",
+              "constructor",
+              "prototype"
+            ]
+          }
+        }
+      },
+      "searches": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "requestVersion": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "sourceStateRevision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "calendarRevision": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "computedAt": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 35,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "no_options"
+              ]
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "branchId": {
+                    "type": "string",
+                    "enum": [
+                      "centre",
+                      "north"
+                    ]
+                  },
+                  "date": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 10,
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                    "format": "date"
+                  },
+                  "startAt": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 35,
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                    "format": "date-time"
+                  },
+                  "readyAt": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 35,
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                    "format": "date-time"
+                  },
+                  "timeZone": {
+                    "const": "Asia/Almaty",
+                    "type": "string"
+                  },
+                  "serviceIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "oil-change",
+                        "brake-check",
+                        "diagnostics",
+                        "tire-service"
+                      ]
+                    },
+                    "minItems": 1,
+                    "maxItems": 3,
+                    "uniqueItems": true
+                  },
+                  "vehicleId": {
+                    "type": "string",
+                    "enum": [
+                      "sedan-petrol",
+                      "crossover-petrol",
+                      "ev-demo"
+                    ]
+                  },
+                  "totalPriceKzt": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 3000000000
+                  },
+                  "totalDurationMinutes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1815
+                  },
+                  "currency": {
+                    "const": "KZT",
+                    "type": "string"
+                  },
+                  "optionId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  "requestId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  "requestVersion": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "calendarRevision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "technicianId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  "bayId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  "expiresAt": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 35,
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                    "format": "date-time"
+                  },
+                  "explanations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    },
+                    "minItems": 1,
+                    "maxItems": 8
+                  }
+                },
+                "required": [
+                  "branchId",
+                  "date",
+                  "startAt",
+                  "readyAt",
+                  "timeZone",
+                  "serviceIds",
+                  "vehicleId",
+                  "totalPriceKzt",
+                  "totalDurationMinutes",
+                  "currency",
+                  "optionId",
+                  "requestId",
+                  "requestVersion",
+                  "calendarRevision",
+                  "technicianId",
+                  "bayId",
+                  "expiresAt",
+                  "explanations"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0,
+              "maxItems": 3
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "VALIDATION_ERROR",
+                      "STALE_REQUEST",
+                      "OPTION_EXPIRED",
+                      "SLOT_CONFLICT",
+                      "NO_OPTIONS",
+                      "BUDGET_EXCEEDED",
+                      "PART_UNAVAILABLE",
+                      "NOT_AUTHORIZED",
+                      "OPERATION_PENDING",
+                      "INTERNAL_ERROR",
+                      "MISSING_FIELDS",
+                      "VEHICLE_UNSUPPORTED",
+                      "NO_COMPATIBLE_TECHNICIAN",
+                      "NO_COMPATIBLE_BAY",
+                      "TECHNICIAN_BUSY",
+                      "BAY_BUSY",
+                      "OUTSIDE_HOURS",
+                      "BEFORE_ARRIVAL",
+                      "AFTER_DEADLINE",
+                      "OUTSIDE_HORIZON",
+                      "PAST_TIME",
+                      "REQUEST_CLOSED",
+                      "BRANCH_NOT_ALLOWED",
+                      "DATE_NOT_ALLOWED",
+                      "STALE_BOOKING",
+                      "CONFIRMATION_REQUIRED",
+                      "SETUP_REQUIRED",
+                      "DATABASE_UNAVAILABLE",
+                      "RATE_LIMIT",
+                      "KEY_NOT_CONFIGURED",
+                      "PROVIDER_ACCESS_DENIED",
+                      "PROVIDER_ERROR",
+                      "PROVIDER_UNREACHABLE",
+                      "VOICE_LIMIT"
+                    ]
+                  },
+                  "message": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                },
+                "required": [
+                  "code",
+                  "message"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0,
+              "maxItems": 30
+            },
+            "relaxations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "another_branch",
+                      "another_day",
+                      "later_ready",
+                      "larger_budget",
+                      "fewer_services"
+                    ]
+                  },
+                  "message": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "requiresNewConsent": {
+                    "const": true,
+                    "type": "boolean"
+                  },
+                  "patch": {
+                    "type": "object",
+                    "properties": {
+                      "serviceIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "oil-change",
+                            "brake-check",
+                            "diagnostics",
+                            "tire-service"
+                          ]
+                        },
+                        "minItems": 0,
+                        "maxItems": 3,
+                        "uniqueItems": true
+                      },
+                      "addServiceIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "oil-change",
+                            "brake-check",
+                            "diagnostics",
+                            "tire-service"
+                          ]
+                        },
+                        "minItems": 0,
+                        "maxItems": 3,
+                        "uniqueItems": true
+                      },
+                      "removeServiceIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "oil-change",
+                            "brake-check",
+                            "diagnostics",
+                            "tire-service"
+                          ]
+                        },
+                        "minItems": 0,
+                        "maxItems": 3,
+                        "uniqueItems": true
+                      },
+                      "vehicleId": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "sedan-petrol",
+                              "crossover-petrol",
+                              "ev-demo"
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "allowedDates": {
+                        "anyOf": [
+                          {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 10,
+                              "maxLength": 10,
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                              "format": "date"
+                            },
+                            "minItems": 1,
+                            "maxItems": 7,
+                            "uniqueItems": true
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "arrivalNotBefore": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 5,
+                            "maxLength": 5,
+                            "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "readyNoLaterThan": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 5,
+                            "maxLength": 5,
+                            "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "maxBudgetKzt": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 3000000000
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "allowedBranchIds": {
+                        "anyOf": [
+                          {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "centre",
+                                "north"
+                              ]
+                            },
+                            "minItems": 1,
+                            "maxItems": 2,
+                            "uniqueItems": true
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "preferredBranchId": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "centre",
+                              "north"
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "rankingPreference": {
+                        "type": "string",
+                        "enum": [
+                          "earliest_ready",
+                          "cheapest"
+                        ]
+                      }
+                    },
+                    "required": [],
+                    "additionalProperties": false
+                  },
+                  "preview": {
+                    "type": "object",
+                    "properties": {
+                      "branchId": {
+                        "type": "string",
+                        "enum": [
+                          "centre",
+                          "north"
+                        ]
+                      },
+                      "date": {
+                        "type": "string",
+                        "minLength": 10,
+                        "maxLength": 10,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "format": "date"
+                      },
+                      "startAt": {
+                        "type": "string",
+                        "minLength": 20,
+                        "maxLength": 35,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                        "format": "date-time"
+                      },
+                      "readyAt": {
+                        "type": "string",
+                        "minLength": 20,
+                        "maxLength": 35,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                        "format": "date-time"
+                      },
+                      "timeZone": {
+                        "const": "Asia/Almaty",
+                        "type": "string"
+                      },
+                      "serviceIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "oil-change",
+                            "brake-check",
+                            "diagnostics",
+                            "tire-service"
+                          ]
+                        },
+                        "minItems": 1,
+                        "maxItems": 3,
+                        "uniqueItems": true
+                      },
+                      "vehicleId": {
+                        "type": "string",
+                        "enum": [
+                          "sedan-petrol",
+                          "crossover-petrol",
+                          "ev-demo"
+                        ]
+                      },
+                      "totalPriceKzt": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 3000000000
+                      },
+                      "totalDurationMinutes": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 1815
+                      },
+                      "currency": {
+                        "const": "KZT",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "branchId",
+                      "date",
+                      "startAt",
+                      "readyAt",
+                      "timeZone",
+                      "serviceIds",
+                      "vehicleId",
+                      "totalPriceKzt",
+                      "totalDurationMinutes",
+                      "currency"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "kind",
+                  "message",
+                  "requiresNewConsent",
+                  "patch",
+                  "preview"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0,
+              "maxItems": 3
+            }
+          },
+          "required": [
+            "requestId",
+            "requestVersion",
+            "sourceStateRevision",
+            "calendarRevision",
+            "computedAt",
+            "status",
+            "options",
+            "reasons",
+            "relaxations"
+          ],
+          "additionalProperties": false
+        },
+        "maxProperties": 10000,
+        "propertyNames": {
+          "minLength": 1,
+          "maxLength": 200,
+          "not": {
+            "enum": [
+              "__proto__",
+              "constructor",
+              "prototype"
+            ]
+          }
+        }
+      },
+      "comparisons": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "previousOptionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "stillFits": {
+              "type": "boolean"
+            },
+            "newReadyAt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 20,
+                  "maxLength": 35,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "totalDurationMinutes": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "totalPriceKzt": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "VALIDATION_ERROR",
+                      "STALE_REQUEST",
+                      "OPTION_EXPIRED",
+                      "SLOT_CONFLICT",
+                      "NO_OPTIONS",
+                      "BUDGET_EXCEEDED",
+                      "PART_UNAVAILABLE",
+                      "NOT_AUTHORIZED",
+                      "OPERATION_PENDING",
+                      "INTERNAL_ERROR",
+                      "MISSING_FIELDS",
+                      "VEHICLE_UNSUPPORTED",
+                      "NO_COMPATIBLE_TECHNICIAN",
+                      "NO_COMPATIBLE_BAY",
+                      "TECHNICIAN_BUSY",
+                      "BAY_BUSY",
+                      "OUTSIDE_HOURS",
+                      "BEFORE_ARRIVAL",
+                      "AFTER_DEADLINE",
+                      "OUTSIDE_HORIZON",
+                      "PAST_TIME",
+                      "REQUEST_CLOSED",
+                      "BRANCH_NOT_ALLOWED",
+                      "DATE_NOT_ALLOWED",
+                      "STALE_BOOKING",
+                      "CONFIRMATION_REQUIRED",
+                      "SETUP_REQUIRED",
+                      "DATABASE_UNAVAILABLE",
+                      "RATE_LIMIT",
+                      "KEY_NOT_CONFIGURED",
+                      "PROVIDER_ACCESS_DENIED",
+                      "PROVIDER_ERROR",
+                      "PROVIDER_UNREACHABLE",
+                      "VOICE_LIMIT"
+                    ]
+                  },
+                  "message": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                },
+                "required": [
+                  "code",
+                  "message"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0,
+              "maxItems": 30
+            }
+          },
+          "required": [
+            "previousOptionId",
+            "stillFits",
+            "newReadyAt",
+            "totalDurationMinutes",
+            "totalPriceKzt",
+            "reasons"
+          ],
+          "additionalProperties": false
+        },
+        "maxProperties": 10000,
+        "propertyNames": {
+          "minLength": 1,
+          "maxLength": 200,
+          "not": {
+            "enum": [
+              "__proto__",
+              "constructor",
+              "prototype"
+            ]
+          }
+        }
+      },
+      "bookings": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "bookingId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "ownerId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "bookingVersion": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "confirmed",
+                "cancelled"
+              ]
+            },
+            "snapshot": {
+              "type": "object",
+              "properties": {
+                "branchId": {
+                  "type": "string",
+                  "enum": [
+                    "centre",
+                    "north"
+                  ]
+                },
+                "date": {
+                  "type": "string",
+                  "minLength": 10,
+                  "maxLength": 10,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                  "format": "date"
+                },
+                "startAt": {
+                  "type": "string",
+                  "minLength": 20,
+                  "maxLength": 35,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                  "format": "date-time"
+                },
+                "readyAt": {
+                  "type": "string",
+                  "minLength": 20,
+                  "maxLength": 35,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                  "format": "date-time"
+                },
+                "timeZone": {
+                  "const": "Asia/Almaty",
+                  "type": "string"
+                },
+                "serviceIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "oil-change",
+                      "brake-check",
+                      "diagnostics",
+                      "tire-service"
+                    ]
+                  },
+                  "minItems": 1,
+                  "maxItems": 3,
+                  "uniqueItems": true
+                },
+                "vehicleId": {
+                  "type": "string",
+                  "enum": [
+                    "sedan-petrol",
+                    "crossover-petrol",
+                    "ev-demo"
+                  ]
+                },
+                "totalPriceKzt": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 3000000000
+                },
+                "totalDurationMinutes": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1815
+                },
+                "currency": {
+                  "const": "KZT",
+                  "type": "string"
+                },
+                "optionId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                "requestId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                "requestVersion": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "calendarRevision": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "technicianId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                "bayId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                "expiresAt": {
+                  "type": "string",
+                  "minLength": 20,
+                  "maxLength": 35,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                  "format": "date-time"
+                },
+                "explanations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "minItems": 1,
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "branchId",
+                "date",
+                "startAt",
+                "readyAt",
+                "timeZone",
+                "serviceIds",
+                "vehicleId",
+                "totalPriceKzt",
+                "totalDurationMinutes",
+                "currency",
+                "optionId",
+                "requestId",
+                "requestVersion",
+                "calendarRevision",
+                "technicianId",
+                "bayId",
+                "expiresAt",
+                "explanations"
+              ],
+              "additionalProperties": false
+            },
+            "createdAt": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 35,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 35,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+              "format": "date-time"
+            }
+          },
+          "required": [
+            "bookingId",
+            "ownerId",
+            "requestId",
+            "bookingVersion",
+            "status",
+            "snapshot",
+            "createdAt",
+            "updatedAt"
+          ],
+          "additionalProperties": false
+        },
+        "maxProperties": 10000,
+        "propertyNames": {
+          "minLength": 1,
+          "maxLength": 200,
+          "not": {
+            "enum": [
+              "__proto__",
+              "constructor",
+              "prototype"
+            ]
+          }
+        }
+      },
+      "actions": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "actionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "actionType": {
+              "type": "string",
+              "enum": [
+                "create",
+                "reschedule",
+                "cancel"
+              ]
+            },
+            "requestVersion": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "expectedBookingVersion": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "bookingId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "snapshot": {
+              "type": "object",
+              "properties": {
+                "branchId": {
+                  "type": "string",
+                  "enum": [
+                    "centre",
+                    "north"
+                  ]
+                },
+                "date": {
+                  "type": "string",
+                  "minLength": 10,
+                  "maxLength": 10,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                  "format": "date"
+                },
+                "startAt": {
+                  "type": "string",
+                  "minLength": 20,
+                  "maxLength": 35,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                  "format": "date-time"
+                },
+                "readyAt": {
+                  "type": "string",
+                  "minLength": 20,
+                  "maxLength": 35,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                  "format": "date-time"
+                },
+                "timeZone": {
+                  "const": "Asia/Almaty",
+                  "type": "string"
+                },
+                "serviceIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "oil-change",
+                      "brake-check",
+                      "diagnostics",
+                      "tire-service"
+                    ]
+                  },
+                  "minItems": 1,
+                  "maxItems": 3,
+                  "uniqueItems": true
+                },
+                "vehicleId": {
+                  "type": "string",
+                  "enum": [
+                    "sedan-petrol",
+                    "crossover-petrol",
+                    "ev-demo"
+                  ]
+                },
+                "totalPriceKzt": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 3000000000
+                },
+                "totalDurationMinutes": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1815
+                },
+                "currency": {
+                  "const": "KZT",
+                  "type": "string"
+                },
+                "optionId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                "requestId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                "requestVersion": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "calendarRevision": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "technicianId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                "bayId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                "expiresAt": {
+                  "type": "string",
+                  "minLength": 20,
+                  "maxLength": 35,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                  "format": "date-time"
+                },
+                "explanations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "minItems": 1,
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "branchId",
+                "date",
+                "startAt",
+                "readyAt",
+                "timeZone",
+                "serviceIds",
+                "vehicleId",
+                "totalPriceKzt",
+                "totalDurationMinutes",
+                "currency",
+                "optionId",
+                "requestId",
+                "requestVersion",
+                "calendarRevision",
+                "technicianId",
+                "bayId",
+                "expiresAt",
+                "explanations"
+              ],
+              "additionalProperties": false
+            },
+            "createdAt": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 35,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+              "format": "date-time"
+            },
+            "expiresAt": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 35,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+              "format": "date-time"
+            },
+            "result": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "bookingId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "pattern": "^[A-Za-z0-9_.:-]+$"
+                    },
+                    "ownerId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "pattern": "^[A-Za-z0-9_.:-]+$"
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "pattern": "^[A-Za-z0-9_.:-]+$"
+                    },
+                    "bookingVersion": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "confirmed",
+                        "cancelled"
+                      ]
+                    },
+                    "snapshot": {
+                      "type": "object",
+                      "properties": {
+                        "branchId": {
+                          "type": "string",
+                          "enum": [
+                            "centre",
+                            "north"
+                          ]
+                        },
+                        "date": {
+                          "type": "string",
+                          "minLength": 10,
+                          "maxLength": 10,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                          "format": "date"
+                        },
+                        "startAt": {
+                          "type": "string",
+                          "minLength": 20,
+                          "maxLength": 35,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                          "format": "date-time"
+                        },
+                        "readyAt": {
+                          "type": "string",
+                          "minLength": 20,
+                          "maxLength": 35,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                          "format": "date-time"
+                        },
+                        "timeZone": {
+                          "const": "Asia/Almaty",
+                          "type": "string"
+                        },
+                        "serviceIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "oil-change",
+                              "brake-check",
+                              "diagnostics",
+                              "tire-service"
+                            ]
+                          },
+                          "minItems": 1,
+                          "maxItems": 3,
+                          "uniqueItems": true
+                        },
+                        "vehicleId": {
+                          "type": "string",
+                          "enum": [
+                            "sedan-petrol",
+                            "crossover-petrol",
+                            "ev-demo"
+                          ]
+                        },
+                        "totalPriceKzt": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 3000000000
+                        },
+                        "totalDurationMinutes": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 1815
+                        },
+                        "currency": {
+                          "const": "KZT",
+                          "type": "string"
+                        },
+                        "optionId": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200,
+                          "pattern": "^[A-Za-z0-9_.:-]+$"
+                        },
+                        "requestId": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200,
+                          "pattern": "^[A-Za-z0-9_.:-]+$"
+                        },
+                        "requestVersion": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "calendarRevision": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "technicianId": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200,
+                          "pattern": "^[A-Za-z0-9_.:-]+$"
+                        },
+                        "bayId": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200,
+                          "pattern": "^[A-Za-z0-9_.:-]+$"
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "minLength": 20,
+                          "maxLength": 35,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                          "format": "date-time"
+                        },
+                        "explanations": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 500
+                          },
+                          "minItems": 1,
+                          "maxItems": 8
+                        }
+                      },
+                      "required": [
+                        "branchId",
+                        "date",
+                        "startAt",
+                        "readyAt",
+                        "timeZone",
+                        "serviceIds",
+                        "vehicleId",
+                        "totalPriceKzt",
+                        "totalDurationMinutes",
+                        "currency",
+                        "optionId",
+                        "requestId",
+                        "requestVersion",
+                        "calendarRevision",
+                        "technicianId",
+                        "bayId",
+                        "expiresAt",
+                        "explanations"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 35,
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 35,
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "bookingId",
+                    "ownerId",
+                    "requestId",
+                    "bookingVersion",
+                    "status",
+                    "snapshot",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "ownerId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "actionId",
+            "requestId",
+            "actionType",
+            "requestVersion",
+            "expectedBookingVersion",
+            "bookingId",
+            "snapshot",
+            "createdAt",
+            "expiresAt",
+            "result",
+            "ownerId"
+          ],
+          "additionalProperties": false
+        },
+        "maxProperties": 10000,
+        "propertyNames": {
+          "minLength": 1,
+          "maxLength": 200,
+          "not": {
+            "enum": [
+              "__proto__",
+              "constructor",
+              "prototype"
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "confirmationRef": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "actionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "ownerId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "source": {
+              "type": "string",
+              "enum": [
+                "button",
+                "voice"
+              ]
+            },
+            "createdAt": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 35,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+              "format": "date-time"
+            },
+            "transcript": {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 4000
+            }
+          },
+          "required": [
+            "confirmationRef",
+            "actionId",
+            "ownerId",
+            "source",
+            "createdAt"
+          ],
+          "additionalProperties": false
+        },
+        "maxProperties": 10000,
+        "propertyNames": {
+          "minLength": 1,
+          "maxLength": 200,
+          "not": {
+            "enum": [
+              "__proto__",
+              "constructor",
+              "prototype"
+            ]
+          }
+        }
+      },
+      "logs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "at": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 35,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+              "format": "date-time"
+            },
+            "type": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "requestId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "ownerId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "id",
+            "at",
+            "type",
+            "requestId",
+            "ownerId"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0,
+        "maxItems": 400
+      },
+      "callbacks": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "constraints": {
+              "type": "object",
+              "properties": {
+                "serviceIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "oil-change",
+                      "brake-check",
+                      "diagnostics",
+                      "tire-service"
+                    ]
+                  },
+                  "minItems": 0,
+                  "maxItems": 3,
+                  "uniqueItems": true
+                },
+                "vehicleId": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "sedan-petrol",
+                        "crossover-petrol",
+                        "ev-demo"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "allowedDates": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 10,
+                        "maxLength": 10,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "format": "date"
+                      },
+                      "minItems": 1,
+                      "maxItems": 7,
+                      "uniqueItems": true
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "arrivalNotBefore": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 5,
+                      "maxLength": 5,
+                      "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "readyNoLaterThan": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 5,
+                      "maxLength": 5,
+                      "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "maxBudgetKzt": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 3000000000
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "allowedBranchIds": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "centre",
+                          "north"
+                        ]
+                      },
+                      "minItems": 1,
+                      "maxItems": 2,
+                      "uniqueItems": true
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "preferredBranchId": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "centre",
+                        "north"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "rankingPreference": {
+                  "type": "string",
+                  "enum": [
+                    "earliest_ready",
+                    "cheapest"
+                  ]
+                }
+              },
+              "required": [
+                "serviceIds",
+                "vehicleId",
+                "allowedDates",
+                "arrivalNotBefore",
+                "readyNoLaterThan",
+                "maxBudgetKzt",
+                "allowedBranchIds",
+                "preferredBranchId",
+                "rankingPreference"
+              ],
+              "additionalProperties": false
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "ownerId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            "createdAt": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 35,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+              "format": "date-time"
+            },
+            "status": {
+              "const": "open",
+              "type": "string"
+            }
+          },
+          "required": [
+            "constraints",
+            "id",
+            "ownerId",
+            "requestId",
+            "reason",
+            "createdAt",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        "maxProperties": 10000,
+        "propertyNames": {
+          "minLength": 1,
+          "maxLength": 200,
+          "not": {
+            "enum": [
+              "__proto__",
+              "constructor",
+              "prototype"
+            ]
+          }
+        }
+      },
+      "parts": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "branchId": {
+              "type": "string",
+              "enum": [
+                "centre",
+                "north"
+              ]
+            },
+            "vehicleId": {
+              "type": "string",
+              "enum": [
+                "sedan-petrol",
+                "crossover-petrol",
+                "ev-demo"
+              ]
+            },
+            "availableFrom": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 10,
+                  "maxLength": 10,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "branchId",
+            "vehicleId",
+            "availableFrom"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0,
+        "maxItems": 6
+      },
+      "extraReservations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "resourceId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "resourceKind": {
+              "type": "string",
+              "enum": [
+                "technician",
+                "bay"
+              ]
+            },
+            "startAt": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 35,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+              "format": "date-time"
+            },
+            "endAt": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 35,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "active",
+                "cancelled"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "resourceId",
+            "resourceKind",
+            "startAt",
+            "endAt",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0,
+        "maxItems": 2000
+      },
+      "sessions": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "requestId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "tokenTimes": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "minItems": 0,
+              "maxItems": 1000
+            },
+            "toolCalls": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "signature": {
+                    "type": "string",
+                    "minLength": 0,
+                    "maxLength": 32000
+                  },
+                  "result": {}
+                },
+                "required": [
+                  "signature",
+                  "result"
+                ],
+                "additionalProperties": false
+              },
+              "maxProperties": 150,
+              "propertyNames": {
+                "minLength": 1,
+                "maxLength": 200,
+                "not": {
+                  "enum": [
+                    "__proto__",
+                    "constructor",
+                    "prototype"
+                  ]
+                }
+              }
+            }
+          },
+          "required": [
+            "requestId",
+            "tokenTimes",
+            "toolCalls"
+          ],
+          "additionalProperties": false
+        },
+        "maxProperties": 10000,
+        "propertyNames": {
+          "minLength": 1,
+          "maxLength": 200,
+          "not": {
+            "enum": [
+              "__proto__",
+              "constructor",
+              "prototype"
+            ]
+          }
+        }
+      }
+    },
+    "required": [
+      "schemaVersion",
+      "generation",
+      "seedAt",
+      "calendarRevision",
+      "requests",
+      "searches",
+      "comparisons",
+      "bookings",
+      "actions",
+      "evidence",
+      "logs",
+      "callbacks",
+      "parts",
+      "extraReservations",
+      "sessions"
+    ],
+    "additionalProperties": false
+  },
+  "BookingSchema": {
+    "type": "object",
+    "properties": {
+      "bookingId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "ownerId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "requestId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "bookingVersion": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 9007199254740991
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "confirmed",
+          "cancelled"
+        ]
+      },
+      "snapshot": {
+        "type": "object",
+        "properties": {
+          "branchId": {
+            "type": "string",
+            "enum": [
+              "centre",
+              "north"
+            ]
+          },
+          "date": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "format": "date"
+          },
+          "startAt": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 35,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+            "format": "date-time"
+          },
+          "readyAt": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 35,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+            "format": "date-time"
+          },
+          "timeZone": {
+            "const": "Asia/Almaty",
+            "type": "string"
+          },
+          "serviceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "oil-change",
+                "brake-check",
+                "diagnostics",
+                "tire-service"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 3,
+            "uniqueItems": true
+          },
+          "vehicleId": {
+            "type": "string",
+            "enum": [
+              "sedan-petrol",
+              "crossover-petrol",
+              "ev-demo"
+            ]
+          },
+          "totalPriceKzt": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3000000000
+          },
+          "totalDurationMinutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1815
+          },
+          "currency": {
+            "const": "KZT",
+            "type": "string"
+          },
+          "optionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "requestId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "requestVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "calendarRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "technicianId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "bayId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "expiresAt": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 35,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+            "format": "date-time"
+          },
+          "explanations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            "minItems": 1,
+            "maxItems": 8
+          }
+        },
+        "required": [
+          "branchId",
+          "date",
+          "startAt",
+          "readyAt",
+          "timeZone",
+          "serviceIds",
+          "vehicleId",
+          "totalPriceKzt",
+          "totalDurationMinutes",
+          "currency",
+          "optionId",
+          "requestId",
+          "requestVersion",
+          "calendarRevision",
+          "technicianId",
+          "bayId",
+          "expiresAt",
+          "explanations"
+        ],
+        "additionalProperties": false
+      },
+      "createdAt": {
+        "type": "string",
+        "minLength": 20,
+        "maxLength": 35,
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+        "format": "date-time"
+      },
+      "updatedAt": {
+        "type": "string",
+        "minLength": 20,
+        "maxLength": 35,
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+        "format": "date-time"
+      }
+    },
+    "required": [
+      "bookingId",
+      "ownerId",
+      "requestId",
+      "bookingVersion",
+      "status",
+      "snapshot",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  },
+  "CallbackSchema": {
+    "type": "object",
+    "properties": {
+      "constraints": {
+        "type": "object",
+        "properties": {
+          "serviceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "oil-change",
+                "brake-check",
+                "diagnostics",
+                "tire-service"
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 3,
+            "uniqueItems": true
+          },
+          "vehicleId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "sedan-petrol",
+                  "crossover-petrol",
+                  "ev-demo"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "allowedDates": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 10,
+                  "maxLength": 10,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                  "format": "date"
+                },
+                "minItems": 1,
+                "maxItems": 7,
+                "uniqueItems": true
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "arrivalNotBefore": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 5,
+                "maxLength": 5,
+                "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "readyNoLaterThan": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 5,
+                "maxLength": 5,
+                "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxBudgetKzt": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 3000000000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "allowedBranchIds": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "centre",
+                    "north"
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 2,
+                "uniqueItems": true
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "preferredBranchId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "centre",
+                  "north"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rankingPreference": {
+            "type": "string",
+            "enum": [
+              "earliest_ready",
+              "cheapest"
+            ]
+          }
+        },
+        "required": [
+          "serviceIds",
+          "vehicleId",
+          "allowedDates",
+          "arrivalNotBefore",
+          "readyNoLaterThan",
+          "maxBudgetKzt",
+          "allowedBranchIds",
+          "preferredBranchId",
+          "rankingPreference"
+        ],
+        "additionalProperties": false
+      },
+      "id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "ownerId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "requestId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "reason": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      },
+      "createdAt": {
+        "type": "string",
+        "minLength": 20,
+        "maxLength": 35,
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+        "format": "date-time"
+      },
+      "status": {
+        "const": "open",
+        "type": "string"
+      }
+    },
+    "required": [
+      "constraints",
+      "id",
+      "ownerId",
+      "requestId",
+      "reason",
+      "createdAt",
+      "status"
+    ],
+    "additionalProperties": false
+  },
+  "CatalogSchema": {
+    "type": "object",
+    "properties": {
+      "services": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "enum": [
+                "oil-change",
+                "brake-check",
+                "diagnostics",
+                "tire-service"
+              ]
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "durationMinutes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 600
+            },
+            "priceKzt": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000000
+            },
+            "vehicleIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "sedan-petrol",
+                  "crossover-petrol",
+                  "ev-demo"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 3,
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "durationMinutes",
+            "priceKzt",
+            "vehicleIds"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0,
+        "maxItems": 4
+      },
+      "vehicles": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "enum": [
+                "sedan-petrol",
+                "crossover-petrol",
+                "ev-demo"
+              ]
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            }
+          },
+          "required": [
+            "id",
+            "name"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0,
+        "maxItems": 3
+      },
+      "branches": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "enum": [
+                "centre",
+                "north"
+              ]
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "timeZone": {
+              "const": "Asia/Almaty",
+              "type": "string"
+            },
+            "workingHours": {
+              "type": "object",
+              "properties": {
+                "open": {
+                  "type": "string",
+                  "minLength": 5,
+                  "maxLength": 5,
+                  "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                },
+                "close": {
+                  "type": "string",
+                  "minLength": 5,
+                  "maxLength": 5,
+                  "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                }
+              },
+              "required": [
+                "open",
+                "close"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "timeZone",
+            "workingHours"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0,
+        "maxItems": 2
+      },
+      "dates": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "format": "date"
+        },
+        "minItems": 0,
+        "maxItems": 7
+      },
+      "clock": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "format": "date"
+          },
+          "time": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 5,
+            "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+          }
+        },
+        "required": [
+          "date",
+          "time"
+        ],
+        "additionalProperties": false
+      },
+      "demoData": {
+        "const": true,
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "services",
+      "vehicles",
+      "branches",
+      "dates",
+      "clock",
+      "demoData"
+    ],
+    "additionalProperties": false
+  },
+  "ErrorResponseSchema": {
+    "type": "object",
+    "properties": {
+      "ok": {
+        "const": false,
+        "type": "boolean"
+      },
+      "error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "VALIDATION_ERROR",
+              "STALE_REQUEST",
+              "OPTION_EXPIRED",
+              "SLOT_CONFLICT",
+              "NO_OPTIONS",
+              "BUDGET_EXCEEDED",
+              "PART_UNAVAILABLE",
+              "NOT_AUTHORIZED",
+              "OPERATION_PENDING",
+              "INTERNAL_ERROR",
+              "MISSING_FIELDS",
+              "VEHICLE_UNSUPPORTED",
+              "NO_COMPATIBLE_TECHNICIAN",
+              "NO_COMPATIBLE_BAY",
+              "TECHNICIAN_BUSY",
+              "BAY_BUSY",
+              "OUTSIDE_HOURS",
+              "BEFORE_ARRIVAL",
+              "AFTER_DEADLINE",
+              "OUTSIDE_HORIZON",
+              "PAST_TIME",
+              "REQUEST_CLOSED",
+              "BRANCH_NOT_ALLOWED",
+              "DATE_NOT_ALLOWED",
+              "STALE_BOOKING",
+              "CONFIRMATION_REQUIRED",
+              "SETUP_REQUIRED",
+              "DATABASE_UNAVAILABLE",
+              "RATE_LIMIT",
+              "KEY_NOT_CONFIGURED",
+              "PROVIDER_ACCESS_DENIED",
+              "PROVIDER_ERROR",
+              "PROVIDER_UNREACHABLE",
+              "VOICE_LIMIT"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000
+          },
+          "nextAction": {
+            "const": "refresh_state",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "nextAction"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "ok",
+      "error"
+    ],
+    "additionalProperties": false
+  },
+  "EvidenceSchema": {
+    "type": "object",
+    "properties": {
+      "confirmationRef": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "actionId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "ownerId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "source": {
+        "type": "string",
+        "enum": [
+          "button",
+          "voice"
+        ]
+      },
+      "createdAt": {
+        "type": "string",
+        "minLength": 20,
+        "maxLength": 35,
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+        "format": "date-time"
+      },
+      "transcript": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 4000
+      }
+    },
+    "required": [
+      "confirmationRef",
+      "actionId",
+      "ownerId",
+      "source",
+      "createdAt"
+    ],
+    "additionalProperties": false
+  },
+  "OperationSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "at": {
+        "type": "string",
+        "minLength": 20,
+        "maxLength": 35,
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+        "format": "date-time"
+      },
+      "type": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "requestId": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "ownerId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      }
+    },
+    "required": [
+      "id",
+      "at",
+      "type",
+      "requestId",
+      "ownerId"
+    ],
+    "additionalProperties": false
+  },
+  "PartRuleSchema": {
+    "type": "object",
+    "properties": {
+      "branchId": {
+        "type": "string",
+        "enum": [
+          "centre",
+          "north"
+        ]
+      },
+      "vehicleId": {
+        "type": "string",
+        "enum": [
+          "sedan-petrol",
+          "crossover-petrol",
+          "ev-demo"
+        ]
+      },
+      "availableFrom": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "format": "date"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "branchId",
+      "vehicleId",
+      "availableFrom"
+    ],
+    "additionalProperties": false
+  },
+  "SessionRecordSchema": {
+    "type": "object",
+    "properties": {
+      "requestId": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tokenTimes": {
+        "type": "array",
+        "items": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "minItems": 0,
+        "maxItems": 1000
+      },
+      "toolCalls": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "signature": {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 32000
+            },
+            "result": {}
+          },
+          "required": [
+            "signature",
+            "result"
+          ],
+          "additionalProperties": false
+        },
+        "maxProperties": 150,
+        "propertyNames": {
+          "minLength": 1,
+          "maxLength": 200,
+          "not": {
+            "enum": [
+              "__proto__",
+              "constructor",
+              "prototype"
+            ]
+          }
+        }
+      }
+    },
+    "required": [
+      "requestId",
+      "tokenTimes",
+      "toolCalls"
+    ],
+    "additionalProperties": false
+  },
+  "SnapshotSchema": {
+    "type": "object",
+    "properties": {
+      "request": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              },
+              "ownerId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              },
+              "namespace": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              },
+              "requestVersion": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "stateRevision": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "constraints": {
+                "type": "object",
+                "properties": {
+                  "serviceIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "oil-change",
+                        "brake-check",
+                        "diagnostics",
+                        "tire-service"
+                      ]
+                    },
+                    "minItems": 0,
+                    "maxItems": 3,
+                    "uniqueItems": true
+                  },
+                  "vehicleId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "sedan-petrol",
+                          "crossover-petrol",
+                          "ev-demo"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "allowedDates": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 10,
+                          "maxLength": 10,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                          "format": "date"
+                        },
+                        "minItems": 1,
+                        "maxItems": 7,
+                        "uniqueItems": true
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "arrivalNotBefore": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 5,
+                        "maxLength": 5,
+                        "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "readyNoLaterThan": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 5,
+                        "maxLength": 5,
+                        "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "maxBudgetKzt": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 3000000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "allowedBranchIds": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "centre",
+                            "north"
+                          ]
+                        },
+                        "minItems": 1,
+                        "maxItems": 2,
+                        "uniqueItems": true
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "preferredBranchId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "centre",
+                          "north"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "rankingPreference": {
+                    "type": "string",
+                    "enum": [
+                      "earliest_ready",
+                      "cheapest"
+                    ]
+                  }
+                },
+                "required": [
+                  "serviceIds",
+                  "vehicleId",
+                  "allowedDates",
+                  "arrivalNotBefore",
+                  "readyNoLaterThan",
+                  "maxBudgetKzt",
+                  "allowedBranchIds",
+                  "preferredBranchId",
+                  "rankingPreference"
+                ],
+                "additionalProperties": false
+              },
+              "stage": {
+                "type": "string",
+                "enum": [
+                  "collecting",
+                  "searching",
+                  "offered",
+                  "awaiting_confirmation",
+                  "executing",
+                  "booked",
+                  "reconciling"
+                ]
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "branchId": {
+                      "type": "string",
+                      "enum": [
+                        "centre",
+                        "north"
+                      ]
+                    },
+                    "date": {
+                      "type": "string",
+                      "minLength": 10,
+                      "maxLength": 10,
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                      "format": "date"
+                    },
+                    "startAt": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 35,
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                      "format": "date-time"
+                    },
+                    "readyAt": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 35,
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                      "format": "date-time"
+                    },
+                    "timeZone": {
+                      "const": "Asia/Almaty",
+                      "type": "string"
+                    },
+                    "serviceIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "oil-change",
+                          "brake-check",
+                          "diagnostics",
+                          "tire-service"
+                        ]
+                      },
+                      "minItems": 1,
+                      "maxItems": 3,
+                      "uniqueItems": true
+                    },
+                    "vehicleId": {
+                      "type": "string",
+                      "enum": [
+                        "sedan-petrol",
+                        "crossover-petrol",
+                        "ev-demo"
+                      ]
+                    },
+                    "totalPriceKzt": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 3000000000
+                    },
+                    "totalDurationMinutes": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 1815
+                    },
+                    "currency": {
+                      "const": "KZT",
+                      "type": "string"
+                    },
+                    "optionId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "pattern": "^[A-Za-z0-9_.:-]+$"
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "pattern": "^[A-Za-z0-9_.:-]+$"
+                    },
+                    "requestVersion": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "calendarRevision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "technicianId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "pattern": "^[A-Za-z0-9_.:-]+$"
+                    },
+                    "bayId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "pattern": "^[A-Za-z0-9_.:-]+$"
+                    },
+                    "expiresAt": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 35,
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                      "format": "date-time"
+                    },
+                    "explanations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 500
+                      },
+                      "minItems": 1,
+                      "maxItems": 8
+                    }
+                  },
+                  "required": [
+                    "branchId",
+                    "date",
+                    "startAt",
+                    "readyAt",
+                    "timeZone",
+                    "serviceIds",
+                    "vehicleId",
+                    "totalPriceKzt",
+                    "totalDurationMinutes",
+                    "currency",
+                    "optionId",
+                    "requestId",
+                    "requestVersion",
+                    "calendarRevision",
+                    "technicianId",
+                    "bayId",
+                    "expiresAt",
+                    "explanations"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 0,
+                "maxItems": 3
+              },
+              "preparedAction": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "actionId": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200,
+                        "pattern": "^[A-Za-z0-9_.:-]+$"
+                      },
+                      "requestId": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200,
+                        "pattern": "^[A-Za-z0-9_.:-]+$"
+                      },
+                      "actionType": {
+                        "type": "string",
+                        "enum": [
+                          "create",
+                          "reschedule",
+                          "cancel"
+                        ]
+                      },
+                      "requestVersion": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      },
+                      "expectedBookingVersion": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9007199254740991
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "bookingId": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200,
+                            "pattern": "^[A-Za-z0-9_.:-]+$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "snapshot": {
+                        "type": "object",
+                        "properties": {
+                          "branchId": {
+                            "type": "string",
+                            "enum": [
+                              "centre",
+                              "north"
+                            ]
+                          },
+                          "date": {
+                            "type": "string",
+                            "minLength": 10,
+                            "maxLength": 10,
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                            "format": "date"
+                          },
+                          "startAt": {
+                            "type": "string",
+                            "minLength": 20,
+                            "maxLength": 35,
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                            "format": "date-time"
+                          },
+                          "readyAt": {
+                            "type": "string",
+                            "minLength": 20,
+                            "maxLength": 35,
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                            "format": "date-time"
+                          },
+                          "timeZone": {
+                            "const": "Asia/Almaty",
+                            "type": "string"
+                          },
+                          "serviceIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "oil-change",
+                                "brake-check",
+                                "diagnostics",
+                                "tire-service"
+                              ]
+                            },
+                            "minItems": 1,
+                            "maxItems": 3,
+                            "uniqueItems": true
+                          },
+                          "vehicleId": {
+                            "type": "string",
+                            "enum": [
+                              "sedan-petrol",
+                              "crossover-petrol",
+                              "ev-demo"
+                            ]
+                          },
+                          "totalPriceKzt": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 3000000000
+                          },
+                          "totalDurationMinutes": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 1815
+                          },
+                          "currency": {
+                            "const": "KZT",
+                            "type": "string"
+                          },
+                          "optionId": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200,
+                            "pattern": "^[A-Za-z0-9_.:-]+$"
+                          },
+                          "requestId": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200,
+                            "pattern": "^[A-Za-z0-9_.:-]+$"
+                          },
+                          "requestVersion": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9007199254740991
+                          },
+                          "calendarRevision": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9007199254740991
+                          },
+                          "technicianId": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200,
+                            "pattern": "^[A-Za-z0-9_.:-]+$"
+                          },
+                          "bayId": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200,
+                            "pattern": "^[A-Za-z0-9_.:-]+$"
+                          },
+                          "expiresAt": {
+                            "type": "string",
+                            "minLength": 20,
+                            "maxLength": 35,
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                            "format": "date-time"
+                          },
+                          "explanations": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 500
+                            },
+                            "minItems": 1,
+                            "maxItems": 8
+                          }
+                        },
+                        "required": [
+                          "branchId",
+                          "date",
+                          "startAt",
+                          "readyAt",
+                          "timeZone",
+                          "serviceIds",
+                          "vehicleId",
+                          "totalPriceKzt",
+                          "totalDurationMinutes",
+                          "currency",
+                          "optionId",
+                          "requestId",
+                          "requestVersion",
+                          "calendarRevision",
+                          "technicianId",
+                          "bayId",
+                          "expiresAt",
+                          "explanations"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "minLength": 20,
+                        "maxLength": 35,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                        "format": "date-time"
+                      },
+                      "expiresAt": {
+                        "type": "string",
+                        "minLength": 20,
+                        "maxLength": 35,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                        "format": "date-time"
+                      }
+                    },
+                    "required": [
+                      "actionId",
+                      "requestId",
+                      "actionType",
+                      "requestVersion",
+                      "expectedBookingVersion",
+                      "bookingId",
+                      "snapshot",
+                      "createdAt",
+                      "expiresAt"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "bookingId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "requestId",
+              "ownerId",
+              "namespace",
+              "requestVersion",
+              "stateRevision",
+              "constraints",
+              "stage",
+              "options",
+              "preparedAction",
+              "bookingId"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "search": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              },
+              "requestVersion": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "sourceStateRevision": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "calendarRevision": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "computedAt": {
+                "type": "string",
+                "minLength": 20,
+                "maxLength": 35,
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                "format": "date-time"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ok",
+                  "no_options"
+                ]
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "branchId": {
+                      "type": "string",
+                      "enum": [
+                        "centre",
+                        "north"
+                      ]
+                    },
+                    "date": {
+                      "type": "string",
+                      "minLength": 10,
+                      "maxLength": 10,
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                      "format": "date"
+                    },
+                    "startAt": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 35,
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                      "format": "date-time"
+                    },
+                    "readyAt": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 35,
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                      "format": "date-time"
+                    },
+                    "timeZone": {
+                      "const": "Asia/Almaty",
+                      "type": "string"
+                    },
+                    "serviceIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "oil-change",
+                          "brake-check",
+                          "diagnostics",
+                          "tire-service"
+                        ]
+                      },
+                      "minItems": 1,
+                      "maxItems": 3,
+                      "uniqueItems": true
+                    },
+                    "vehicleId": {
+                      "type": "string",
+                      "enum": [
+                        "sedan-petrol",
+                        "crossover-petrol",
+                        "ev-demo"
+                      ]
+                    },
+                    "totalPriceKzt": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 3000000000
+                    },
+                    "totalDurationMinutes": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 1815
+                    },
+                    "currency": {
+                      "const": "KZT",
+                      "type": "string"
+                    },
+                    "optionId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "pattern": "^[A-Za-z0-9_.:-]+$"
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "pattern": "^[A-Za-z0-9_.:-]+$"
+                    },
+                    "requestVersion": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "calendarRevision": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "technicianId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "pattern": "^[A-Za-z0-9_.:-]+$"
+                    },
+                    "bayId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "pattern": "^[A-Za-z0-9_.:-]+$"
+                    },
+                    "expiresAt": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 35,
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                      "format": "date-time"
+                    },
+                    "explanations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 500
+                      },
+                      "minItems": 1,
+                      "maxItems": 8
+                    }
+                  },
+                  "required": [
+                    "branchId",
+                    "date",
+                    "startAt",
+                    "readyAt",
+                    "timeZone",
+                    "serviceIds",
+                    "vehicleId",
+                    "totalPriceKzt",
+                    "totalDurationMinutes",
+                    "currency",
+                    "optionId",
+                    "requestId",
+                    "requestVersion",
+                    "calendarRevision",
+                    "technicianId",
+                    "bayId",
+                    "expiresAt",
+                    "explanations"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 0,
+                "maxItems": 3
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "VALIDATION_ERROR",
+                        "STALE_REQUEST",
+                        "OPTION_EXPIRED",
+                        "SLOT_CONFLICT",
+                        "NO_OPTIONS",
+                        "BUDGET_EXCEEDED",
+                        "PART_UNAVAILABLE",
+                        "NOT_AUTHORIZED",
+                        "OPERATION_PENDING",
+                        "INTERNAL_ERROR",
+                        "MISSING_FIELDS",
+                        "VEHICLE_UNSUPPORTED",
+                        "NO_COMPATIBLE_TECHNICIAN",
+                        "NO_COMPATIBLE_BAY",
+                        "TECHNICIAN_BUSY",
+                        "BAY_BUSY",
+                        "OUTSIDE_HOURS",
+                        "BEFORE_ARRIVAL",
+                        "AFTER_DEADLINE",
+                        "OUTSIDE_HORIZON",
+                        "PAST_TIME",
+                        "REQUEST_CLOSED",
+                        "BRANCH_NOT_ALLOWED",
+                        "DATE_NOT_ALLOWED",
+                        "STALE_BOOKING",
+                        "CONFIRMATION_REQUIRED",
+                        "SETUP_REQUIRED",
+                        "DATABASE_UNAVAILABLE",
+                        "RATE_LIMIT",
+                        "KEY_NOT_CONFIGURED",
+                        "PROVIDER_ACCESS_DENIED",
+                        "PROVIDER_ERROR",
+                        "PROVIDER_UNREACHABLE",
+                        "VOICE_LIMIT"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 0,
+                "maxItems": 30
+              },
+              "relaxations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "another_branch",
+                        "another_day",
+                        "later_ready",
+                        "larger_budget",
+                        "fewer_services"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    },
+                    "requiresNewConsent": {
+                      "const": true,
+                      "type": "boolean"
+                    },
+                    "patch": {
+                      "type": "object",
+                      "properties": {
+                        "serviceIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "oil-change",
+                              "brake-check",
+                              "diagnostics",
+                              "tire-service"
+                            ]
+                          },
+                          "minItems": 0,
+                          "maxItems": 3,
+                          "uniqueItems": true
+                        },
+                        "addServiceIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "oil-change",
+                              "brake-check",
+                              "diagnostics",
+                              "tire-service"
+                            ]
+                          },
+                          "minItems": 0,
+                          "maxItems": 3,
+                          "uniqueItems": true
+                        },
+                        "removeServiceIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "oil-change",
+                              "brake-check",
+                              "diagnostics",
+                              "tire-service"
+                            ]
+                          },
+                          "minItems": 0,
+                          "maxItems": 3,
+                          "uniqueItems": true
+                        },
+                        "vehicleId": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "sedan-petrol",
+                                "crossover-petrol",
+                                "ev-demo"
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "allowedDates": {
+                          "anyOf": [
+                            {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "minLength": 10,
+                                "maxLength": 10,
+                                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                                "format": "date"
+                              },
+                              "minItems": 1,
+                              "maxItems": 7,
+                              "uniqueItems": true
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "arrivalNotBefore": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "minLength": 5,
+                              "maxLength": 5,
+                              "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "readyNoLaterThan": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "minLength": 5,
+                              "maxLength": 5,
+                              "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "maxBudgetKzt": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 3000000000
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "allowedBranchIds": {
+                          "anyOf": [
+                            {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "centre",
+                                  "north"
+                                ]
+                              },
+                              "minItems": 1,
+                              "maxItems": 2,
+                              "uniqueItems": true
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "preferredBranchId": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "centre",
+                                "north"
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "rankingPreference": {
+                          "type": "string",
+                          "enum": [
+                            "earliest_ready",
+                            "cheapest"
+                          ]
+                        }
+                      },
+                      "required": [],
+                      "additionalProperties": false
+                    },
+                    "preview": {
+                      "type": "object",
+                      "properties": {
+                        "branchId": {
+                          "type": "string",
+                          "enum": [
+                            "centre",
+                            "north"
+                          ]
+                        },
+                        "date": {
+                          "type": "string",
+                          "minLength": 10,
+                          "maxLength": 10,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                          "format": "date"
+                        },
+                        "startAt": {
+                          "type": "string",
+                          "minLength": 20,
+                          "maxLength": 35,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                          "format": "date-time"
+                        },
+                        "readyAt": {
+                          "type": "string",
+                          "minLength": 20,
+                          "maxLength": 35,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                          "format": "date-time"
+                        },
+                        "timeZone": {
+                          "const": "Asia/Almaty",
+                          "type": "string"
+                        },
+                        "serviceIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "oil-change",
+                              "brake-check",
+                              "diagnostics",
+                              "tire-service"
+                            ]
+                          },
+                          "minItems": 1,
+                          "maxItems": 3,
+                          "uniqueItems": true
+                        },
+                        "vehicleId": {
+                          "type": "string",
+                          "enum": [
+                            "sedan-petrol",
+                            "crossover-petrol",
+                            "ev-demo"
+                          ]
+                        },
+                        "totalPriceKzt": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 3000000000
+                        },
+                        "totalDurationMinutes": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 1815
+                        },
+                        "currency": {
+                          "const": "KZT",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "branchId",
+                        "date",
+                        "startAt",
+                        "readyAt",
+                        "timeZone",
+                        "serviceIds",
+                        "vehicleId",
+                        "totalPriceKzt",
+                        "totalDurationMinutes",
+                        "currency"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "message",
+                    "requiresNewConsent",
+                    "patch",
+                    "preview"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 0,
+                "maxItems": 3
+              }
+            },
+            "required": [
+              "requestId",
+              "requestVersion",
+              "sourceStateRevision",
+              "calendarRevision",
+              "computedAt",
+              "status",
+              "options",
+              "reasons",
+              "relaxations"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "comparison": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "previousOptionId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              },
+              "stillFits": {
+                "type": "boolean"
+              },
+              "newReadyAt": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 35,
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "totalDurationMinutes": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "totalPriceKzt": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "VALIDATION_ERROR",
+                        "STALE_REQUEST",
+                        "OPTION_EXPIRED",
+                        "SLOT_CONFLICT",
+                        "NO_OPTIONS",
+                        "BUDGET_EXCEEDED",
+                        "PART_UNAVAILABLE",
+                        "NOT_AUTHORIZED",
+                        "OPERATION_PENDING",
+                        "INTERNAL_ERROR",
+                        "MISSING_FIELDS",
+                        "VEHICLE_UNSUPPORTED",
+                        "NO_COMPATIBLE_TECHNICIAN",
+                        "NO_COMPATIBLE_BAY",
+                        "TECHNICIAN_BUSY",
+                        "BAY_BUSY",
+                        "OUTSIDE_HOURS",
+                        "BEFORE_ARRIVAL",
+                        "AFTER_DEADLINE",
+                        "OUTSIDE_HORIZON",
+                        "PAST_TIME",
+                        "REQUEST_CLOSED",
+                        "BRANCH_NOT_ALLOWED",
+                        "DATE_NOT_ALLOWED",
+                        "STALE_BOOKING",
+                        "CONFIRMATION_REQUIRED",
+                        "SETUP_REQUIRED",
+                        "DATABASE_UNAVAILABLE",
+                        "RATE_LIMIT",
+                        "KEY_NOT_CONFIGURED",
+                        "PROVIDER_ACCESS_DENIED",
+                        "PROVIDER_ERROR",
+                        "PROVIDER_UNREACHABLE",
+                        "VOICE_LIMIT"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 0,
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "previousOptionId",
+              "stillFits",
+              "newReadyAt",
+              "totalDurationMinutes",
+              "totalPriceKzt",
+              "reasons"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "bookings": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "bookingId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "ownerId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "bookingVersion": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "confirmed",
+                "cancelled"
+              ]
+            },
+            "snapshot": {
+              "type": "object",
+              "properties": {
+                "branchId": {
+                  "type": "string",
+                  "enum": [
+                    "centre",
+                    "north"
+                  ]
+                },
+                "date": {
+                  "type": "string",
+                  "minLength": 10,
+                  "maxLength": 10,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                  "format": "date"
+                },
+                "startAt": {
+                  "type": "string",
+                  "minLength": 20,
+                  "maxLength": 35,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                  "format": "date-time"
+                },
+                "readyAt": {
+                  "type": "string",
+                  "minLength": 20,
+                  "maxLength": 35,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                  "format": "date-time"
+                },
+                "timeZone": {
+                  "const": "Asia/Almaty",
+                  "type": "string"
+                },
+                "serviceIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "oil-change",
+                      "brake-check",
+                      "diagnostics",
+                      "tire-service"
+                    ]
+                  },
+                  "minItems": 1,
+                  "maxItems": 3,
+                  "uniqueItems": true
+                },
+                "vehicleId": {
+                  "type": "string",
+                  "enum": [
+                    "sedan-petrol",
+                    "crossover-petrol",
+                    "ev-demo"
+                  ]
+                },
+                "totalPriceKzt": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 3000000000
+                },
+                "totalDurationMinutes": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1815
+                },
+                "currency": {
+                  "const": "KZT",
+                  "type": "string"
+                },
+                "optionId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                "requestId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                "requestVersion": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "calendarRevision": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "technicianId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                "bayId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                "expiresAt": {
+                  "type": "string",
+                  "minLength": 20,
+                  "maxLength": 35,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+                  "format": "date-time"
+                },
+                "explanations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "minItems": 1,
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "branchId",
+                "date",
+                "startAt",
+                "readyAt",
+                "timeZone",
+                "serviceIds",
+                "vehicleId",
+                "totalPriceKzt",
+                "totalDurationMinutes",
+                "currency",
+                "optionId",
+                "requestId",
+                "requestVersion",
+                "calendarRevision",
+                "technicianId",
+                "bayId",
+                "expiresAt",
+                "explanations"
+              ],
+              "additionalProperties": false
+            },
+            "createdAt": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 35,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 35,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+              "format": "date-time"
+            }
+          },
+          "required": [
+            "bookingId",
+            "ownerId",
+            "requestId",
+            "bookingVersion",
+            "status",
+            "snapshot",
+            "createdAt",
+            "updatedAt"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0,
+        "maxItems": 10000
+      },
+      "events": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            },
+            "at": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 35,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.\\d{1,3})?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$",
+              "format": "date-time"
+            },
+            "type": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "requestId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "^[A-Za-z0-9_.:-]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "ownerId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "required": [
+            "id",
+            "at",
+            "type",
+            "requestId",
+            "ownerId"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0,
+        "maxItems": 40
+      },
+      "generation": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "databaseConnected": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "request",
+      "search",
+      "comparison",
+      "bookings",
+      "events",
+      "generation",
+      "databaseConnected"
+    ],
+    "additionalProperties": false
+  },
+  "UserSchema": {
+    "type": "object",
+    "properties": {
+      "userId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9_.:-]+$"
+      },
+      "role": {
+        "type": "string",
+        "enum": [
+          "client",
+          "admin"
+        ]
+      }
+    },
+    "required": [
+      "userId",
+      "role"
+    ],
+    "additionalProperties": false
+  }
+}

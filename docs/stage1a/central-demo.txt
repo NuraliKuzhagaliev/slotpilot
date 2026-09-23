@@ -1,0 +1,18 @@
+(node:1191) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+SlotPilot · OFFLINE CONSTRAINT ENGINE DEMO · no voice, no database, no booking
+
+┌─────────┬────────────────────────────────────────────────────┬──────────┬──────────────┬─────────┬─────────┬─────────┬──────────┐
+│ (index) │ step                                               │ branch   │ date         │ start   │ ready   │ minutes │ priceKzt │
+├─────────┼────────────────────────────────────────────────────┼──────────┼──────────────┼─────────┼─────────┼─────────┼──────────┤
+│ 0       │ '1. Oil change / Centre'                           │ 'centre' │ '2026-09-24' │ '15:00' │ '15:45' │ 45      │ 15000    │
+│ 1       │ '2. Old start, with three services (REJECTED)'     │ 'centre' │ '2026-09-24' │ '15:00' │ '17:00' │ 120     │ 37000    │
+│ 2       │ '3. Another branch (CONSENT REQUIRED)'             │ 'north'  │ '2026-09-24' │ '14:00' │ '16:00' │ 120     │ 37000    │
+│ 3       │ '4. After scripted branch consent (PROPOSAL ONLY)' │ 'north'  │ '2026-09-24' │ '14:00' │ '16:00' │ 120     │ 37000    │
+└─────────┴────────────────────────────────────────────────────┴──────────┴──────────────┴─────────┴─────────┴─────────┴──────────┘
+Why the old start fails: Finishes at 17:00, after 16:00.
+Actual allowed options before branch consent: 0
+Versions: request=4; state=5
+This script stops at a proposal. No appointment was created or reserved.
+

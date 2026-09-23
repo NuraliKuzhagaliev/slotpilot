@@ -1,0 +1,261 @@
+[
+  {
+    "name": "get_services",
+    "value": {},
+    "accepted": true
+  },
+  {
+    "name": "get_services",
+    "value": {
+      "vehicleId": "sedan-petrol"
+    },
+    "accepted": true
+  },
+  {
+    "name": "get_services",
+    "value": {
+      "vehicleId": "unknown"
+    },
+    "accepted": false
+  },
+  {
+    "name": "get_services",
+    "value": {
+      "userId": "fake"
+    },
+    "accepted": false
+  },
+  {
+    "name": "update_request",
+    "value": {
+      "patch": {},
+      "expectedRequestVersion": 1
+    },
+    "accepted": true
+  },
+  {
+    "name": "update_request",
+    "value": {
+      "patch": {
+        "maxBudgetKzt": null
+      },
+      "expectedRequestVersion": 1
+    },
+    "accepted": true
+  },
+  {
+    "name": "update_request",
+    "value": {
+      "patch": {
+        "maxBudgetKzt": 1.5
+      },
+      "expectedRequestVersion": 1
+    },
+    "accepted": false
+  },
+  {
+    "name": "update_request",
+    "value": {
+      "patch": {},
+      "expectedRequestVersion": 0
+    },
+    "accepted": false
+  },
+  {
+    "name": "update_request",
+    "value": {
+      "patch": {
+        "allowedDates": [
+          "2026-02-30"
+        ]
+      },
+      "expectedRequestVersion": 1
+    },
+    "accepted": false
+  },
+  {
+    "name": "update_request",
+    "value": {
+      "patch": {
+        "serviceIds": [
+          "oil-change",
+          "oil-change"
+        ]
+      },
+      "expectedRequestVersion": 1
+    },
+    "accepted": false
+  },
+  {
+    "name": "update_request",
+    "value": {
+      "patch": {},
+      "expectedRequestVersion": 1,
+      "role": "admin"
+    },
+    "accepted": false
+  },
+  {
+    "name": "find_options",
+    "value": {
+      "expectedRequestVersion": 1
+    },
+    "accepted": true
+  },
+  {
+    "name": "find_options",
+    "value": {},
+    "accepted": false
+  },
+  {
+    "name": "find_options",
+    "value": {
+      "expectedRequestVersion": "1"
+    },
+    "accepted": false
+  },
+  {
+    "name": "prepare_booking",
+    "value": {
+      "optionId": "opt",
+      "expectedRequestVersion": 1
+    },
+    "accepted": true
+  },
+  {
+    "name": "prepare_booking",
+    "value": {
+      "optionId": "opt"
+    },
+    "accepted": false
+  },
+  {
+    "name": "confirm_booking",
+    "value": {
+      "actionId": "act",
+      "confirmationRef": "ref"
+    },
+    "accepted": true
+  },
+  {
+    "name": "confirm_booking",
+    "value": {
+      "actionId": "act",
+      "confirmed": true
+    },
+    "accepted": false
+  },
+  {
+    "name": "get_booking",
+    "value": {
+      "actionId": "act"
+    },
+    "accepted": true
+  },
+  {
+    "name": "get_booking",
+    "value": {
+      "bookingId": "b"
+    },
+    "accepted": true
+  },
+  {
+    "name": "get_booking",
+    "value": {},
+    "accepted": false
+  },
+  {
+    "name": "get_booking",
+    "value": {
+      "actionId": "a",
+      "bookingId": "b"
+    },
+    "accepted": false
+  },
+  {
+    "name": "prepare_change",
+    "value": {
+      "changeType": "cancel",
+      "bookingId": "b",
+      "expectedBookingVersion": 1
+    },
+    "accepted": true
+  },
+  {
+    "name": "prepare_change",
+    "value": {
+      "changeType": "reschedule",
+      "bookingId": "b",
+      "expectedBookingVersion": 1,
+      "optionId": "o",
+      "expectedRequestVersion": 2
+    },
+    "accepted": true
+  },
+  {
+    "name": "prepare_change",
+    "value": {
+      "changeType": "reschedule",
+      "bookingId": "b",
+      "expectedBookingVersion": 1
+    },
+    "accepted": false
+  },
+  {
+    "name": "prepare_change",
+    "value": {
+      "changeType": "cancel",
+      "bookingId": "b",
+      "expectedBookingVersion": 1,
+      "optionId": "o"
+    },
+    "accepted": false
+  },
+  {
+    "name": "reschedule_booking",
+    "value": {
+      "actionId": "a",
+      "confirmationRef": "r"
+    },
+    "accepted": true
+  },
+  {
+    "name": "reschedule_booking",
+    "value": {
+      "actionId": "a"
+    },
+    "accepted": false
+  },
+  {
+    "name": "cancel_booking",
+    "value": {
+      "actionId": "a",
+      "confirmationRef": "r"
+    },
+    "accepted": true
+  },
+  {
+    "name": "cancel_booking",
+    "value": {
+      "actionId": "a",
+      "confirmed": true
+    },
+    "accepted": false
+  },
+  {
+    "name": "create_callback_request",
+    "value": {
+      "reason": "Need a human",
+      "expectedRequestVersion": 1
+    },
+    "accepted": true
+  },
+  {
+    "name": "create_callback_request",
+    "value": {
+      "reason": "",
+      "expectedRequestVersion": 1
+    },
+    "accepted": false
+  }
+]

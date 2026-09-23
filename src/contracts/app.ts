@@ -1,0 +1,27 @@
+/** Application persistence and response contracts. Types derive from runtime/JSON schemas. */
+import { v, type Infer } from './schema.ts';
+import { ErrorCodeSchema } from './domain.ts';
+import { ActorSchema, BookingRequestSchema, BranchSchema, CustomerConstraintsSchema, DateSchema, DemoVehicleSchema, IdSchema, InstantSchema, PartRuleSchema, PreparedActionSchema, PreviousOptionComparisonSchema, ResourceReservationSchema, SearchResultSchema, ServiceSchema, SlotOptionSchema, TimeSchema } from './domain.ts';
+export { PartRuleSchema } from './domain.ts';
+export const BookingSchema = v.object({ bookingId:IdSchema, ownerId:IdSchema, requestId:IdSchema, bookingVersion:v.int(1), status:v.enum(['confirmed','cancelled']), snapshot:SlotOptionSchema, createdAt:InstantSchema, updatedAt:InstantSchema });
+export const EvidenceSchema = v.object({ confirmationRef:IdSchema, actionId:IdSchema, ownerId:IdSchema, source:v.enum(['button','voice']), createdAt:InstantSchema, transcript:v.optional(v.string({max:4000})) });
+export const OperationSchema = v.object({ id:IdSchema, at:InstantSchema, type:v.string({min:1,max:100}), requestId:v.nullable(IdSchema), ownerId:IdSchema });
+export const CallbackSchema = v.object({ constraints:CustomerConstraintsSchema, id:IdSchema, ownerId:IdSchema, requestId:IdSchema, reason:v.string({min:1,max:500}), createdAt:InstantSchema, status:v.literal('open') });
+export const ActionSchema = v.extend(PreparedActionSchema,{ result:v.nullable(BookingSchema), ownerId:IdSchema });
+export const SessionRecordSchema = v.object({ requestId:v.nullable(IdSchema), tokenTimes:v.array(v.int(),{max:1000}), toolCalls:v.record(v.object({ signature:v.string({max:32000}), result:v.json() }),150) });
+export const AppStateSchema = v.object({ schemaVersion:v.literal(1), generation:IdSchema, seedAt:InstantSchema, calendarRevision:v.int(1), requests:v.record(BookingRequestSchema), searches:v.record(SearchResultSchema), comparisons:v.record(PreviousOptionComparisonSchema), bookings:v.record(BookingSchema), actions:v.record(ActionSchema), evidence:v.record(EvidenceSchema), logs:v.array(OperationSchema,{max:400}), callbacks:v.record(CallbackSchema), parts:v.array(PartRuleSchema,{max:6}), extraReservations:v.array(ResourceReservationSchema,{max:2000}), sessions:v.record(SessionRecordSchema) });
+export const UserSchema = ActorSchema;
+export const ErrorResponseSchema = v.object({ ok:v.literal(false), error:v.object({code:ErrorCodeSchema,message:v.string({min:1,max:5000}),nextAction:v.literal('refresh_state')}) });
+export const SnapshotSchema = v.object({ request:v.nullable(BookingRequestSchema), search:v.nullable(SearchResultSchema), comparison:v.nullable(PreviousOptionComparisonSchema), bookings:v.array(BookingSchema,{max:10000}), events:v.array(OperationSchema,{max:40}), generation:IdSchema, databaseConnected:v.boolean() });
+export const CatalogSchema = v.object({ services:v.array(ServiceSchema,{max:4}), vehicles:v.array(DemoVehicleSchema,{max:3}), branches:v.array(BranchSchema,{max:2}), dates:v.array(DateSchema,{max:7}), clock:v.object({date:DateSchema,time:TimeSchema}), demoData:v.literal(true) });
+export type Booking = Infer<typeof BookingSchema>;
+export type Evidence = Infer<typeof EvidenceSchema>;
+export type Operation = Infer<typeof OperationSchema>;
+export type Callback = Infer<typeof CallbackSchema>;
+export type Action = Infer<typeof ActionSchema>;
+export type PartRule = Infer<typeof PartRuleSchema>;
+export type SessionRecord = Infer<typeof SessionRecordSchema>;
+export type AppState = Infer<typeof AppStateSchema>;
+export type User = Infer<typeof UserSchema>;
+export type Snapshot = Infer<typeof SnapshotSchema>;
+export type Catalog = Infer<typeof CatalogSchema>;

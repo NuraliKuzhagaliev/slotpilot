@@ -1,0 +1,14 @@
+Mode: actual route handlers in process; real Supabase/PostgreSQL.
+PASS: runtime sees the real database and server authentication
+PASS: client cannot access admin data or reset the database
+PASS: a resource occupied after preparation rejects the booking
+PASS: confirmed booking is saved to PostgreSQL
+PASS: repeated confirmation returns the same booking without a duplicate
+PASS: reloading server state preserves the saved booking
+PASS: another client cannot read this booking
+PASS: failed reschedule preserves the original booking
+PASS: successful reschedule keeps the ID and increments the booking version
+PASS: cancellation is persisted after separate confirmation
+PASS: administrator sees the saved result and operation history
+PASS: administrator reset clears only this isolated test namespace
+Finished: 12 real route/PostgreSQL scenarios passed. Voice provider and microphone were not used.

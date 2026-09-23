@@ -1,0 +1,33 @@
+{
+  "milestone": "1a-offline-core",
+  "verifiedAt": "2026-09-23",
+  "node": "22.16.0",
+  "typescript": "5.8.3",
+  "tests": {
+    "runner": "node:test",
+    "total": 143,
+    "passed": 143,
+    "failed": 0,
+    "skipped": 0,
+    "legacyProbe": 51,
+    "newCore": 92,
+    "generatedScenarioCasesInsideOneTest": 60
+  },
+  "strictTypecheck": "passed",
+  "mjsSyntaxChecked": 23,
+  "schemaChecks": {
+    "validSchemas": 36,
+    "corpusMatches": 32
+  },
+  "liveAssemblyAI": "not tested",
+  "nextBuild": "not implemented / not run",
+  "supabase": "not connected / unconfirmed",
+  "postgresTransactions": "not implemented / not run",
+  "bookingsCreated": 0,
+  "gateway": "optional; not implemented",
+  "frameworkDependencyInstall": "not completed; npm registry EAI_AGAIN",
+  "lockfileScope": "dependency-free offline package only",
+  "stage0Complete": false,
+  "stage1Complete": false,
+  "P0Complete": false
+}

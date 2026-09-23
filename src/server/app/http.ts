@@ -1,0 +1,6 @@
+import { AppError } from './db.ts';
+import { ErrorResponseSchema } from '../../contracts/app.ts';
+import { ErrorCodeSchema } from '../../contracts/domain.ts';
+export const json=(data:unknown,status=200,headers:Record<string,string>={})=>Response.json(data,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers}});
+export async function body(req:Request){if(Number(req.headers.get('content-length')??0)>32768)throw new AppError('VALIDATION_ERROR','Request too large.',413);const text=await req.text();if(text.length>32768)throw new AppError('VALIDATION_ERROR','Request too large.',413);try{return JSON.parse(text)}catch{throw new AppError('VALIDATION_ERROR','Invalid JSON.')}}
+export async function handle(fn:()=>Promise<Response>){try{return await fn()}catch(e){const err=e as Error&{code?:string;status?:number};const validation=err.name==='ContractError'||err.name==='ZodError';let code='INTERNAL_ERROR';try{code=ErrorCodeSchema.parse(err.code)}catch{}return json(ErrorResponseSchema.parse({ok:false,error:{code:validation?'VALIDATION_ERROR':code,message:validation?'Check the supplied values.':code!=='INTERNAL_ERROR'?err.message:'The operation could not be completed. Refresh the saved state before retrying.',nextAction:'refresh_state'}}),err.status??(validation?400:code!=='INTERNAL_ERROR'?409:500))}}

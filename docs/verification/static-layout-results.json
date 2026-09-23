@@ -1,0 +1,14 @@
+[
+  {
+    "viewport": "desktop",
+    "width": 1440,
+    "horizontalOverflow": false,
+    "kind": "static HTML/CSS render only"
+  },
+  {
+    "viewport": "mobile",
+    "width": 390,
+    "horizontalOverflow": false,
+    "kind": "static HTML/CSS render only"
+  }
+]

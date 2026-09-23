@@ -1,0 +1,49 @@
+{
+  "date": "2026-09-23",
+  "stage": "0 - local voice access probe",
+  "stageAccepted": false,
+  "unitAndLocalHttp": {
+    "runner": "node:test",
+    "passed": 51,
+    "failed": 0,
+    "skipped": 0,
+    "actualProviderCalls": 0
+  },
+  "syntaxAndStaticBrowserBoundary": {
+    "modules": 20,
+    "passed": true,
+    "securityAudit": false
+  },
+  "staticLayout": {
+    "viewports": [
+      1440,
+      390
+    ],
+    "passed": 2,
+    "executesApplicationJavaScript": false
+  },
+  "fullBrowserSmoke": {
+    "status": "blocked",
+    "error": "ERR_BLOCKED_BY_ADMINISTRATOR",
+    "checksPassed": 0,
+    "voiceFixture": "mock only; scenario not reached"
+  },
+  "liveAssemblyAI": {
+    "status": "not run",
+    "realKeyAvailableInDevelopmentEnvironment": false,
+    "realMicrophoneTested": false
+  },
+  "nextBuild": "not implemented",
+  "databaseIntegration": "not implemented",
+  "bookingAcceptance": "not implemented",
+  "setupCheck": {
+    "passed": true,
+    "scope": "temporary directory only; no real API key",
+    "checks": [
+      "distinct passwords",
+      "no password stdout",
+      "no overwrite",
+      "gitignore excludes .env.local only"
+    ]
+  }
+}

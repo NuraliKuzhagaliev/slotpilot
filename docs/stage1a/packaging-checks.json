@@ -1,0 +1,11 @@
+{
+  "setupSecretsNotPrinted": true,
+  "setupDoesNotOverwrite": true,
+  "envLocalIgnored": true,
+  "envExampleNotIgnored": true,
+  "hostTimeZonesCompared": [
+    "UTC",
+    "America/Los_Angeles"
+  ],
+  "centralDemoRowsEqualAcrossHostTimeZones": true
+}

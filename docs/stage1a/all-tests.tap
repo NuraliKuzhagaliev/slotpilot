@@ -1,0 +1,878 @@
+
+> slotpilot@0.2.0 test
+> node scripts/test.mjs
+
+TAP version 13
+# Subtest: catalogue matches the four prices and durations from the specification
+ok 1 - catalogue matches the four prices and durations from the specification
+  ---
+  duration_ms: 2.340328
+  type: 'test'
+  ...
+# Subtest: central-demo catalogue values total 37,000 KZT and 120 minutes including one reserve
+ok 2 - central-demo catalogue values total 37,000 KZT and 120 minutes including one reserve
+  ---
+  duration_ms: 0.256702
+  type: 'test'
+  ...
+# Subtest: catalogue response explicitly declares demo and disabled scheduling
+ok 3 - catalogue response explicitly declares demo and disabled scheduling
+  ---
+  duration_ms: 0.153749
+  type: 'test'
+  ...
+# Subtest: petrol and electric demo compatibility is different
+ok 4 - petrol and electric demo compatibility is different
+  ---
+  duration_ms: 0.144284
+  type: 'test'
+  ...
+# Subtest: callers cannot mutate the shared catalogue
+ok 5 - callers cannot mutate the shared catalogue
+  ---
+  duration_ms: 0.246397
+  type: 'test'
+  ...
+# Subtest: branch date crosses midnight by Asia/Almaty, not by the machine timezone
+ok 6 - branch date crosses midnight by Asia/Almaty, not by the machine timezone
+  ---
+  duration_ms: 13.130047
+  type: 'test'
+  ...
+# Subtest: tool parameters and runtime validation use the same vehicle enum
+ok 7 - tool parameters and runtime validation use the same vehicle enum
+  ---
+  duration_ms: 0.41732
+  type: 'test'
+  ...
+# Subtest: tool rejects unknown vehicles and null vehicle IDs
+ok 8 - tool rejects unknown vehicles and null vehicle IDs
+  ---
+  duration_ms: 0.313506
+  type: 'test'
+  ...
+# Subtest: tool rejects owner or role spoofing and unknown operation names
+ok 9 - tool rejects owner or role spoofing and unknown operation names
+  ---
+  duration_ms: 0.312664
+  type: 'test'
+  ...
+# Subtest: tool rejects malformed call IDs and string arguments
+ok 10 - tool rejects malformed call IDs and string arguments
+  ---
+  duration_ms: 0.327768
+  type: 'test'
+  ...
+# Subtest: empty credentials do not enable a default demo account
+ok 11 - empty credentials do not enable a default demo account
+  ---
+  duration_ms: 0.428557
+  type: 'test'
+  ...
+# Subtest: authentication compares strings with different lengths safely
+ok 12 - authentication compares strings with different lengths safely
+  ---
+  duration_ms: 0.46391
+  type: 'test'
+  ...
+# Subtest: server assigns the role and a unique probe identity
+ok 13 - server assigns the role and a unique probe identity
+  ---
+  duration_ms: 0.833349
+  type: 'test'
+  ...
+# Subtest: expired and logged-out cookies cannot be reused
+ok 14 - expired and logged-out cookies cannot be reused
+  ---
+  duration_ms: 0.463159
+  type: 'test'
+  ...
+# Subtest: limiter rejects exhaustion and allows the next time window
+ok 15 - limiter rejects exhaustion and allows the next time window
+  ---
+  duration_ms: 0.238244
+  type: 'test'
+  ...
+# Subtest: configuration rejects unsafe durations, short passwords and duplicate role passwords
+ok 16 - configuration rejects unsafe durations, short passwords and duplicate role passwords
+  ---
+  duration_ms: 0.217944
+  type: 'test'
+  ...
+# Subtest: inline session uses one function tool, English and no stored-agent ID
+ok 17 - inline session uses one function tool, English and no stored-agent ID
+  ---
+  duration_ms: 0.525992
+  type: 'test'
+  ...
+# Subtest: mint token calls only the documented endpoint with server credentials and limits
+ok 18 - mint token calls only the documented endpoint with server credentials and limits
+  ---
+  duration_ms: 22.188323
+  type: 'test'
+  ...
+# Subtest: missing key fails before any provider request; there is no voice mock fallback
+ok 19 - missing key fails before any provider request; there is no voice mock fallback
+  ---
+  duration_ms: 0.297843
+  type: 'test'
+  ...
+# Subtest: provider errors cannot leak their response body or the key
+ok 20 - provider errors cannot leak their response body or the key
+  ---
+  duration_ms: 0.687271
+  type: 'test'
+  ...
+# Subtest: network failures and malformed provider token replies are reported honestly
+ok 21 - network failures and malformed provider token replies are reported honestly
+  ---
+  duration_ms: 0.554955
+  type: 'test'
+  ...
+# (node:1093) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: canonical product catalogue agrees with the isolated voice probe catalogue
+ok 22 - canonical product catalogue agrees with the isolated voice probe catalogue
+  ---
+  duration_ms: 5.301981
+  type: 'test'
+  ...
+# Subtest: schema output objects are immutable and parsers return copies
+ok 23 - schema output objects are immutable and parsers return copies
+  ---
+  duration_ms: 0.209842
+  type: 'test'
+  ...
+# Subtest: plain-object schemas reject prototype objects, arrays, null, symbols and unknown fields
+ok 24 - plain-object schemas reject prototype objects, arrays, null, symbols and unknown fields
+  ---
+  duration_ms: 0.509958
+  type: 'test'
+  ...
+# Subtest: unsafe keys cannot be used in schema definitions
+ok 25 - unsafe keys cannot be used in schema definitions
+  ---
+  duration_ms: 0.129663
+  type: 'test'
+  ...
+# Subtest: optional omission and explicit null are different
+ok 26 - optional omission and explicit null are different
+  ---
+  duration_ms: 0.305865
+  type: 'test'
+  ...
+# Subtest: integer runtime rejects NaN, Infinity, floats, strings and unsafe integers
+ok 27 - integer runtime rejects NaN, Infinity, floats, strings and unsafe integers
+  ---
+  duration_ms: 0.802583
+  type: 'test'
+  ...
+# Subtest: string length follows Unicode code points like JSON Schema
+ok 28 - string length follows Unicode code points like JSON Schema
+  ---
+  duration_ms: 0.304653
+  type: 'test'
+  ...
+# Subtest: array schemas reject duplicates, holes, bad values and excessive length
+ok 29 - array schemas reject duplicates, holes, bad values and excessive length
+  ---
+  duration_ms: 0.196793
+  type: 'test'
+  ...
+# Subtest: union validates exactly the declared alternatives
+ok 30 - union validates exactly the declared alternatives
+  ---
+  duration_ms: 0.527634
+  type: 'test'
+  ...
+# Subtest: invalid calendar date 2026-02-29 is rejected
+ok 31 - invalid calendar date 2026-02-29 is rejected
+  ---
+  duration_ms: 0.321618
+  type: 'test'
+  ...
+# Subtest: invalid calendar date 2026-04-31 is rejected
+ok 32 - invalid calendar date 2026-04-31 is rejected
+  ---
+  duration_ms: 0.265094
+  type: 'test'
+  ...
+# Subtest: invalid calendar date 2026-13-01 is rejected
+ok 33 - invalid calendar date 2026-13-01 is rejected
+  ---
+  duration_ms: 0.084416
+  type: 'test'
+  ...
+# Subtest: invalid calendar date 2026-9-01 is rejected
+ok 34 - invalid calendar date 2026-9-01 is rejected
+  ---
+  duration_ms: 0.052278
+  type: 'test'
+  ...
+# Subtest: invalid calendar date not-a-date is rejected
+ok 35 - invalid calendar date not-a-date is rejected
+  ---
+  duration_ms: 0.077706
+  type: 'test'
+  ...
+# Subtest: leap day is accepted in a leap year
+ok 36 - leap day is accepted in a leap year
+  ---
+  duration_ms: 0.102633
+  type: 'test'
+  ...
+# Subtest: invalid local clock 24:00 rejected
+ok 37 - invalid local clock 24:00 rejected
+  ---
+  duration_ms: 0.104455
+  type: 'test'
+  ...
+# Subtest: invalid local clock 12:60 rejected
+ok 38 - invalid local clock 12:60 rejected
+  ---
+  duration_ms: 0.057686
+  type: 'test'
+  ...
+# Subtest: invalid local clock 9:00 rejected
+ok 39 - invalid local clock 9:00 rejected
+  ---
+  duration_ms: 0.043264
+  type: 'test'
+  ...
+# Subtest: invalid local clock noon rejected
+ok 40 - invalid local clock noon rejected
+  ---
+  duration_ms: 0.041292
+  type: 'test'
+  ...
+# Subtest: timestamp needs an explicit zone and a real calendar date
+ok 41 - timestamp needs an explicit zone and a real calendar date
+  ---
+  duration_ms: 0.129933
+  type: 'test'
+  ...
+# Subtest: Almaty date rolls over according to IANA zone, not UTC or OS locale
+ok 42 - Almaty date rolls over according to IANA zone, not UTC or OS locale
+  ---
+  duration_ms: 0.269681
+  type: 'test'
+  ...
+# Subtest: local-to-ISO round trip uses IANA zone
+ok 43 - local-to-ISO round trip uses IANA zone
+  ---
+  duration_ms: 0.136603
+  type: 'test'
+  ...
+# Subtest: calendar arithmetic handles month/year/leap boundaries
+ok 44 - calendar arithmetic handles month/year/leap boundaries
+  ---
+  duration_ms: 0.144525
+  type: 'test'
+  ...
+# Subtest: horizon is exactly seven local calendar days including today
+ok 45 - horizon is exactly seven local calendar days including today
+  ---
+  duration_ms: 0.145236
+  type: 'test'
+  ...
+# Subtest: time conversion and interval adjacency
+ok 46 - time conversion and interval adjacency
+  ---
+  duration_ms: 0.434265
+  type: 'test'
+  ...
+# Subtest: model-supplied ownership, role, route and confirmed flags cannot enter tool inputs
+ok 47 - model-supplied ownership, role, route and confirmed flags cannot enter tool inputs
+  ---
+  duration_ms: 0.271293
+  type: 'test'
+  ...
+# Subtest: confirmationRef is a reference only, never evidence validated by this contract
+ok 48 - confirmationRef is a reference only, never evidence validated by this contract
+  ---
+  duration_ms: 0.092638
+  type: 'test'
+  ...
+# Subtest: get_booking requires exactly one lookup selector
+ok 49 - get_booking requires exactly one lookup selector
+  ---
+  duration_ms: 0.144826
+  type: 'test'
+  ...
+# Subtest: prepare_change cancellation and reschedule have distinct conditional schemas
+ok 50 - prepare_change cancellation and reschedule have distinct conditional schemas
+  ---
+  duration_ms: 0.16113
+  type: 'test'
+  ...
+# Subtest: all ten tool input schemas derive from runtime definitions
+ok 51 - all ten tool input schemas derive from runtime definitions
+  ---
+  duration_ms: 0.237803
+  type: 'test'
+  ...
+# Subtest: patch model cannot inject a prepared action or booking number
+ok 52 - patch model cannot inject a prepared action or booking number
+  ---
+  duration_ms: 0.14154
+  type: 'test'
+  ...
+# (node:1094) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: draft uses unknown values, not invented dates/budget/car
+ok 53 - draft uses unknown values, not invented dates/budget/car
+  ---
+  duration_ms: 2.149255
+  type: 'test'
+  ...
+# Subtest: patch omits fields to preserve them; adding services never erases budget/date
+ok 54 - patch omits fields to preserve them; adding services never erases budget/date
+  ---
+  duration_ms: 1.152332
+  type: 'test'
+  ...
+# Subtest: explicit null removes only that nullable restriction
+ok 55 - explicit null removes only that nullable restriction
+  ---
+  duration_ms: 0.405823
+  type: 'test'
+  ...
+# Subtest: same semantic update does not increase versions
+ok 56 - same semantic update does not increase versions
+  ---
+  duration_ms: 0.534815
+  type: 'test'
+  ...
+# Subtest: adding a service already present is a no-op
+ok 57 - adding a service already present is a no-op
+  ---
+  duration_ms: 1.041147
+  type: 'test'
+  ...
+# Subtest: empty patch is a no-op
+ok 58 - empty patch is a no-op
+  ---
+  duration_ms: 0.339826
+  type: 'test'
+  ...
+# Subtest: changed constraint invalidates options and prepared snapshot and increases both counters once
+ok 59 - changed constraint invalidates options and prepared snapshot and increases both counters once
+  ---
+  duration_ms: 18.319942
+  type: 'test'
+  ...
+# Subtest: stale update is rejected even when the patch looks like a no-op
+ok 60 - stale update is rejected even when the patch looks like a no-op
+  ---
+  duration_ms: 0.730336
+  type: 'test'
+  ...
+# Subtest: another user cannot change a request; admin role is not model-supplied ownership
+ok 61 - another user cannot change a request; admin role is not model-supplied ownership
+  ---
+  duration_ms: 0.671158
+  type: 'test'
+  ...
+# Subtest: saved requests cannot create a second booking by changing constraints
+ok 62 - saved requests cannot create a second booking by changing constraints
+  ---
+  duration_ms: 0.804926
+  type: 'test'
+  ...
+# Subtest: executing blocks edits until result is reconciled
+ok 63 - executing blocks edits until result is reconciled
+  ---
+  duration_ms: 0.469688
+  type: 'test'
+  ...
+# Subtest: reconciling blocks edits until result is reconciled
+ok 64 - reconciling blocks edits until result is reconciled
+  ---
+  duration_ms: 0.25536
+  type: 'test'
+  ...
+# Subtest: late search for an old request version is ignored
+ok 65 - late search for an old request version is ignored
+  ---
+  duration_ms: 15.668731
+  type: 'test'
+  ...
+# Subtest: late same-version search cannot overwrite a newer stateRevision
+ok 66 - late same-version search cannot overwrite a newer stateRevision
+  ---
+  duration_ms: 8.959427
+  type: 'test'
+  ...
+# Subtest: search results for another request do not merge
+ok 67 - search results for another request do not merge
+  ---
+  duration_ms: 8.908001
+  type: 'test'
+  ...
+# Subtest: search cannot overwrite a saved result
+ok 68 - search cannot overwrite a saved result
+  ---
+  duration_ms: 8.041905
+  type: 'test'
+  ...
+# Subtest: a result with mismatched nested option versions is rejected
+ok 69 - a result with mismatched nested option versions is rejected
+  ---
+  duration_ms: 7.465858
+  type: 'test'
+  ...
+# Subtest: more than three services rejected after an additive update
+ok 70 - more than three services rejected after an additive update
+  ---
+  duration_ms: 0.359023
+  type: 'test'
+  ...
+# Subtest: conflicting service edits and replacement mixed with deltas rejected
+ok 71 - conflicting service edits and replacement mixed with deltas rejected
+  ---
+  duration_ms: 0.514254
+  type: 'test'
+  ...
+# Subtest: remove service preserves remaining services and constraints
+ok 72 - remove service preserves remaining services and constraints
+  ---
+  duration_ms: 0.232676
+  type: 'test'
+  ...
+# Subtest: empty allowed branches/dates and unknown service IDs are rejected
+ok 73 - empty allowed branches/dates and unknown service IDs are rejected
+  ---
+  duration_ms: 0.19567
+  type: 'test'
+  ...
+# Subtest: hard branch list and preferred branch cannot contradict each other
+ok 74 - hard branch list and preferred branch cannot contradict each other
+  ---
+  duration_ms: 0.181821
+  type: 'test'
+  ...
+# Subtest: null service list is invalid; an explicit empty list clears it
+ok 75 - null service list is invalid; an explicit empty list clears it
+  ---
+  duration_ms: 0.319906
+  type: 'test'
+  ...
+# (node:1125) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: central demo: 45 minutes / 15000, then 120 / 37000; no silent branch switch
+ok 76 - central demo: 45 minutes / 15000, then 120 / 37000; no silent branch switch
+  ---
+  duration_ms: 148.212544
+  type: 'test'
+  ...
+# Subtest: one buffer per visit, not per service; no double charge for parts
+ok 77 - one buffer per visit, not per service; no double charge for parts
+  ---
+  duration_ms: 2.466847
+  type: 'test'
+  ...
+# Subtest: a deadline includes the buffer and is inclusive at exactly 16:00
+ok 78 - a deadline includes the buffer and is inclusive at exactly 16:00
+  ---
+  duration_ms: 69.900285
+  type: 'test'
+  ...
+# Subtest: earliest arrival is a hard bound; starts use the next 15-minute grid point
+ok 79 - earliest arrival is a hard bound; starts use the next 15-minute grid point
+  ---
+  duration_ms: 7.828106
+  type: 'test'
+  ...
+# Subtest: over-budget options excluded and exact excess explained
+ok 80 - over-budget options excluded and exact excess explained
+  ---
+  duration_ms: 7.238179
+  type: 'test'
+  ...
+# Subtest: equal budget is allowed, zero is a real constraint, null removes budget
+ok 81 - equal budget is allowed, zero is a real constraint, null removes budget
+  ---
+  duration_ms: 22.149004
+  type: 'test'
+  ...
+# Subtest: hard Centre branch is not exchanged for an earlier North slot
+ok 82 - hard Centre branch is not exchanged for an earlier North slot
+  ---
+  duration_ms: 9.268627
+  type: 'test'
+  ...
+# Subtest: soft preferred Centre precedes earlier North within allowed branches
+ok 83 - soft preferred Centre precedes earlier North within allowed branches
+  ---
+  duration_ms: 14.563778
+  type: 'test'
+  ...
+# Subtest: without preferred branch, earliest ready time wins across allowed branches
+ok 84 - without preferred branch, earliest ready time wins across allowed branches
+  ---
+  duration_ms: 13.479597
+  type: 'test'
+  ...
+# Subtest: cheapest preference is stable (shared catalogue means equal prices in this demo)
+ok 85 - cheapest preference is stable (shared catalogue means equal prices in this demo)
+  ---
+  duration_ms: 28.714438
+  type: 'test'
+  ...
+# Subtest: incompatible EV oil change has no eligible option
+ok 86 - incompatible EV oil change has no eligible option
+  ---
+  duration_ms: 2.068065
+  type: 'test'
+  ...
+# Subtest: compatible EV diagnostics still work
+ok 87 - compatible EV diagnostics still work
+  ---
+  duration_ms: 11.813114
+  type: 'test'
+  ...
+# Subtest: missing conditions do not invent a vehicle, date or service
+ok 88 - missing conditions do not invent a vehicle, date or service
+  ---
+  duration_ms: 1.614289
+  type: 'test'
+  ...
+# Subtest: no single technician has all skills, even if separate technicians could split the work
+ok 89 - no single technician has all skills, even if separate technicians could split the work
+  ---
+  duration_ms: 16.295573
+  type: 'test'
+  ...
+# Subtest: no single bay supports the whole visit
+ok 90 - no single bay supports the whole visit
+  ---
+  duration_ms: 6.012027
+  type: 'test'
+  ...
+# Subtest: busy technician prevents a pair even when the other resource is free
+ok 91 - busy technician prevents a pair even when the other resource is free
+  ---
+  duration_ms: 42.038819
+  type: 'test'
+  ...
+# Subtest: technician working hours must cover the full visit
+ok 92 - technician working hours must cover the full visit
+  ---
+  duration_ms: 44.124539
+  type: 'test'
+  ...
+# Subtest: busy bay prevents a pair even when the other resource is free
+ok 93 - busy bay prevents a pair even when the other resource is free
+  ---
+  duration_ms: 43.610746
+  type: 'test'
+  ...
+# Subtest: bay working hours must cover the full visit
+ok 94 - bay working hours must cover the full visit
+  ---
+  duration_ms: 39.178978
+  type: 'test'
+  ...
+# Subtest: resource branch locality: a free technician in North cannot pair with a Centre bay
+ok 95 - resource branch locality: a free technician in North cannot pair with a Centre bay
+  ---
+  duration_ms: 6.541374
+  type: 'test'
+  ...
+# Subtest: adjacent reservations are allowed: interval end is exclusive
+ok 96 - adjacent reservations are allowed: interval end is exclusive
+  ---
+  duration_ms: 6.096732
+  type: 'test'
+  ...
+# Subtest: reservation beginning during buffer excludes a slot
+ok 97 - reservation beginning during buffer excludes a slot
+  ---
+  duration_ms: 6.346665
+  type: 'test'
+  ...
+# Subtest: cancelled fixture reservations do not block slots
+ok 98 - cancelled fixture reservations do not block slots
+  ---
+  duration_ms: 7.060184
+  type: 'test'
+  ...
+# Subtest: same branch/time using different pairs is one client option
+ok 99 - same branch/time using different pairs is one client option
+  ---
+  duration_ms: 18.743912
+  type: 'test'
+  ...
+# Subtest: resource tie-break is deterministic when input arrays are reordered
+ok 100 - resource tie-break is deterministic when input arrays are reordered
+  ---
+  duration_ms: 37.94224
+  type: 'test'
+  ...
+# Subtest: today never produces a start before the server clock
+ok 101 - today never produces a start before the server clock
+  ---
+  duration_ms: 7.234284
+  type: 'test'
+  ...
+# Subtest: past/out-of-horizon dates do not return admissible options
+ok 102 - past/out-of-horizon dates do not return admissible options
+  ---
+  duration_ms: 40.265944
+  type: 'test'
+  ...
+# Subtest: branch working hours include the buffer and prevent closing-time overflow
+ok 103 - branch working hours include the buffer and prevent closing-time overflow
+  ---
+  duration_ms: 39.13281
+  type: 'test'
+  ...
+# Subtest: relaxation preview has no optionId and preserves existing constraints until applied
+ok 104 - relaxation preview has no optionId and preserves existing constraints until applied
+  ---
+  duration_ms: 77.790634
+  type: 'test'
+  ...
+# Subtest: fixture and request inputs are not mutated by scheduling or comparison
+ok 105 - fixture and request inputs are not mutated by scheduling or comparison
+  ---
+  duration_ms: 7.837019
+  type: 'test'
+  ...
+# Subtest: IDs come from server context; repeated ID factory output is rejected
+ok 106 - IDs come from server context; repeated ID factory output is rejected
+  ---
+  duration_ms: 6.859657
+  type: 'test'
+  ...
+# Subtest: option expiry is 120 seconds from injected server time
+ok 107 - option expiry is 120 seconds from injected server time
+  ---
+  duration_ms: 6.649204
+  type: 'test'
+  ...
+# Subtest: returned object passes the canonical runtime output schema
+ok 108 - returned object passes the canonical runtime output schema
+  ---
+  duration_ms: 13.644492
+  type: 'test'
+  ...
+# Subtest: owned search boundary rejects another client and a stale version
+ok 109 - owned search boundary rejects another client and a stale version
+  ---
+  duration_ms: 1.44021
+  type: 'test'
+  ...
+# Subtest: changing fixture occupancy changes output; this is not a scripted conflict response
+ok 110 - changing fixture occupancy changes output; this is not a scripted conflict response
+  ---
+  duration_ms: 12.227586
+  type: 'test'
+  ...
+# Subtest: malformed dataset identifiers, references and ranges are rejected
+ok 111 - malformed dataset identifiers, references and ranges are rejected
+  ---
+  duration_ms: 3.736894
+  type: 'test'
+  ...
+# Subtest: horizon can be reproduced at a future clock without stale calendar dates
+ok 112 - horizon can be reproduced at a future clock without stale calendar dates
+  ---
+  duration_ms: 8.498392
+  type: 'test'
+  ...
+# Subtest: generated scenarios: every returned option independently satisfies all hard constraints
+ok 113 - generated scenarios: every returned option independently satisfies all hard constraints
+  ---
+  duration_ms: 1230.684024
+  type: 'test'
+  ...
+# Subtest: static UI loads, secrets are not served, and status makes no provider request
+ok 114 - static UI loads, secrets are not served, and status makes no provider request
+  ---
+  duration_ms: 55.337197
+  type: 'test'
+  ...
+# Subtest: tokens and tools require an authenticated session
+ok 115 - tokens and tools require an authenticated session
+  ---
+  duration_ms: 16.548759
+  type: 'test'
+  ...
+# Subtest: cross-origin mutation and untrusted Host are denied
+ok 116 - cross-origin mutation and untrusted Host are denied
+  ---
+  duration_ms: 9.882901
+  type: 'test'
+  ...
+# Subtest: demo login sets an HttpOnly SameSite=Strict cookie; missing key produces a real error
+ok 117 - demo login sets an HttpOnly SameSite=Strict cookie; missing key produces a real error
+  ---
+  duration_ms: 10.961984
+  type: 'test'
+  ...
+# Subtest: catalogue checks are server results bound to the authenticated probe
+ok 118 - catalogue checks are server results bound to the authenticated probe
+  ---
+  duration_ms: 7.719845
+  type: 'test'
+  ...
+# Subtest: repeated tool calls return the identical result; a changed payload is rejected
+ok 119 - repeated tool calls return the identical result; a changed payload is rejected
+  ---
+  duration_ms: 13.184528
+  type: 'test'
+  ...
+# Subtest: role and owner injection are rejected; unavailable write tools cannot be called
+ok 120 - role and owner injection are rejected; unavailable write tools cannot be called
+  ---
+  duration_ms: 7.4072
+  type: 'test'
+  ...
+# Subtest: local provider fixture verifies token mapping, server-only key and required consent
+ok 121 - local provider fixture verifies token mapping, server-only key and required consent
+  ---
+  duration_ms: 9.15591
+  type: 'test'
+  ...
+# Subtest: token rate limit applies to the user across fresh logins
+ok 122 - token rate limit applies to the user across fresh logins
+  ---
+  duration_ms: 7.898471
+  type: 'test'
+  ...
+# Subtest: logout revokes the cookie and credentials never appear in normal responses
+ok 123 - logout revokes the cookie and credentials never appear in normal responses
+  ---
+  duration_ms: 7.093344
+  type: 'test'
+  ...
+# Subtest: tool.result waits until reply.done even when the backend responds immediately
+ok 124 - tool.result waits until reply.done even when the backend responds immediately
+  ---
+  duration_ms: 6.530277
+  type: 'test'
+  ...
+# Subtest: a backend response after reply.done is sent without requiring a second done event
+ok 125 - a backend response after reply.done is sent without requiring a second done event
+  ---
+  duration_ms: 0.577568
+  type: 'test'
+  ...
+# Subtest: interruption drops queued results
+ok 126 - interruption drops queued results
+  ---
+  duration_ms: 0.427605
+  type: 'test'
+  ...
+# Subtest: interruption drops an in-flight result and does not update the screen
+ok 127 - interruption drops an in-flight result and does not update the screen
+  ---
+  duration_ms: 0.535656
+  type: 'test'
+  ...
+# Subtest: a new user turn invalidates read-only catalogue results
+ok 128 - a new user turn invalidates read-only catalogue results
+  ---
+  duration_ms: 0.69252
+  type: 'test'
+  ...
+# Subtest: reply.started closes the idle sending window
+ok 129 - reply.started closes the idle sending window
+  ---
+  duration_ms: 0.409428
+  type: 'test'
+  ...
+# Subtest: duplicate tool.call is executed only once in a connection
+ok 130 - duplicate tool.call is executed only once in a connection
+  ---
+  duration_ms: 0.660061
+  type: 'test'
+  ...
+# Subtest: tool failure is an is_error result, not invented business success
+ok 131 - tool failure is an is_error result, not invented business success
+  ---
+  duration_ms: 0.527715
+  type: 'test'
+  ...
+# Subtest: closing the controller makes late tool results inert
+ok 132 - closing the controller makes late tool results inert
+  ---
+  duration_ms: 2.669328
+  type: 'test'
+  ...
+# Subtest: partial user text replaces the same item instead of being concatenated
+ok 133 - partial user text replaces the same item instead of being concatenated
+  ---
+  duration_ms: 0.536988
+  type: 'test'
+  ...
+# Subtest: only a final user transcript is final, and trimmed agent text keeps its interruption flag
+ok 134 - only a final user transcript is final, and trimmed agent text keeps its interruption flag
+  ---
+  duration_ms: 0.157354
+  type: 'test'
+  ...
+# Subtest: PCM conversion clamps values and writes little-endian PCM16
+ok 135 - PCM conversion clamps values and writes little-endian PCM16
+  ---
+  duration_ms: 0.320617
+  type: 'test'
+  ...
+# Subtest: 48 kHz capture is resampled to 24 kHz across audio chunks
+ok 136 - 48 kHz capture is resampled to 24 kHz across audio chunks
+  ---
+  duration_ms: 3.582255
+  type: 'test'
+  ...
+# Subtest: 44.1 kHz chunk boundaries retain the fractional resampling position
+ok 137 - 44.1 kHz chunk boundaries retain the fractional resampling position
+  ---
+  duration_ms: 12.731795
+  type: 'test'
+  ...
+# Subtest: playback resampling produces 48 kHz frames from 24 kHz speech
+ok 138 - playback resampling produces 48 kHz frames from 24 kHz speech
+  ---
+  duration_ms: 0.115792
+  type: 'test'
+  ...
+# Subtest: playback clear silences all queued audio rather than just resetting a timestamp
+ok 139 - playback clear silences all queued audio rather than just resetting a timestamp
+  ---
+  duration_ms: 0.193928
+  type: 'test'
+  ...
+# Subtest: playback underflow is silence and overflow is bounded
+ok 140 - playback underflow is silence and overflow is bounded
+  ---
+  duration_ms: 0.146337
+  type: 'test'
+  ...
+# Subtest: Stop sends session.end synchronously and waits for session.ended before closing
+ok 141 - Stop sends session.end synchronously and waits for session.ended before closing
+  ---
+  duration_ms: 18.654298
+  type: 'test'
+  ...
+# Subtest: Stop closes after a bounded timeout when no end acknowledgment arrives
+ok 142 - Stop closes after a bounded timeout when no end acknowledgment arrives
+  ---
+  duration_ms: 19.924197
+  type: 'test'
+  ...
+# Subtest: Stop during connection closes without sending a frame to an unopened socket
+ok 143 - Stop during connection closes without sending a frame to an unopened socket
+  ---
+  duration_ms: 2.297485
+  type: 'test'
+  ...
+1..143
+# tests 143
+# suites 0
+# pass 143
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2464.220853
