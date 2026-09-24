@@ -3,11 +3,44 @@ import assert from 'node:assert/strict';
 import { ToolResultQueue } from '../spikes/voice-access/public/tool-queue.mjs';
 import { LinearResampler, floatToPcm16, pcm16ToFloat, PlaybackRing } from '../spikes/voice-access/public/pcm.mjs';
 import { fadeOut } from '../public/audio/pcm.mjs';
+import { ToolResults } from '../src/features/voice/tool-results.mjs';
 import { transcriptEntry, endVoiceSocket } from '../spikes/voice-access/public/controller.mjs';
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const call = { type: 'tool.call', call_id: 'call_1', name: 'get_services', arguments: {} };
 const done = { type: 'reply.done', reply_id: 'fc-call_1', status: 'completed' };
 const result = { ok: true, data: { value: 37 } };
+test('production tool results wait for their own completed reply, not an earlier reply.done',()=>{
+  const sent=[];const gate=new ToolResults(frame=>sent.push(frame));
+  gate.done('reply-before-call','completed');gate.started();gate.push('call_1',{call_id:'call_1'});
+  assert.equal(sent.length,0);
+  gate.done('reply-other','completed');assert.equal(sent.length,0);
+  gate.done('fc-call_1','completed');assert.deepEqual(sent,[{call_id:'call_1'}]);
+});
+test('a slow production tool result is sent after its own reply.done and interrupted results are dropped',()=>{
+  const sent=[];const gate=new ToolResults(frame=>sent.push(frame));
+  gate.started();gate.done('fc-slow','completed');gate.push('slow',{call_id:'slow'});
+  assert.equal(sent.length,1);
+  gate.started();gate.push('cancelled',{call_id:'cancelled'});gate.done('fc-cancelled','interrupted');
+  assert.equal(sent.length,1);gate.clear();gate.push('stale',{call_id:'stale'});assert.equal(sent.length,1);
+});
+test('production playback buffers bursts, plays short final chunks and fades from the last heard sample',async()=>{
+  globalThis.sampleRate=48000;
+  globalThis.AudioWorkletProcessor=class {constructor(){this.port={postMessage:()=>{}}}};
+  let Processor;globalThis.registerProcessor=(_name,ctor)=>{Processor=ctor};
+  await import('../public/audio/playback.worklet.mjs');
+  const node=new Processor();const out=()=>{const output=new Float32Array(128);node.process([],[ [output] ]);return output};
+  const pcm=new Int16Array(2400).fill(24000);
+  node.port.onmessage({data:pcm.buffer});
+  let output;for(let i=0;i<20;i++)output=out();
+  assert.ok(output.some(v=>v>0));
+  node.port.onmessage({data:'clear'});const tail=out();
+  assert.ok(tail[0]>0&&tail[0]<0.75);assert.ok(tail.at(-1)<tail[0]);
+  node.port.onmessage({data:new Int16Array(480).fill(12000).buffer});
+  node.port.onmessage({data:'end'});
+  let heard=false;for(let i=0;i<20;i++)if(out().some(v=>v>.1))heard=true;
+  assert.ok(heard,'a 20 ms final packet must play even below prebuffer length');
+  delete globalThis.registerProcessor;delete globalThis.AudioWorkletProcessor;delete globalThis.sampleRate;
+});
 test('production playback interruption fades the queued tail to silence without changing sample type',()=>{
   const source=new Float32Array([.4,.4,.4,.4]),faded=fadeOut(source);
   assert.ok(Math.abs(source[0]-.4)<1e-6);assert.equal(faded.length,source.length);assert.ok(faded[0]>.3);assert.ok(faded[0]>faded[1]);assert.ok(faded[1]>faded[2]);assert.ok(Math.abs(faded.at(-1))<1e-6);

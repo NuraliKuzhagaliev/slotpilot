@@ -29,6 +29,7 @@ export class BrowserAudio {
   }
   play(base64) {
     if (this.closed || !this.playNode) return;
+    if (this.playContext.state === 'suspended') void this.playContext.resume().catch(() => this.onPlaybackEvent('playback-suspended'));
     if (typeof base64 !== 'string' || base64.length > 2000000) throw new Error('INVALID_AUDIO');
     const raw = atob(base64);
     if (raw.length % 2) throw new Error('INVALID_AUDIO');
@@ -36,6 +37,8 @@ export class BrowserAudio {
     for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
     this.playNode.port.postMessage(bytes.buffer, [bytes.buffer]);
   }
+  startReply() { this.playNode?.port.postMessage('start'); }
+  finishReply() { this.playNode?.port.postMessage('end'); }
   clear() { this.playNode?.port.postMessage('clear'); }
   async close() {
     this.closed = true;
