@@ -6,6 +6,11 @@ class PlaybackProcessor extends AudioWorkletProcessor {
     this.silenceFrames = 0; this.lastSample = 0; this.ramp = 0;
     this.tailSample = 0; this.tailRemaining = 0;
     this.rampSamples = Math.ceil(sampleRate * 0.002);
+    // A small reservoir absorbs network jitter. A lone short packet must still
+    // play: never wait indefinitely for another packet or reply.done.
+    this.buffering = true; this.bufferWait = 0; this.ended = false;
+    this.targetFrames = Math.ceil(sampleRate * 0.04);
+    this.maxWaitFrames = Math.ceil(sampleRate * 0.06);
     this.port.onmessage = ({ data }) => {
       if (data === 'clear') {
         // Fade from the sample actually sent to the speaker. The queued PCM may
@@ -15,9 +20,17 @@ class PlaybackProcessor extends AudioWorkletProcessor {
         this.fade = fadeOut(tail); this.fadeOffset = 0;
         this.ring.clear(); this.resampler.reset(); this.silenceFrames = 0;
         this.tailSample = 0; this.tailRemaining = 0;
+        this.buffering = true; this.bufferWait = 0; this.ended = false;
         this.lastSample = 0; this.ramp = 0; this.wasPlaying = false; return;
       }
-      if (data === 'start' || data === 'end') return; // Older clients can still send these.
+      if (data === 'start') {
+        this.ended = false;
+        if (!this.ring.available && !this.wasPlaying) {
+          this.buffering = true; this.bufferWait = 0; this.resampler.reset();
+        }
+        return;
+      }
+      if (data === 'end') { this.ended = true; return; }
       try {
         // Keep interpolation phase/sample continuity across short network gaps.
         // Resetting at every ring underrun can create an audible click at chunk edges.
@@ -38,20 +51,30 @@ class PlaybackProcessor extends AudioWorkletProcessor {
       if (this.fadeOffset >= this.fade.length) { this.fade = null; this.fadeOffset = 0; this.lastSample = 0; }
       return true;
     }
-    const count = Math.min(this.ring.available, output[0].length);
+    if (this.buffering && this.ring.available) {
+      this.bufferWait += output[0].length;
+      if (this.ended || this.ring.available >= this.targetFrames || this.bufferWait >= this.maxWaitFrames) {
+        this.buffering = false; this.bufferWait = 0;
+      }
+    }
+    const count = this.buffering ? 0 : Math.min(this.ring.available, output[0].length);
     if (count) {
       const chunk = output[0].subarray(0, count); this.ring.pull(chunk);
-      // Play every packet immediately. Blend a packet arriving during an
-      // underrun with the remaining tail instead of jumping between samples.
+      // Blend playback into the tail after a real underrun or interruption.
       for (let i = 0; i < count; i++) {
         this.ramp = Math.min(1, this.ramp + 1 / this.rampSamples);
         const weight = this.tailRemaining / this.rampSamples;
         chunk[i] = chunk[i] * 0.75 * this.ramp + this.tailSample * weight * (1 - this.ramp);
         if (this.tailRemaining) this.tailRemaining--;
       }
+      if (!this.wasPlaying) this.port.postMessage({ type: 'started' });
       this.lastSample = chunk[count - 1]; this.wasPlaying = true; this.silenceFrames = 0;
     }
     if (count < output[0].length) {
+      if (!this.buffering && !this.ended) {
+        this.buffering = true; this.bufferWait = 0;
+        if (this.wasPlaying) this.port.postMessage({ type: 'underrun' });
+      }
       // Keep the 2 ms fade across render blocks, including a one-sample gap.
       if (!this.tailRemaining && this.lastSample) {
         this.tailSample = this.lastSample; this.tailRemaining = this.rampSamples;

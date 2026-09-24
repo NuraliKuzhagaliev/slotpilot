@@ -23,7 +23,7 @@ test('a slow production tool result is sent after its own reply.done and interru
   gate.started();gate.push('cancelled',{call_id:'cancelled'});gate.done('fc-cancelled','interrupted');
   assert.equal(sent.length,1);gate.clear();gate.push('stale',{call_id:'stale'});assert.equal(sent.length,1);
 });
-test('production playback starts a 20 ms packet without waiting for more network audio',async()=>{
+test('production playback bounds jitter buffering and fades interruptions without clicks',async()=>{
   globalThis.sampleRate=48000;
   globalThis.AudioWorkletProcessor=class {constructor(){this.port={postMessage:()=>{}}}};
   let Processor;globalThis.registerProcessor=(_name,ctor)=>{Processor=ctor};
@@ -31,17 +31,19 @@ test('production playback starts a 20 ms packet without waiting for more network
   const node=new Processor();const out=()=>{const output=new Float32Array(128);node.process([],[ [output] ]);return output};
   const pcm=new Int16Array(480).fill(24000);
   node.port.onmessage({data:pcm.buffer});
-  const first=out();assert.ok(first.some(v=>v>0));
+  assert.ok(out().every(v=>v===0),'first packet is held briefly for jitter');
+  let startBlock=-1;for(let i=1;i<24;i++){if(out().some(v=>v>0)){startBlock=i;break}}
+  assert.ok(startBlock>=0 && startBlock*128/48000<=.06,'isolated packet starts within 60 ms');
   node.port.onmessage({data:'clear'});const tail=out();
   assert.ok(tail[0]>0&&tail[0]<0.75);assert.ok(tail.at(-1)<tail[0]);
-  const gap=new Processor();
+  const gap=new Processor();gap.ended=true;
   gap.ring.push(new Float32Array(127).fill(.5));
   const oneSampleGap=new Float32Array(128);gap.process([],[[oneSampleGap]]);
   assert.ok(oneSampleGap[127]>.3,'a one-sample underrun must not snap to zero');
   gap.ring.push(new Float32Array(128).fill(.5));
   const resumed=new Float32Array(128);gap.process([],[[resumed]]);
   assert.ok(Math.abs(resumed[0]-oneSampleGap[127])<.04,'resumed audio must join the underrun tail');
-  const cut=new Processor();
+  const cut=new Processor();cut.ended=true;
   cut.ring.push(new Float32Array(128).fill(.5));
   const beforeCut=new Float32Array(128);cut.process([],[[beforeCut]]);
   cut.ring.push(new Float32Array(128).fill(-.5));
@@ -49,18 +51,23 @@ test('production playback starts a 20 ms packet without waiting for more network
   const afterCut=new Float32Array(128);cut.process([],[[afterCut]]);
   assert.ok(Math.abs(afterCut[0]-beforeCut[127])<.02,'clear must fade from the last audible sample');
   node.port.onmessage({data:new Int16Array(480).fill(12000).buffer});
-  let heard=false;for(let i=0;i<20;i++)if(out().some(v=>v>.1))heard=true;
+  let heard=false;for(let i=0;i<36;i++)if(out().some(v=>v>.1))heard=true;
   assert.ok(heard,'a short packet must play without a reply.done signal');
   const stream=new Processor(),rendered=[];
   for(let packet=0;packet<12;packet++){
     const wave=new Int16Array(480);
     for(let i=0;i<wave.length;i++)wave[i]=Math.round(24000*Math.sin(2*Math.PI*440*(packet*480+i)/24000));
     stream.port.onmessage({data:wave.buffer});
-    const frames=packet%3===0?10:7; // Some packets arrive after the speaker ran dry.
+    const frames=packet%3===0?11:6; // 20.4 ms average with alternating 29/16 ms delivery gaps.
     for(let i=0;i<frames;i++){const frame=new Float32Array(128);stream.process([],[[frame]]);rendered.push(...frame)}
   }
   let largestJump=0;for(let i=1;i<rendered.length;i++)largestJump=Math.max(largestJump,Math.abs(rendered[i]-rendered[i-1]));
   assert.ok(largestJump<0.13,`playback packet boundaries jumped by ${largestJump}`);
+  const firstSignal=rendered.findIndex(v=>Math.abs(v)>.01);let silence=0,maxSilence=0;
+  for(const v of rendered.slice(firstSignal)){silence=Math.abs(v)<1e-7?silence+1:0;maxSilence=Math.max(maxSilence,silence)}
+  assert.ok(maxSilence<4,`jitter left a ${maxSilence}-sample hole in speech`);
+  const short=new Processor();short.port.onmessage({data:pcm.buffer});short.port.onmessage({data:'end'});
+  const shortOutput=new Float32Array(128);short.process([],[[shortOutput]]);assert.ok(shortOutput.some(v=>v>0),'completed short replies do not wait out the buffer');
   delete globalThis.registerProcessor;delete globalThis.AudioWorkletProcessor;delete globalThis.sampleRate;
 });
 test('production playback interruption fades the queued tail to silence without changing sample type',()=>{

@@ -1,5 +1,5 @@
 import { exportToolInputSchemas } from '../src/contracts/tools.ts';
-import { SERVICE_IDS, VEHICLE_IDS, RULES } from '../src/contracts/domain.ts';
+import { RULES } from '../src/contracts/domain.ts';
 import type { BookingRequest } from '../src/contracts/domain.ts';
 import { localParts,addDays } from '../src/server/domain/time.ts';
 import { makeDemoDataset } from '../src/server/db/demo-fixtures.ts';
@@ -15,7 +15,7 @@ export function bookingSession(now:string,r:BookingRequest){const clock=localPar
  cancel_booking:'Execute a prepared cancellation after a separate complete confirmation. confirmationRef is supplied by the browser.',
  create_callback_request:'Save a request for the workshop administrator to review this demo visit. Do not claim an email, SMS or phone call was sent.'};
  const schemas=exportToolInputSchemas();return {
- system_prompt:`You are SlotPilot, an English-speaking concierge for a fictional two-branch auto workshop. Be warm and brief (usually 1–2 sentences); ask only for missing details and never make the user repeat information. All prices, slots and vehicles are demo data. Never invent availability or claim a booking is saved before the server confirms it. A diagnostic visit does not guarantee a repair. Each visit has one 15-minute buffer, up to three services, one technician and one bay.
+ system_prompt:`You are SlotPilot, an English-speaking concierge for a fictional two-branch auto workshop. Use one short sentence or question, usually under 30 words; the required final booking summary is the exception. Ask only for missing details; never repeat answered questions or narrate tool calls. All prices, slots and vehicles are demo data. Never invent availability or claim a booking is saved before the server confirms it. A diagnostic visit does not guarantee a repair. Each visit has one 15-minute buffer, up to three services, one technician and one bay.
 Today in Asia/Almaty: ${clock.date} ${clock.time}; tomorrow: ${addDays(clock.date,1)}. Hours are 09:00–18:00, starts every 15 minutes. Catalogue and vehicle compatibility:
 ${serviceGuide}
 Vehicles: ${catalogue.vehicles.map(v=>`${v.name} (${v.id})`).join(', ')}. Branches: ${catalogue.branches.map(b=>`${b.name} (${b.id})`).join(', ')}.
@@ -25,9 +25,9 @@ Collect service(s), vehicle and date; budget, arrival window and branch are opti
 Before booking, call prepare_booking, read back the exact services, vehicle, branch, date, start, ready time and price, then ask for separate final confirmation. A changed “yes, but…” is not consent. For confirm/cancel/reschedule use confirmationRef="from_browser"; the browser replaces it with evidence from the full final utterance. If unclear, ask the user to use the Confirm button. After a network error, reconcile with get_booking; never retry a write blindly. For unsupported services, offer create_callback_request and call it a saved demo review request, never an email or phone call. Never bypass validation or reveal secrets.
 CURRENT SERVER STATE: ${JSON.stringify({requestId:r.requestId,requestVersion:r.requestVersion,constraints:r.constraints,stage:r.stage})}`,
  greeting:'Hi, I’m SlotPilot. What does your car need today?',
- // Keep AssemblyAI's adaptive semantic turn detection. Local sustained-speech VAD
- // below handles fast barge-in; raw provider thresholds caused noisy false cuts.
- input:{format:{encoding:'audio/pcm'},language_codes:['en'],transcription_mode:'min_latency',keyterms:['SlotPilot','tenge','oil change','brake inspection','September','October','November','first of October','tenth of October','middle of the month','after lunch','midday','early afternoon','late afternoon','around four','tomorrow']},
+ // Adaptive semantic turn detection handles interruptions and backchannels.
+ // No local volume threshold: loudspeaker echo must not cut valid replies.
+ input:{format:{encoding:'audio/pcm'},language_codes:['en'],transcription_mode:'min_latency',keyterms:['SlotPilot','tenge'],transcription_prompt:`An English conversation about booking vehicle maintenance at SlotPilot in Almaty. Services: ${catalogue.services.map(s=>s.name).join(', ')}. Vehicles: ${catalogue.vehicles.map(v=>v.name).join(', ')}. Branches: Centre and North. Customers discuss budgets in tenge, dates, arrival windows such as after lunch or around four, and finish-by deadlines.`},
  output:{voice:'alba',format:{encoding:'audio/pcm'}},
  tools:Object.entries(schemas).map(([name,parameters])=>({type:'function',name,description:descriptions[name],parameters:('anyOf'in parameters?{type:'object',...parameters}:parameters),execution_mode:'interactive',timeout_seconds:30}))
  };

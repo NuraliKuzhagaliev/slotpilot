@@ -12,4 +12,8 @@ test('voice prompt stays compact and preserves natural date/time and booking saf
   assert.match(session.system_prompt, /separate final confirmation/);
   assert.equal('turn_detection' in session.input, false, 'use AssemblyAI adaptive semantic turn detection');
   assert.equal(session.input.transcription_mode, 'min_latency');
+  assert.deepEqual(session.input.language_codes, ['en']);
+  assert.ok(session.input.transcription_prompt.length <= 1750);
+  assert.match(session.input.transcription_prompt, /Wheel alignment/);
+  assert.match(session.system_prompt, /under 30 words/);
 });
