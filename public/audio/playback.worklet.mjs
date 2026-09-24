@@ -5,12 +5,13 @@ class PlaybackProcessor extends AudioWorkletProcessor {
     this.ring = new PlaybackRing(sampleRate * 15); this.wasPlaying = false;
     this.port.onmessage = ({ data }) => {
       if (data === 'clear') {
-        const tail = new Float32Array(Math.min(this.ring.available, Math.ceil(sampleRate * 0.008)));
+        const tail = new Float32Array(Math.min(this.ring.available, Math.ceil(sampleRate * 0.015)));
         this.ring.pull(tail); this.fade = tail.length ? fadeOut(tail) : null; this.fadeOffset = 0;
         this.ring.clear(); this.resampler.reset(); this.wasPlaying = Boolean(this.fade); return;
       }
       try {
-        if (!this.ring.available) this.resampler.reset();
+        // Keep interpolation phase/sample continuity across short network gaps.
+        // Resetting at every ring underrun can create an audible click at chunk edges.
         const valid = this.ring.push(this.resampler.process(pcm16ToFloat(data)));
         if (!valid) { this.resampler.reset(); this.port.postMessage({ type: 'overflow' }); }
       } catch { this.port.postMessage({ type: 'invalid-audio' }); }
