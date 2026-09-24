@@ -1,6 +1,16 @@
 import { BrowserAudio } from './audio.mjs';
 import { ToolResults } from './tool-results.mjs';
-export async function api(path,body){const r=await fetch(path,{method:body===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw Object.assign(new Error(d.error?.message||'Request failed.'),{code:d.error?.code});return d}
+export async function api(path,body){
+ try{
+  const r=await fetch(path,{method:body===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(15000)});
+  const d=await r.json();
+  if(!r.ok)throw Object.assign(new Error(d.error?.message||'Request failed.'),{code:d.error?.code});
+  return d;
+ }catch(error){
+  if(error?.name==='TimeoutError'||error?.name==='AbortError')throw Object.assign(new Error('The request timed out. Checking the saved state may be necessary.'),{code:'REQUEST_TIMEOUT'});
+  throw error;
+ }
+}
 export class VoiceController{
  constructor(callbacks){this.c=callbacks;this.active=false;this.generation=0;this.epoch=0;this.results=new ToolResults(frame=>{this.send(frame);this.event('tool.result.sent')});this.seen=new Set();this.chain=Promise.resolve();this.confirmationRef=null;this.suppressed=new Set();this.replyId=null;this.playing=false;this.lastEvent='';}
  emit(n,v){this.c[n]?.(v)}
@@ -30,7 +40,13 @@ export class VoiceController{
   if(t==='tool.call'&&!this.seen.has(e.call_id)){this.results.started();this.event('tool.call');this.seen.add(e.call_id);const epoch=this.epoch;const write=['confirm_booking','reschedule_booking','cancel_booking','create_callback_request'].includes(e.name);this.chain=this.chain.then(async()=>{
     if(epoch!==this.epoch)return;let args=typeof e.arguments==='string'?JSON.parse(e.arguments):e.arguments;
     if(['confirm_booking','reschedule_booking','cancel_booking'].includes(e.name))args={...args,confirmationRef:this.confirmationRef??'no-evidence'};
-    let result;try{result=await api('/api/tools',{callId:e.call_id,name:e.name,arguments:args,requestId:this.c.snapshot()?.request?.requestId});this.emit('updateSnapshot',result)}catch(error){result={ok:false,error:{code:error.code??'CONNECTION_ERROR',message:error.message}};if(write)await this.c.reconcile?.()}
+    const requestId=this.c.snapshot()?.request?.requestId;
+    let result;try{result=await api('/api/tools',{callId:e.call_id,name:e.name,arguments:args,requestId});this.emit('updateSnapshot',result)}catch(error){result={ok:false,error:{code:error.code??'CONNECTION_ERROR',message:error.message}};if(write){
+      // An HTTP timeout cannot tell us whether the database committed. Check
+      // the exact action without holding up the next voice tool call.
+      const check=args?.actionId?api('/api/tools',{callId:crypto.randomUUID(),name:'get_booking',arguments:{actionId:args.actionId},requestId}):Promise.resolve().then(()=>this.c.reconcile?.());
+      void check.then(snapshot=>{if(snapshot?.request)this.emit('updateSnapshot',snapshot)}).catch(()=>this.emit('error','Could not verify the saved action yet. Refresh the visit state.'));
+    }}
     // A write result always updates UI/reconciles above, even if speech moved on.
     if(epoch!==this.epoch){this.event('tool.result.stale');return}
     this.results.push(e.call_id,{type:'tool.result',call_id:e.call_id,result:JSON.stringify(result),is_error:result.ok===false});

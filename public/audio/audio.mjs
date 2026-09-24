@@ -10,7 +10,7 @@ export class BrowserAudio {
       this.playContext = new AudioContext();
       await Promise.all([this.captureContext.resume(), this.playContext.resume()]);
       if (this.closed) throw new Error('CANCELLED');
-      this.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } });
+      this.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: false, channelCount: 1 } });
       if (this.closed) { await this.close(); throw new Error('CANCELLED'); }
       await Promise.all([
         this.captureContext.audioWorklet.addModule('/audio/capture.worklet.mjs'),
