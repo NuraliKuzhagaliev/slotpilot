@@ -2,17 +2,14 @@ import { BrowserAudio } from './audio.mjs';
 import { ToolResults } from './tool-results.mjs';
 export async function api(path,body){const r=await fetch(path,{method:body===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw Object.assign(new Error(d.error?.message||'Request failed.'),{code:d.error?.code});return d}
 export class VoiceController{
- constructor(callbacks){this.c=callbacks;this.active=false;this.generation=0;this.epoch=0;this.results=new ToolResults(frame=>{this.send(frame);this.event('tool.result.sent')});this.seen=new Set();this.chain=Promise.resolve();this.confirmationRef=null;this.suppressed=new Set();this.replyId=null;this.playing=false;this.speechFrames=0;this.noiseFloor=.006;this.lastEvent='';}
+ constructor(callbacks){this.c=callbacks;this.active=false;this.generation=0;this.epoch=0;this.results=new ToolResults(frame=>{this.send(frame);this.event('tool.result.sent')});this.seen=new Set();this.chain=Promise.resolve();this.confirmationRef=null;this.suppressed=new Set();this.replyId=null;this.playing=false;this.lastEvent='';}
  emit(n,v){this.c[n]?.(v)}
  send(m){if(this.socket?.readyState===1)this.socket.send(JSON.stringify(m))}
  event(type){this.emit('event',{type,at:new Date().toISOString()})}
  cut(source){if(this.replyId)this.suppressed.add(this.replyId);this.dropAudio=true;this.audio?.clear();this.playing=false;this.emit('state','listening');this.event(`playback.cleared.${source}`)}
  async start(){if(this.active)return;this.active=true;const g=++this.generation;this.emit('state','connecting');this.audio=new BrowserAudio(buffer=>{if(!this.ready||this.socket?.readyState!==1)return;if(this.socket.bufferedAmount>48000){void this.stop();this.emit('error','Network is too slow. Conversation stopped; saved bookings remain intact.');return}
-  // 20ms frames; echo-cancelled sustained input mutes locally without waiting for network.
-  const pcm=new Int16Array(buffer);let power=0;for(const n of pcm)power+=(n/32768)**2;const rms=Math.sqrt(power/pcm.length);
-  if(!this.playing)this.noiseFloor=.98*this.noiseFloor+.02*Math.min(rms,.03);
- this.speechFrames=this.playing&&rms>Math.max(.027,this.noiseFloor*4)?this.speechFrames+1:0;
-  if(this.speechFrames>=3){this.cut('local');this.speechFrames=0}
+  // The provider distinguishes true interruptions from short backchannels.
+  // Loudspeaker echo must never make us discard an otherwise valid reply.
   let raw='';for(const b of new Uint8Array(buffer))raw+=String.fromCharCode(b);this.send({type:'input.audio',audio:btoa(raw)});
  },kind=>{if(kind==='drained'){this.playing=false;this.emit('state','listening')}if(kind==='overflow'||kind==='invalid-audio'||kind==='playback-suspended'){this.emit('error','Audio playback failed. Restart the conversation and check your output device.');void this.stop()}});
  try{await this.audio.open();if(g!==this.generation)return;const token=await api('/api/voice/token',{consent:true});if(g!==this.generation)return;this.basePrompt=token.session.system_prompt;const url=new URL(token.websocketUrl);if(url.origin!=='wss://agents.assemblyai.com'||url.pathname!=='/v1/ws')throw new Error('Invalid voice endpoint');url.searchParams.set('token',token.token);const ws=new WebSocket(url);this.socket=ws;
@@ -20,7 +17,7 @@ export class VoiceController{
  ws.onopen=()=>{if(g!==this.generation){ws.close();return}this.send({type:'session.update',session:token.session})};
  ws.onmessage=({data})=>{if(g!==this.generation)return;let e;try{e=JSON.parse(data)}catch{return}const t=e.type;
   if(t==='session.ready'){clearTimeout(this.connectTimer);this.ready=true;this.emit('state','listening');this.event('voice.connected');this.durationTimer=setTimeout(()=>void this.stop(),token.maxSessionSeconds*1000)}
-  if(t==='input.speech.started'){this.epoch++;this.results.clear();this.lastEvent=t;this.confirmationRef=null;this.cut('provider');if(this.c.snapshot()?.request?.preparedAction)this.chain=this.chain.then(()=>api('/api/evidence',{kind:'speech_started'})).catch(()=>{});this.userSpeechStarted=performance.now()}
+  if(t==='input.speech.started'){this.results.started();if(!this.playing){this.epoch++;this.results.clear()}this.lastEvent=t;this.confirmationRef=null;if(this.c.snapshot()?.request?.preparedAction)this.chain=this.chain.then(()=>api('/api/evidence',{kind:'speech_started'})).catch(()=>{});this.userSpeechStarted=performance.now()}
   if(t==='input.speech.stopped'){this.speechStopped=performance.now();this.event('speech.stopped')}
   if(t==='reply.started'){this.lastEvent=t;this.results.started();this.replyId=e.reply_id;this.dropAudio=false;this.replyHadAudio=false;this.replyHadText=false;this.audio.startReply();this.emit('state','thinking');this.event('reply.started')}
   if(t==='reply.audio'&&!this.dropAudio&&!this.suppressed.has(e.reply_id)){try{this.audio.play(e.data)}catch{this.emit('error','Invalid voice audio was received. Please restart the conversation.');void this.stop();return}this.replyHadAudio=true;if(!this.playing&&this.speechStopped){this.emit('latency',Math.round(performance.now()-this.speechStopped));this.event('reply.audio.first');this.speechStopped=null}this.playing=true;this.emit('state','responding')}

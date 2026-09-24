@@ -23,22 +23,30 @@ test('a slow production tool result is sent after its own reply.done and interru
   gate.started();gate.push('cancelled',{call_id:'cancelled'});gate.done('fc-cancelled','interrupted');
   assert.equal(sent.length,1);gate.clear();gate.push('stale',{call_id:'stale'});assert.equal(sent.length,1);
 });
-test('production playback buffers bursts, plays short final chunks and fades from the last heard sample',async()=>{
+test('production playback starts a 20 ms packet without waiting for more network audio',async()=>{
   globalThis.sampleRate=48000;
   globalThis.AudioWorkletProcessor=class {constructor(){this.port={postMessage:()=>{}}}};
   let Processor;globalThis.registerProcessor=(_name,ctor)=>{Processor=ctor};
   await import('../public/audio/playback.worklet.mjs');
   const node=new Processor();const out=()=>{const output=new Float32Array(128);node.process([],[ [output] ]);return output};
-  const pcm=new Int16Array(2400).fill(24000);
+  const pcm=new Int16Array(480).fill(24000);
   node.port.onmessage({data:pcm.buffer});
-  let output;for(let i=0;i<20;i++)output=out();
-  assert.ok(output.some(v=>v>0));
+  const first=out();assert.ok(first.some(v=>v>0));
   node.port.onmessage({data:'clear'});const tail=out();
   assert.ok(tail[0]>0&&tail[0]<0.75);assert.ok(tail.at(-1)<tail[0]);
   node.port.onmessage({data:new Int16Array(480).fill(12000).buffer});
-  node.port.onmessage({data:'end'});
   let heard=false;for(let i=0;i<20;i++)if(out().some(v=>v>.1))heard=true;
-  assert.ok(heard,'a 20 ms final packet must play even below prebuffer length');
+  assert.ok(heard,'a short packet must play without a reply.done signal');
+  const stream=new Processor(),rendered=[];
+  for(let packet=0;packet<12;packet++){
+    const wave=new Int16Array(480);
+    for(let i=0;i<wave.length;i++)wave[i]=Math.round(24000*Math.sin(2*Math.PI*440*(packet*480+i)/24000));
+    stream.port.onmessage({data:wave.buffer});
+    const frames=packet%3===0?10:7; // Some packets arrive after the speaker ran dry.
+    for(let i=0;i<frames;i++){const frame=new Float32Array(128);stream.process([],[[frame]]);rendered.push(...frame)}
+  }
+  let largestJump=0;for(let i=1;i<rendered.length;i++)largestJump=Math.max(largestJump,Math.abs(rendered[i]-rendered[i-1]));
+  assert.ok(largestJump<0.13,`playback packet boundaries jumped by ${largestJump}`);
   delete globalThis.registerProcessor;delete globalThis.AudioWorkletProcessor;delete globalThis.sampleRate;
 });
 test('production playback interruption fades the queued tail to silence without changing sample type',()=>{
