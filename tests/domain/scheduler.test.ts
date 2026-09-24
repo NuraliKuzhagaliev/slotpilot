@@ -144,7 +144,7 @@ test('today never produces a start before the server clock', () => {
   assert.ok(result.options.every(option => Date.parse(option.startAt) >= Date.parse('2026-09-23T10:01:00.000Z')));
 });
 test('past/out-of-horizon dates do not return admissible options', () => {
-  for (const date of ['2026-09-22', '2026-09-30']) {
+  for (const date of ['2026-09-22', '2026-10-23']) {
     const result = search(request({ allowedDates: [date] })); assert.equal(result.options.length, 0);
     assert.ok(result.reasons.some(item => item.code === 'OUTSIDE_HORIZON'));
   }

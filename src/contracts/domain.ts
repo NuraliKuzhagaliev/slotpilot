@@ -4,9 +4,9 @@
 import { v, type Infer } from './schema.ts';
 export { ContractError } from './schema.ts';
 export const RULES = Object.freeze({ currency: 'KZT', timeZone: 'Asia/Almaty', visitBufferMinutes: 15,
-  slotStepMinutes: 15, maxServicesPerVisit: 3, horizonDays: 7, optionTtlSeconds: 120, maxOptions: 3 } as const);
-export const SERVICE_IDS = ['oil-change', 'brake-check', 'diagnostics', 'tire-service'] as const;
-export const VEHICLE_IDS = ['sedan-petrol', 'crossover-petrol', 'ev-demo'] as const;
+  slotStepMinutes: 15, maxServicesPerVisit: 3, horizonDays: 30, optionTtlSeconds: 120, maxOptions: 3 } as const);
+export const SERVICE_IDS = ['oil-change', 'brake-check', 'diagnostics', 'tire-service', 'battery-check', 'air-filter', 'ac-service', 'wheel-alignment'] as const;
+export const VEHICLE_IDS = ['sedan-petrol', 'crossover-petrol', 'ev-demo', 'hatchback-petrol', 'suv-diesel', 'hybrid-demo'] as const;
 export const BRANCH_IDS = ['centre', 'north'] as const;
 export const IdSchema = v.string({ min: 1, max: 200, pattern: '^[A-Za-z0-9_.:-]+$' });
 export const ServiceIdSchema = v.enum(SERVICE_IDS);
@@ -23,10 +23,10 @@ export const BranchSchema = v.object({ id: BranchIdSchema, name: v.string({ min:
   timeZone: v.literal(RULES.timeZone), workingHours: HoursSchema });
 export const ServiceSchema = v.object({ id: ServiceIdSchema, name: v.string({ min: 1, max: 80 }),
   durationMinutes: v.int(1, 600), priceKzt: v.int(0, 1_000_000_000),
-  vehicleIds: v.array(VehicleIdSchema, { min: 1, max: 3, unique: true }) });
+  vehicleIds: v.array(VehicleIdSchema, { min: 1, max: VEHICLE_IDS.length, unique: true }) });
 export const DemoVehicleSchema = v.object({ id: VehicleIdSchema, name: v.string({ min: 1, max: 80 }) });
 const resourceFields = { id: IdSchema, branchId: BranchIdSchema, name: v.string({ min: 1, max: 80 }),
-  serviceIds: v.array(ServiceIdSchema, { min: 1, max: 4, unique: true }), workingHours: HoursSchema };
+  serviceIds: v.array(ServiceIdSchema, { min: 1, max: SERVICE_IDS.length, unique: true }), workingHours: HoursSchema };
 export const TechnicianSchema = v.object(resourceFields);
 export const BaySchema = v.object(resourceFields);
 const serviceList = v.array(ServiceIdSchema, { max: RULES.maxServicesPerVisit, unique: true });
@@ -52,8 +52,8 @@ export const ResourceReservationSchema = v.object({ id: IdSchema, resourceId: Id
   status: v.enum(['active', 'cancelled']) });
 export const PartRuleSchema = v.object({ branchId: BranchIdSchema, vehicleId: VehicleIdSchema, availableFrom: v.nullable(DateSchema) });
 export const DatasetSchema = v.object({ demoData: v.literal(true), calendarRevision: v.int(1),
-  branches: v.array(BranchSchema, { min: 2, max: 2 }), services: v.array(ServiceSchema, { min: 4, max: 4 }),
-  vehicles: v.array(DemoVehicleSchema, { min: 2, max: 3 }), technicians: v.array(TechnicianSchema, { min: 4, max: 4 }),
+  branches: v.array(BranchSchema, { min: 2, max: 2 }), services: v.array(ServiceSchema, { min: 4, max: SERVICE_IDS.length }),
+  vehicles: v.array(DemoVehicleSchema, { min: 2, max: VEHICLE_IDS.length }), technicians: v.array(TechnicianSchema, { min: 4, max: 4 }),
   bays: v.array(BaySchema, { min: 4, max: 4 }), reservations: v.array(ResourceReservationSchema, { max: 2000 }), parts: v.optional(v.array(PartRuleSchema, { max: 6 })) });
 export const ErrorCodeSchema = v.enum(['VALIDATION_ERROR', 'STALE_REQUEST', 'OPTION_EXPIRED', 'SLOT_CONFLICT',
   'NO_OPTIONS', 'BUDGET_EXCEEDED', 'PART_UNAVAILABLE', 'NOT_AUTHORIZED', 'OPERATION_PENDING', 'INTERNAL_ERROR',

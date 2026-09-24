@@ -8,9 +8,10 @@ import { makeDemoDataset } from '../../src/server/db/demo-fixtures.ts';
 import { getServices } from '../../spikes/voice-access/catalog.mjs';
 import { NOW } from './helpers.ts';
 
-test('canonical product catalogue agrees with the isolated voice probe catalogue', () => {
+test('expanded catalogue preserves the isolated voice probe services and vehicles', () => {
   const canonical = makeDemoDataset(NOW), probe = getServices();
-  assert.deepEqual(canonical.services, probe.services); assert.deepEqual(canonical.vehicles, probe.vehicles);
+  assert.deepEqual(canonical.services.slice(0,probe.services.length).map(s=>({...s,vehicleIds:s.vehicleIds.filter(id=>probe.vehicles.some(v=>v.id===id))})), probe.services);
+  assert.deepEqual(canonical.vehicles.slice(0,probe.vehicles.length), probe.vehicles);
   assert.equal(probe.rules.visitBufferMinutes, RULES.visitBufferMinutes);
 });
 test('schema output objects are immutable and parsers return copies', () => {
@@ -68,8 +69,8 @@ test('calendar arithmetic handles month/year/leap boundaries', () => {
   assert.equal(addDays('2026-12-31', 1), '2027-01-01'); assert.equal(addDays('2028-02-28', 1), '2028-02-29');
   assert.equal(addDays('2028-03-01', -1), '2028-02-29'); assert.throws(() => addDays('2026-09-23', 0.5));
 });
-test('horizon is exactly seven local calendar days including today', () => {
-  assert.equal(horizonDates(NOW).length, 7); assert.equal(horizonDates(NOW).at(-1), '2026-09-29');
+test('horizon is exactly thirty local calendar days including today', () => {
+  assert.equal(horizonDates(NOW).length, 30); assert.equal(horizonDates(NOW).at(-1), '2026-10-22');
 });
 test('time conversion and interval adjacency', () => {
   assert.equal(minutes('14:15'), 855); assert.equal(timeOfDay(855), '14:15');

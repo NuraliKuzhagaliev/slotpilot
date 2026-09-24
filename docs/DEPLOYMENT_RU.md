@@ -16,7 +16,8 @@
 2. В Supabase создать **отдельный бесплатный** проект; выполнить `supabase/migrations/001_slotpilot.sql` в SQL Editor.
 3. В Vercel импортировать репозиторий. Preset: Next.js. Install: `pnpm install --frozen-lockfile`. Build: `pnpm run build:next`. Node: 22 или 24. Эти значения также заданы в `vercel.json`.
 4. Внести серверные переменные из локального `.env.local` в Environment Variables Vercel. Ни одна секретная переменная не должна начинаться с NEXT_PUBLIC_. Включить минимум Production; preview-окружение должно иметь отдельный DEMO_NAMESPACE.
-5. Опубликовать и открыть HTTPS-адрес. Проверить клиент/админ в разных профилях браузера, запись, reload, перенос и конфликт.
+5. Настроить Supabase Auth: Site URL и Redirect URL на публичный адрес, собственный SMTP для отправки писем. Зарегистрировать владельца, выдать `role: "admin"` в его App Metadata и перелогиниться. Без SMTP публичная регистрация для всех адресов не работает.
+6. Опубликовать и открыть HTTPS-адрес. Проверить регистрацию, восстановление, клиент/админ в разных профилях браузера, запись, reload, перенос и конфликт.
 
 ## Чего бесплатный тариф не гарантирует
 
@@ -28,6 +29,8 @@ AssemblyAI оплачивается отдельно от хостинга. Пр
 
 Проверенные официальные источники:
 - https://supabase.com/pricing
+- https://supabase.com/docs/guides/auth/auth-smtp
+- https://supabase.com/docs/guides/auth/redirect-urls
 - https://vercel.com/docs/plans/hobby
 - https://www.assemblyai.com/docs/billing-and-pricing
 - https://www.assemblyai.com/products/voice-agent-api

@@ -11,8 +11,8 @@ export class VoiceController{
   // 20ms frames; echo-cancelled sustained input mutes locally without waiting for network.
   const pcm=new Int16Array(buffer);let power=0;for(const n of pcm)power+=(n/32768)**2;const rms=Math.sqrt(power/pcm.length);
   if(!this.playing)this.noiseFloor=.98*this.noiseFloor+.02*Math.min(rms,.03);
-  this.speechFrames=this.playing&&rms>Math.max(.04,this.noiseFloor*5)?this.speechFrames+1:0;
-  if(this.speechFrames>=5){this.cut('local');this.speechFrames=0}
+  this.speechFrames=this.playing&&rms>Math.max(.027,this.noiseFloor*4)?this.speechFrames+1:0;
+  if(this.speechFrames>=3){this.cut('local');this.speechFrames=0}
   let raw='';for(const b of new Uint8Array(buffer))raw+=String.fromCharCode(b);this.send({type:'input.audio',audio:btoa(raw)});
  },kind=>{if(kind==='drained'){this.playing=false;this.emit('state','listening')}if(kind==='overflow'||kind==='invalid-audio'){this.emit('error','Audio could not keep up. Restart the conversation.');void this.stop()}});
  try{await this.audio.open();if(g!==this.generation)return;const token=await api('/api/voice/token',{consent:true});if(g!==this.generation)return;this.basePrompt=token.session.system_prompt;const url=new URL(token.websocketUrl);if(url.origin!=='wss://agents.assemblyai.com'||url.pathname!=='/v1/ws')throw new Error('Invalid voice endpoint');url.searchParams.set('token',token.token);const ws=new WebSocket(url);this.socket=ws;

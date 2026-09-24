@@ -1,0 +1,19 @@
+SlotPilot: установка обновления
+1. Сохраните копию текущей папки SlotPilot. Не удаляйте файл .env.local.
+2. Распакуйте содержимое архива ПОВЕРХ корня репозитория slotpilot, чтобы папки app, src, tests совпали.
+3. В Supabase настройте Authentication → URL Configuration:
+   Site URL: https://slotpilot-beta.vercel.app
+   Redirect URLs: https://slotpilot-beta.vercel.app/
+   Подключите собственный SMTP в Authentication → SMTP Settings.
+   До SMTP не публикуйте изменения в main: письмо любому новому посетителю не отправится.
+4. В PowerShell в папке slotpilot выполните последовательно:
+   npm.cmd test
+   npm.cmd run typecheck
+   npm.cmd run build:next
+   git add .
+   git commit -m "Add personal accounts and expand booking catalogue"
+   git push origin main
+5. Зарегистрируйте свою учётную запись и подтвердите email.
+   Выдайте только себе роль admin через Supabase Auth Users → App Metadata,
+   затем выйдите и войдите заново.
+Старые DEMO_*_PASSWORD более не используются. Старые демо-записи не будут привязаны к новому аккаунту.
