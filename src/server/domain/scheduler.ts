@@ -38,6 +38,8 @@ function inspect(candidate: Candidate, constraints: CustomerConstraints, data: D
   if (start < Date.parse(now)) rejected.push(reason('PAST_TIME', 'This visit would start in the past.'));
   if (constraints.arrivalNotBefore && start < Date.parse(localToIso(date, constraints.arrivalNotBefore)))
     rejected.push(reason('BEFORE_ARRIVAL', `Starts before ${constraints.arrivalNotBefore}.`));
+  if (constraints.arrivalNotAfter && start > Date.parse(localToIso(date, constraints.arrivalNotAfter)))
+    rejected.push(reason('AFTER_ARRIVAL', `Starts after your latest arrival time of ${constraints.arrivalNotAfter}.`));
   if (constraints.readyNoLaterThan && end > Date.parse(localToIso(date, constraints.readyNoLaterThan)))
     rejected.push(reason('AFTER_DEADLINE', `Finishes at ${localParts(readyAt).time}, after ${constraints.readyNoLaterThan}.`));
   if (constraints.maxBudgetKzt !== null && quote.totalPriceKzt > constraints.maxBudgetKzt)

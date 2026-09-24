@@ -16,6 +16,25 @@ test('patch omits fields to preserve them; adding services never erases budget/d
   assert.equal(after.constraints.maxBudgetKzt, 40000); assert.deepEqual(after.constraints.allowedDates, [TOMORROW]);
   assert.equal(after.constraints.arrivalNotBefore, '14:00'); assert.equal(before.constraints.serviceIds.length, 1);
 });
+test('an inclusive natural-language date range expands deterministically across month boundaries', () => {
+  const state=request();
+  const october=updateRequest(state,ACTOR,{allowedDateRange:{from:'2026-10-01',to:'2026-10-10'}},state.requestVersion);
+  assert.deepEqual(october.constraints.allowedDates,Array.from({length:10},(_,i)=>`2026-10-${String(i+1).padStart(2,'0')}`));
+  const yearEnd=updateRequest(state,ACTOR,{allowedDateRange:{from:'2026-12-30',to:'2027-01-02'}},state.requestVersion);
+  assert.deepEqual(yearEnd.constraints.allowedDates,['2026-12-30','2026-12-31','2027-01-01','2027-01-02']);
+});
+test('date ranges reject inverted, oversized, and simultaneous list/range inputs', () => {
+  const state=request();
+  for(const patch of [
+    {allowedDateRange:{from:'2026-10-10',to:'2026-10-01'}},
+    {allowedDateRange:{from:'2026-10-01',to:'2026-10-31'}},
+    {allowedDateRange:{from:'2026-10-01',to:'2026-10-10'},allowedDates:['2026-10-01']},
+  ]) assert.throws(()=>updateRequest(state,ACTOR,patch,state.requestVersion),{code:'VALIDATION_ERROR'});
+});
+test('legacy stored constraints normalize to an unbounded latest arrival',()=>{
+  const {arrivalNotAfter:_,...legacy}=emptyConstraints();
+  assert.equal(normalizeConstraints(legacy).arrivalNotAfter,null);
+});
 test('explicit null removes only that nullable restriction', () => {
   const before = request(); const after = updateRequest(before, ACTOR, { maxBudgetKzt: null }, before.requestVersion);
   assert.equal(after.constraints.maxBudgetKzt, null); assert.equal(after.constraints.vehicleId, 'sedan-petrol');

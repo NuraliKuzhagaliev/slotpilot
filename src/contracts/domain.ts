@@ -34,7 +34,7 @@ const fields = {
   serviceIds: serviceList,
   vehicleId: v.nullable(VehicleIdSchema),
   allowedDates: v.nullable(v.array(DateSchema, { min: 1, max: RULES.horizonDays, unique: true })),
-  arrivalNotBefore: v.nullable(TimeSchema), readyNoLaterThan: v.nullable(TimeSchema),
+  arrivalNotBefore: v.nullable(TimeSchema), arrivalNotAfter: v.optional(v.nullable(TimeSchema)), readyNoLaterThan: v.nullable(TimeSchema),
   maxBudgetKzt: v.nullable(v.int(0, 3_000_000_000)),
   allowedBranchIds: v.nullable(v.array(BranchIdSchema, { min: 1, max: 2, unique: true })),
   preferredBranchId: v.nullable(BranchIdSchema), rankingPreference: v.enum(['earliest_ready', 'cheapest']),
@@ -43,7 +43,8 @@ export const CustomerConstraintsSchema = v.object(fields);
 export const RequestPatchSchema = v.object({
   serviceIds: v.optional(fields.serviceIds), addServiceIds: v.optional(serviceList), removeServiceIds: v.optional(serviceList),
   vehicleId: v.optional(fields.vehicleId), allowedDates: v.optional(fields.allowedDates),
-  arrivalNotBefore: v.optional(fields.arrivalNotBefore), readyNoLaterThan: v.optional(fields.readyNoLaterThan),
+  allowedDateRange: v.optional(v.object({ from: DateSchema, to: DateSchema })),
+  arrivalNotBefore: v.optional(fields.arrivalNotBefore), arrivalNotAfter: v.optional(v.nullable(TimeSchema)), readyNoLaterThan: v.optional(fields.readyNoLaterThan),
   maxBudgetKzt: v.optional(fields.maxBudgetKzt), allowedBranchIds: v.optional(fields.allowedBranchIds),
   preferredBranchId: v.optional(fields.preferredBranchId), rankingPreference: v.optional(fields.rankingPreference),
 });
@@ -58,7 +59,7 @@ export const DatasetSchema = v.object({ demoData: v.literal(true), calendarRevis
 export const ErrorCodeSchema = v.enum(['VALIDATION_ERROR', 'STALE_REQUEST', 'OPTION_EXPIRED', 'SLOT_CONFLICT',
   'NO_OPTIONS', 'BUDGET_EXCEEDED', 'PART_UNAVAILABLE', 'NOT_AUTHORIZED', 'OPERATION_PENDING', 'INTERNAL_ERROR',
   'MISSING_FIELDS', 'VEHICLE_UNSUPPORTED', 'NO_COMPATIBLE_TECHNICIAN', 'NO_COMPATIBLE_BAY',
-  'TECHNICIAN_BUSY', 'BAY_BUSY', 'OUTSIDE_HOURS', 'BEFORE_ARRIVAL', 'AFTER_DEADLINE',
+  'TECHNICIAN_BUSY', 'BAY_BUSY', 'OUTSIDE_HOURS', 'BEFORE_ARRIVAL', 'AFTER_ARRIVAL', 'AFTER_DEADLINE',
   'OUTSIDE_HORIZON', 'PAST_TIME', 'REQUEST_CLOSED', 'BRANCH_NOT_ALLOWED', 'DATE_NOT_ALLOWED',
   'STALE_BOOKING', 'CONFIRMATION_REQUIRED', 'SETUP_REQUIRED', 'DATABASE_UNAVAILABLE', 'RATE_LIMIT',
   'KEY_NOT_CONFIGURED', 'PROVIDER_ACCESS_DENIED', 'PROVIDER_ERROR', 'PROVIDER_UNREACHABLE', 'VOICE_LIMIT']);

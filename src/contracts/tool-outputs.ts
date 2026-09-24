@@ -5,7 +5,7 @@ import type { ToolName } from './tools.ts';
 const prepared = v.object({ actionId:IdSchema, actionType:v.enum(['create','reschedule','cancel']), snapshot:SlotOptionSchema, expiresAt:InstantSchema, confirmation:v.string({min:1,max:500}) });
 export const toolOutputs = {
   get_services:v.object({ services:v.array(ServiceSchema,{max:SERVICE_IDS.length}), vehicles:v.array(DemoVehicleSchema,{max:VEHICLE_IDS.length}), branches:v.array(BranchSchema,{max:2}), bufferMinutes:v.literal(15), currency:v.literal('KZT'), demoData:v.literal(true) }),
-  update_request:v.object({ request:BookingRequestSchema, missingFields:v.array(v.string({min:1,max:100}),{max:10}) }),
+  update_request:v.object({ request:BookingRequestSchema, missingFields:v.array(v.string({min:1,max:100}),{max:10}), search:v.optional(SearchResultSchema) }),
   find_options:v.extend(SearchResultSchema,{searchDurationMs:v.int()}),
   prepare_booking:prepared,
   confirm_booking:BookingSchema,

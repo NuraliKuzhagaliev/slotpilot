@@ -43,6 +43,14 @@ test('earliest arrival is a hard bound; starts use the next 15-minute grid point
   const result = search(request({ allowedBranchIds: ['north'], arrivalNotBefore: '14:01' }));
   assert.equal(localParts(result.options[0]!.startAt).time, '14:15');
 });
+test('arrival range constrains the start time and does not confuse it with a ready-by deadline',()=>{
+  const inRange=search(request({allowedBranchIds:['north'],arrivalNotBefore:'14:00',arrivalNotAfter:'16:00'}));
+  assert.ok(inRange.options.length);assert.ok(inRange.options.every(o=>localParts(o.startAt).time>='14:00'&&localParts(o.startAt).time<='16:00'));
+  const noMatch=search(request({allowedBranchIds:['north'],arrivalNotBefore:'16:00',arrivalNotAfter:'16:00'}));
+  assert.equal(noMatch.options.length,1);assert.equal(localParts(noMatch.options[0]!.startAt).time,'16:00');
+  assert.equal(localParts(noMatch.options[0]!.readyAt).time,'16:45');
+  assert.throws(()=>request({arrivalNotBefore:'16:00',arrivalNotAfter:'14:00'}),{code:'VALIDATION_ERROR'});
+});
 test('over-budget options excluded and exact excess explained', () => {
   const result = search(request({ maxBudgetKzt: 13000 }));
   assert.equal(result.options.length, 0); assert.deepEqual(result.reasons[0], { code: 'BUDGET_EXCEEDED', message: 'Exceeds the budget by 2000 KZT.' });

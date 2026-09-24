@@ -2,11 +2,16 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ToolResultQueue } from '../spikes/voice-access/public/tool-queue.mjs';
 import { LinearResampler, floatToPcm16, pcm16ToFloat, PlaybackRing } from '../spikes/voice-access/public/pcm.mjs';
+import { fadeOut } from '../public/audio/pcm.mjs';
 import { transcriptEntry, endVoiceSocket } from '../spikes/voice-access/public/controller.mjs';
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const call = { type: 'tool.call', call_id: 'call_1', name: 'get_services', arguments: {} };
 const done = { type: 'reply.done', reply_id: 'fc-call_1', status: 'completed' };
 const result = { ok: true, data: { value: 37 } };
+test('production playback interruption fades the queued tail to silence without changing sample type',()=>{
+  const source=new Float32Array([.4,.4,.4,.4]),faded=fadeOut(source);
+  assert.ok(Math.abs(source[0]-.4)<1e-6);assert.equal(faded.length,source.length);assert.ok(faded[0]>.3);assert.ok(faded[0]>faded[1]);assert.ok(faded[1]>faded[2]);assert.ok(Math.abs(faded.at(-1))<1e-6);
+});
 test('tool.result waits until reply.done even when the backend responds immediately', async () => {
   const sent = []; const queue = new ToolResultQueue(async () => result, data => sent.push(data));
   queue.event(call); await tick(); assert.equal(sent.length, 0);

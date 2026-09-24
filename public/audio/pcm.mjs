@@ -37,6 +37,14 @@ export function pcm16ToFloat(buffer) {
   for (let i = 0; i < out.length; i++) out[i] = view.getInt16(i * 2, true) / 32768;
   return out;
 }
+export function fadeOut(samples) {
+  const faded = Float32Array.from(samples), length = faded.length;
+  for (let i = 0; i < length; i++) {
+    const gain = Math.cos(((i + 1) / length) * Math.PI / 2);
+    faded[i] *= gain * gain;
+  }
+  return faded;
+}
 export class PlaybackRing {
   constructor(capacity) { this.data = new Float32Array(capacity); this.clear(); }
   clear() { this.read = 0; this.write = 0; this.available = 0; }

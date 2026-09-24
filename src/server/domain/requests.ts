@@ -1,20 +1,33 @@
-import { ActorSchema, BookingRequestSchema, CustomerConstraintsSchema, RequestPatchSchema, SearchResultSchema,
+import { ActorSchema, BookingRequestSchema, CustomerConstraintsSchema, DateSchema, RequestPatchSchema, SearchResultSchema, RULES, TimeSchema,
   type Actor, type BookingRequest, type CustomerConstraints, type RequestPatch, type SearchResult } from '../../contracts/domain.ts';
 import { DomainError } from './errors.ts';
 export function emptyConstraints(): CustomerConstraints {
   return CustomerConstraintsSchema.parse({ serviceIds: [], vehicleId: null, allowedDates: null, arrivalNotBefore: null,
-    readyNoLaterThan: null, maxBudgetKzt: null, allowedBranchIds: null, preferredBranchId: null, rankingPreference: 'earliest_ready' });
+    arrivalNotAfter: null, readyNoLaterThan: null, maxBudgetKzt: null, allowedBranchIds: null, preferredBranchId: null, rankingPreference: 'earliest_ready' });
 }
 export function normalizeConstraints(value: unknown): CustomerConstraints {
   const result = CustomerConstraintsSchema.parse(value);
+  result.arrivalNotAfter ??= null; // Accept stored requests created before arrival windows were added.
   result.serviceIds.sort(); result.allowedDates?.sort(); result.allowedBranchIds?.sort();
+  if (result.arrivalNotBefore && result.arrivalNotAfter && TimeSchema.parse(result.arrivalNotBefore) > TimeSchema.parse(result.arrivalNotAfter))
+    throw new DomainError('VALIDATION_ERROR', 'The latest arrival must be after the earliest arrival.');
   if (result.allowedBranchIds && result.preferredBranchId && !result.allowedBranchIds.includes(result.preferredBranchId))
     throw new DomainError('VALIDATION_ERROR', 'Preferred branch must be among allowed branches.');
   return result;
 }
 export function patchConstraints(current: CustomerConstraints, rawPatch: unknown): CustomerConstraints {
   const patch: RequestPatch = RequestPatchSchema.parse(rawPatch);
-  const { addServiceIds, removeServiceIds, ...direct } = patch;
+  const { addServiceIds, removeServiceIds, allowedDateRange, ...direct } = patch;
+  if (allowedDateRange && patch.allowedDates !== undefined)
+    throw new DomainError('VALIDATION_ERROR', 'Provide a date range or a list of dates, not both.');
+  if (allowedDateRange) {
+    const from = DateSchema.parse(allowedDateRange.from), to = DateSchema.parse(allowedDateRange.to);
+    const first = Date.parse(`${from}T00:00:00.000Z`), last = Date.parse(`${to}T00:00:00.000Z`);
+    const count = Math.floor((last - first) / 86_400_000) + 1;
+    if (count < 1) throw new DomainError('VALIDATION_ERROR', 'The end date must be on or after the start date.');
+    if (count > RULES.horizonDays) throw new DomainError('VALIDATION_ERROR', `A date range can include up to ${RULES.horizonDays} days.`);
+    direct.allowedDates = Array.from({ length: count }, (_, index) => new Date(first + index * 86_400_000).toISOString().slice(0, 10));
+  }
   if (patch.serviceIds !== undefined && (addServiceIds !== undefined || removeServiceIds !== undefined))
     throw new DomainError('VALIDATION_ERROR', 'Use replacement or add/remove services, not both.');
   if (addServiceIds?.some(id => removeServiceIds?.includes(id)))
