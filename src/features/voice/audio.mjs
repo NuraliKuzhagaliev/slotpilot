@@ -14,7 +14,7 @@ export class BrowserAudio {
       if (this.closed) { await this.close(); throw new Error('CANCELLED'); }
       await Promise.all([
         this.captureContext.audioWorklet.addModule('/audio/capture.worklet.mjs?v=20260924-2'),
-        this.playContext.audioWorklet.addModule('/audio/playback.worklet.mjs?v=20260924-2'),
+        this.playContext.audioWorklet.addModule('/audio/playback.worklet.mjs?v=20260928-1'),
       ]);
       if (this.closed) throw new Error('CANCELLED');
       this.source = this.captureContext.createMediaStreamSource(this.stream);
@@ -41,6 +41,7 @@ export class BrowserAudio {
   }
   startReply() { this.playNode?.port.postMessage('start'); }
   finishReply() { this.playNode?.port.postMessage('end'); }
+  setVolume(value) { this.playNode?.port.postMessage({ type: 'volume', value }); }
   clear() { this.playNode?.port.postMessage('clear'); }
   async close() {
     this.closed = true;

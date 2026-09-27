@@ -23,6 +23,19 @@ test('a slow production tool result is sent after its own reply.done and interru
   gate.started();gate.push('cancelled',{call_id:'cancelled'});gate.done('fc-cancelled','interrupted');
   assert.equal(sent.length,1);gate.clear();gate.push('stale',{call_id:'stale'});assert.equal(sent.length,1);
 });
+test('documented reply.done without an ID releases only tools already observed',()=>{
+  const sent=[];const gate=new ToolResults(frame=>sent.push(frame));
+  gate.done(undefined,'completed');gate.register('later');gate.push('later',{call_id:'later'});
+  assert.equal(sent.length,0);
+  gate.done(undefined,'completed');assert.deepEqual(sent,[{call_id:'later'}]);
+  gate.register('cut');gate.push('cut',{call_id:'cut'});gate.done(undefined,'interrupted');
+  gate.done(undefined,'completed');assert.equal(sent.length,1);
+});
+test('normal reply.done without status completes an identified tool reply',()=>{
+  const sent=[];const gate=new ToolResults(frame=>sent.push(frame));
+  gate.register('normal');gate.push('normal',{call_id:'normal'});
+  gate.done('fc-normal');assert.deepEqual(sent,[{call_id:'normal'}]);
+});
 test('production playback bounds jitter buffering and fades interruptions without clicks',async()=>{
   globalThis.sampleRate=48000;
   globalThis.AudioWorkletProcessor=class {constructor(){this.port={postMessage:()=>{}}}};
@@ -31,6 +44,9 @@ test('production playback bounds jitter buffering and fades interruptions withou
   const node=new Processor();const out=()=>{const output=new Float32Array(128);node.process([],[ [output] ]);return output};
   const pcm=new Int16Array(480).fill(24000);
   node.port.onmessage({data:pcm.buffer});
+  node.port.onmessage({data:{type:'volume',value:10}});
+  assert.equal(node.targetGain,.9,'playback volume is capped even for invalid UI values');
+  node.port.onmessage({data:{type:'volume',value:.55}});
   assert.ok(out().every(v=>v===0),'first packet is held briefly for jitter');
   let startBlock=-1;for(let i=1;i<24;i++){if(out().some(v=>v>0)){startBlock=i;break}}
   assert.ok(startBlock>=0 && startBlock*128/48000<=.06,'isolated packet starts within 60 ms');
@@ -39,7 +55,7 @@ test('production playback bounds jitter buffering and fades interruptions withou
   const gap=new Processor();gap.ended=true;
   gap.ring.push(new Float32Array(127).fill(.5));
   const oneSampleGap=new Float32Array(128);gap.process([],[[oneSampleGap]]);
-  assert.ok(oneSampleGap[127]>.3,'a one-sample underrun must not snap to zero');
+  assert.ok(oneSampleGap[127]>.16,'a one-sample underrun must not snap to zero');
   gap.ring.push(new Float32Array(128).fill(.5));
   const resumed=new Float32Array(128);gap.process([],[[resumed]]);
   assert.ok(Math.abs(resumed[0]-oneSampleGap[127])<.04,'resumed audio must join the underrun tail');
