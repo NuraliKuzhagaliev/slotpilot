@@ -2,13 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { bookingSession } from '../agents/booking.ts';
 import { createDraft } from '../src/server/domain/requests.ts';
+import { RULES } from '../src/contracts/domain.ts';
 
 test('voice prompt stays compact and preserves natural date/time and booking safety rules', () => {
   const session = bookingSession('2026-09-24T10:00:00.000Z', createDraft('request-12345678', 'user-12345678', 'slotpilot-demo'));
   assert.ok(session.system_prompt.length < 5000, `prompt has ${session.system_prompt.length} characters`);
   assert.match(session.system_prompt, /after lunch 13:00–17:00/);
   assert.match(session.system_prompt, /"Afternoon" is a complete 12:00–17:00/);
-  assert.match(session.system_prompt, /outside the seven-day booking horizon/);
+  assert.match(session.system_prompt, new RegExp(`outside the ${RULES.horizonDays}-day booking horizon`));
   const updateTool=session.tools.find(tool=>tool.name==='update_request');
   assert.match(updateTool?.description??'', /Call immediately/);
   assert.match(session.system_prompt, /middle = 11–20/);
