@@ -3,7 +3,8 @@ class PlaybackProcessor extends AudioWorkletProcessor {
   constructor() {
     super(); this.resampler = new LinearResampler(24000, sampleRate); this.fade = null; this.fadeOffset = 0;
     this.ring = new PlaybackRing(sampleRate * 15); this.wasPlaying = false;
-    this.silenceFrames = 0; this.lastSample = 0; this.ramp = 0;
+    this.silenceFrames = 0; this.lastSample = 0; this.lastOutputSample = 0; this.ramp = 0;
+    this.gain = 0.55; this.targetGain = 0.55;
     this.tailSample = 0; this.tailRemaining = 0;
     this.rampSamples = Math.ceil(sampleRate * 0.002);
     // A small reservoir absorbs network jitter. A lone short packet must still
@@ -12,16 +13,20 @@ class PlaybackProcessor extends AudioWorkletProcessor {
     this.targetFrames = Math.ceil(sampleRate * 0.04);
     this.maxWaitFrames = Math.ceil(sampleRate * 0.06);
     this.port.onmessage = ({ data }) => {
+      if (data?.type === 'volume') {
+        if (Number.isFinite(data.value)) this.targetGain = Math.max(0.2, Math.min(0.9, data.value));
+        return;
+      }
       if (data === 'clear') {
         // Fade from the sample actually sent to the speaker. The queued PCM may
         // start at another phase or level, which would make the cut click.
         const tail = new Float32Array(Math.ceil(sampleRate * 0.008));
-        tail.fill(this.lastSample);
+        tail.fill(this.lastOutputSample);
         this.fade = fadeOut(tail); this.fadeOffset = 0;
         this.ring.clear(); this.resampler.reset(); this.silenceFrames = 0;
         this.tailSample = 0; this.tailRemaining = 0;
         this.buffering = true; this.bufferWait = 0; this.ended = false;
-        this.lastSample = 0; this.ramp = 0; this.wasPlaying = false; return;
+        this.lastSample = 0; this.lastOutputSample = 0; this.ramp = 0; this.wasPlaying = false; return;
       }
       if (data === 'start') {
         this.ended = false;
@@ -48,6 +53,7 @@ class PlaybackProcessor extends AudioWorkletProcessor {
       for (let c = 1; c < output.length; c++) output[c].set(output[0]);
       this.fadeOffset += count;
       this.lastSample = output[0][output[0].length - 1];
+      this.lastOutputSample = this.lastSample;
       if (this.fadeOffset >= this.fade.length) { this.fade = null; this.fadeOffset = 0; this.lastSample = 0; }
       return true;
     }
@@ -85,6 +91,13 @@ class PlaybackProcessor extends AudioWorkletProcessor {
       this.lastSample = output[0][output[0].length - 1]; this.ramp = 0;
       this.silenceFrames += output[0].length;
     }
+    // Keep output below the PCM peak and slew user volume changes so adjusting
+    // the slider cannot make a click in the middle of a spoken word.
+    for (let i = 0; i < output[0].length; i++) {
+      this.gain += (this.targetGain - this.gain) * 0.01;
+      output[0][i] *= this.gain;
+    }
+    this.lastOutputSample = output[0][output[0].length - 1];
     for (let c = 1; c < output.length; c++) output[c].set(output[0]);
     if (this.wasPlaying && this.silenceFrames >= sampleRate * 0.25) { this.port.postMessage({ type: 'drained' }); this.wasPlaying = false; }
     return true;
