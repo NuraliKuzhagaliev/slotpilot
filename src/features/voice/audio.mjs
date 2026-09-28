@@ -31,7 +31,13 @@ export class BrowserAudio {
   }
   play(base64) {
     if (this.closed || !this.playNode) return;
-    if (this.playContext.state === 'suspended') void this.playContext.resume().catch(() => this.onPlaybackEvent('playback-suspended'));
+    if (this.playContext.state === 'suspended') {
+      if (!this.resumeOnGesture && typeof document !== 'undefined') {
+        this.resumeOnGesture = () => void this.playContext.resume().then(() => this.clearResumeGesture()).catch(() => {});
+        document.addEventListener('pointerdown', this.resumeOnGesture, { passive: true });
+      }
+      void this.playContext.resume().then(() => this.clearResumeGesture()).catch(() => this.onPlaybackEvent('playback-suspended'));
+    }
     if (typeof base64 !== 'string' || base64.length > 2000000) throw new Error('INVALID_AUDIO');
     const raw = atob(base64);
     if (raw.length % 2) throw new Error('INVALID_AUDIO');
@@ -43,8 +49,10 @@ export class BrowserAudio {
   finishReply() { this.playNode?.port.postMessage('end'); }
   setVolume(value) { this.playNode?.port.postMessage({ type: 'volume', value }); }
   clear() { this.playNode?.port.postMessage('clear'); }
+  clearResumeGesture() { if (this.resumeOnGesture && typeof document !== 'undefined') document.removeEventListener('pointerdown', this.resumeOnGesture); this.resumeOnGesture = null; }
   async close() {
     this.closed = true;
+    this.clearResumeGesture();
     this.clear(); this.stream?.getTracks().forEach(track => track.stop());
     this.source?.disconnect(); this.captureNode?.disconnect(); this.playNode?.disconnect();
     await Promise.all([this.captureContext, this.playContext].filter(Boolean).map(ctx => ctx.state === 'closed' ? null : ctx.close().catch(() => {})));

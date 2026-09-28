@@ -29,6 +29,6 @@ CURRENT SERVER STATE: ${JSON.stringify({requestId:r.requestId,requestVersion:r.r
  // No local volume threshold: loudspeaker echo must not cut valid replies.
  input:{format:{encoding:'audio/pcm'},language_codes:['en'],transcription_mode:'min_latency',keyterms:['SlotPilot','tenge'],transcription_prompt:`An English conversation about booking vehicle maintenance at SlotPilot in Almaty. Services: ${catalogue.services.map(s=>s.name).join(', ')}. Vehicles: ${catalogue.vehicles.map(v=>v.name).join(', ')}. Branches: Centre and North. Customers discuss budgets in tenge, dates, arrival windows such as after lunch or around four, and finish-by deadlines.`},
  output:{voice:'alba',format:{encoding:'audio/pcm'}},
- tools:Object.entries(schemas).map(([name,parameters])=>({type:'function',name,description:descriptions[name],parameters:('anyOf'in parameters?{type:'object',...parameters}:parameters),execution_mode:'interactive',timeout_seconds:30}))
+ tools:Object.entries(schemas).map(([name,parameters])=>({type:'function',name,description:descriptions[name],parameters:('anyOf'in parameters?{type:'object',...parameters}:parameters),execution_mode:'interactive',timeout_seconds:12}))
  };
 }
