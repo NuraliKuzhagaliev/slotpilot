@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./visual-refresh.css";
 
 export const metadata: Metadata = {
-  title: "SlotPilot · Book your next service",
-  description: "Voice-assisted car service booking with clear constraints and real confirmations.",
+  title: "SlotPilot · A clearer way to plan car service",
+  description: "Explore demo workshop services, find a time that fits and review your visit with SlotPilot.",
   other: {
     "codex-preview": "development",
   },
