@@ -1,0 +1,28 @@
+// A conservative safety net for final English transcripts. It only updates
+// reversible visit preferences; booking actions still require server evidence.
+const months={january:1,jan:1,february:2,feb:2,march:3,mar:3,april:4,apr:4,may:5,june:6,jun:6,july:7,jul:7,august:8,aug:8,september:9,sep:9,sept:9,october:10,oct:10,november:11,nov:11,december:12,dec:12};
+const servicePatterns=[['oil-change',/\b(?:oil change|change (?:my |the )?oil)\b/],['brake-check',/\b(?:brake (?:check|inspection)|check (?:my |the )?brakes)\b/],['diagnostics',/\b(?:diagnostic(?:s)?|scan (?:my |the )?car)\b/],['tire-service',/\b(?:tire|tyre) (?:service|change|replacement)\b/],['battery-check',/\bbattery (?:check|inspection|test)\b/],['air-filter',/\bair filter (?:change|replacement|service)\b/],['ac-service',/\b(?:ac|a\/c|air conditioning) (?:service|check|repair)\b/],['wheel-alignment',/\bwheel alignment\b/]];
+const vehiclePatterns=[['crossover-petrol',/\b(?:petrol|gas|gasoline) crossover\b|\bcrossover (?:petrol|gas|gasoline)\b/],['sedan-petrol',/\b(?:petrol|gas|gasoline) sedan\b|\bsedan (?:petrol|gas|gasoline)\b/],['hatchback-petrol',/\b(?:petrol|gas|gasoline) hatchback\b|\bhatchback (?:petrol|gas|gasoline)\b/],['suv-diesel',/\bdiesel (?:suv|4x4)\b|\b(?:suv|4x4) diesel\b/],['ev-demo',/\b(?:electric (?:car|vehicle|ev)|ev)\b/],['hybrid-demo',/\bhybrid (?:car|vehicle|demo)\b/]];
+const dayMs=86400000;
+function localToday(now){const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Almaty',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now);const get=t=>parts.find(p=>p.type===t).value;return `${get('year')}-${get('month')}-${get('day')}`}
+function addDays(date,n){return new Date(Date.parse(`${date}T00:00:00Z`)+n*dayMs).toISOString().slice(0,10)}
+function dateWithinHorizon(day,now){const today=localToday(now);return day>=today&&day<=addDays(today,29)?day:null}
+function spokenDate(text,now){const today=localToday(now);if(/\bday after tomorrow\b/.test(text))return dateWithinHorizon(addDays(today,2),now);if(/\btomorrow\b/.test(text))return dateWithinHorizon(addDays(today,1),now);if(/\btoday\b/.test(text))return dateWithinHorizon(today,now);
+ const match=text.match(/\b(?:(\d{1,2})(?:st|nd|rd|th)?\s+(?:of\s+)?(january|jan|february|feb|march|mar|april|apr|may|june|jun|july|jul|august|aug|september|sept|sep|october|oct|november|nov|december|dec)|(january|jan|february|feb|march|mar|april|apr|may|june|jun|july|jul|august|aug|september|sept|sep|october|oct|november|nov|december|dec)\s+(\d{1,2})(?:st|nd|rd|th)?)(?:\s*,?\s*(20\d{2}))?\b/);
+ if(!match)return null;const day=Number(match[1]??match[4]),month=months[match[2]??match[3]];const explicit=match[5]?Number(match[5]):null;const currentYear=Number(today.slice(0,4));for(const year of explicit?[explicit]:[currentYear,currentYear+1]){const candidate=`${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;if(new Date(`${candidate}T00:00:00Z`).toISOString().slice(0,10)===candidate){const valid=dateWithinHorizon(candidate,now);if(valid)return valid}}return null}
+function startTime(text){const match=text.match(/\b(?:at|around|by|before|after)\s+(\d{1,2})(?::([0-5]\d))?\s*(am|pm)\b|^\s*(\d{1,2})(?::([0-5]\d))?\s*(am|pm)\s*[.!?]?\s*$/);if(!match)return null;const hour=Number(match[1]??match[4]),minute=Number(match[2]??match[5]??0),period=match[3]??match[6];if(hour<1||hour>12)return null;return `${String(hour%12+(period==='pm'?12:0)).padStart(2,'0')}:${String(minute).padStart(2,'0')}`}
+export function transcriptPatch(raw,now=new Date()){
+ if(typeof raw!=='string'||raw.length>500)return null;const text=raw.toLowerCase().replace(/[’']/g,"'").trim();if(!text||/\b(?:don't|do not|not|maybe|perhaps|instead of|cancel)\b/.test(text))return null;
+ const patch={};const services=servicePatterns.filter(([,pattern])=>pattern.test(text)).map(([id])=>id);if(services.length&&services.length<=3)patch.addServiceIds=services;
+ const vehicles=vehiclePatterns.filter(([,pattern])=>pattern.test(text)).map(([id])=>id);if(vehicles.length===1)patch.vehicleId=vehicles[0];
+ const date=spokenDate(text,now);if(date)patch.allowedDates=[date];
+ if(/\blate afternoon\b/.test(text)){patch.arrivalNotBefore='15:00';patch.arrivalNotAfter='18:00'}
+ else if(/\bafter lunch\b/.test(text)){patch.arrivalNotBefore='13:00';patch.arrivalNotAfter='17:00'}
+ else if(/\bafternoon\b/.test(text)){patch.arrivalNotBefore='12:00';patch.arrivalNotAfter='17:00'}
+ else if(/\bmorning\b/.test(text)){patch.arrivalNotBefore='09:00';patch.arrivalNotAfter='12:00'}
+ else if(/\b(?:any time|whenever)\b/.test(text)){patch.arrivalNotBefore=null;patch.arrivalNotAfter=null}
+ else {const hour=startTime(text);if(hour){if(/\b(?:ready|pick (?:it )?up|collect|finished|done)\b/.test(text))patch.readyNoLaterThan=hour;else if(!/\b(?:before|by|after)\b/.test(text)||/\b(?:arrive|bring|drop off|come)\b/.test(text)){patch.arrivalNotBefore=hour;patch.arrivalNotAfter=hour}}}
+ const branch=text.match(/\b(?:centre|center|north)\s+branch\b|^\s*(?:the\s+)?(?:centre|center|north)\s*[.!?]?\s*$/);if(branch){const id=/\bnorth\b/.test(branch[0])?'north':'centre';patch.allowedBranchIds=[id];patch.preferredBranchId=id}
+ return Object.keys(patch).length?patch:null;
+}
+export function unsavedTranscriptPatch(patch,constraints){if(!patch||!constraints)return null;const out={};for(const [key,value] of Object.entries(patch)){if(key==='addServiceIds'){const missing=value.filter(id=>!constraints.serviceIds?.includes(id));if(missing.length)out.addServiceIds=missing}else if(JSON.stringify(constraints[key]??null)!==JSON.stringify(value))out[key]=value}return Object.keys(out).length?out:null}
