@@ -12,7 +12,7 @@ function spokenDate(text,now){const today=localToday(now);if(/\bday after tomorr
  if(!match)return null;const day=Number(match[1]??match[4]),month=months[match[2]??match[3]];const explicit=match[5]?Number(match[5]):null;const currentYear=Number(today.slice(0,4));for(const year of explicit?[explicit]:[currentYear,currentYear+1]){const candidate=`${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;if(new Date(`${candidate}T00:00:00Z`).toISOString().slice(0,10)===candidate){const valid=dateWithinHorizon(candidate,now);if(valid)return valid}}return null}
 function startTime(text){const match=text.match(/\b(?:at|around|by|before|after)\s+(\d{1,2})(?::([0-5]\d))?\s*(am|pm)\b|^\s*(\d{1,2})(?::([0-5]\d))?\s*(am|pm)\s*[.!?]?\s*$/);if(!match)return null;const hour=Number(match[1]??match[4]),minute=Number(match[2]??match[5]??0),period=match[3]??match[6];if(hour<1||hour>12)return null;return `${String(hour%12+(period==='pm'?12:0)).padStart(2,'0')}:${String(minute).padStart(2,'0')}`}
 export function transcriptPatch(raw,now=new Date()){
- if(typeof raw!=='string'||raw.length>500)return null;const text=raw.toLowerCase().replace(/[’']/g,"'").trim();if(!text||/\b(?:don't|do not|not|maybe|perhaps|instead of|cancel)\b/.test(text))return null;
+ if(typeof raw!=='string'||raw.length>500)return null;const text=raw.toLowerCase().replace(/[’']/g,"'").trim();if(!text||/\b(?:don't|do not|not|no|maybe|perhaps|instead of|cancel|remove|without|except|exclude|rather than|drop(?!\s+off))\b/.test(text))return null;
  const patch={};const services=servicePatterns.filter(([,pattern])=>pattern.test(text)).map(([id])=>id);if(services.length&&services.length<=3)patch.addServiceIds=services;
  const vehicles=vehiclePatterns.filter(([,pattern])=>pattern.test(text)).map(([id])=>id);if(vehicles.length===1)patch.vehicleId=vehicles[0];
  const date=spokenDate(text,now);if(date)patch.allowedDates=[date];
@@ -21,7 +21,7 @@ export function transcriptPatch(raw,now=new Date()){
  else if(/\bafternoon\b/.test(text)){patch.arrivalNotBefore='12:00';patch.arrivalNotAfter='17:00'}
  else if(/\bmorning\b/.test(text)){patch.arrivalNotBefore='09:00';patch.arrivalNotAfter='12:00'}
  else if(/\b(?:any time|whenever)\b/.test(text)){patch.arrivalNotBefore=null;patch.arrivalNotAfter=null}
- else {const hour=startTime(text);if(hour){if(/\b(?:ready|pick (?:it )?up|collect|finished|done)\b/.test(text))patch.readyNoLaterThan=hour;else if(!/\b(?:before|by|after)\b/.test(text)||/\b(?:arrive|bring|drop off|come)\b/.test(text)){patch.arrivalNotBefore=hour;patch.arrivalNotAfter=hour}}}
+ else {const hour=startTime(text);if(hour){if(/\b(?:ready|pick (?:it )?up|collect|finished|done)\b/.test(text)&&! /\b(?:after|around)\b/.test(text))patch.readyNoLaterThan=hour;else if(!/\b(?:before|by|after|around)\b/.test(text)){patch.arrivalNotBefore=hour;patch.arrivalNotAfter=hour}}}
  const branch=text.match(/\b(?:centre|center|north)\s+branch\b|^\s*(?:the\s+)?(?:centre|center|north)\s*[.!?]?\s*$/);if(branch){const id=/\bnorth\b/.test(branch[0])?'north':'centre';patch.allowedBranchIds=[id];patch.preferredBranchId=id}
  return Object.keys(patch).length?patch:null;
 }
