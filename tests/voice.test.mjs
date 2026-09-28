@@ -9,37 +9,24 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
 const call = { type: 'tool.call', call_id: 'call_1', name: 'get_services', arguments: {} };
 const done = { type: 'reply.done', reply_id: 'fc-call_1', status: 'completed' };
 const result = { ok: true, data: { value: 37 } };
-test('production tool results wait for their own completed reply, not an earlier reply.done',()=>{
-  const sent=[];const gate=new ToolResults(frame=>sent.push(frame));
-  gate.done('reply-before-call','completed');gate.started();gate.push('call_1',{call_id:'call_1'});
-  assert.equal(sent.length,0);
-  gate.done('reply-other','completed');assert.equal(sent.length,0);
-  gate.done('fc-call_1','completed');assert.deepEqual(sent,[{call_id:'call_1'}]);
+test('production tool result belongs to its observed opaque reply, not an earlier completion',()=>{
+ const sent=[],gate=new ToolResults(frame=>sent.push(frame));
+ gate.started('resp-before');gate.done('resp-before','completed');gate.started('resp-current');gate.register('call-1');gate.push('call-1',{call_id:'call-1'});
+ gate.done('resp-before','completed');assert.equal(sent.length,0);gate.done('resp-current','completed');assert.deepEqual(sent,[{call_id:'call-1'}]);
 });
-test('a slow production tool result is sent after its own reply.done and interrupted results are dropped',()=>{
-  const sent=[];const gate=new ToolResults(frame=>sent.push(frame));
-  gate.started();gate.done('fc-slow','completed');gate.push('slow',{call_id:'slow'});
-  assert.equal(sent.length,1);
-  gate.started();gate.push('cancelled',{call_id:'cancelled'});gate.done('fc-cancelled','interrupted');
-  assert.equal(sent.length,1);gate.clear();gate.push('stale',{call_id:'stale'});assert.equal(sent.length,1);
+test('HTTP result after reply completion is sent; interrupted call is never resurrected',()=>{
+ const sent=[],gate=new ToolResults(frame=>sent.push(frame));gate.started('resp-slow');gate.register('slow');gate.done('resp-slow');gate.push('slow',{call_id:'slow'});assert.equal(sent.length,1);
+ gate.started('resp-cut');gate.register('cut');gate.done('resp-cut','interrupted');gate.push('cut',{call_id:'cut'});gate.done('resp-cut');assert.equal(sent.length,1);
 });
-test('documented reply.done without an ID releases only tools already observed',()=>{
-  const sent=[];const gate=new ToolResults(frame=>sent.push(frame));
-  gate.done(undefined,'completed');gate.register('later');gate.push('later',{call_id:'later'});
-  assert.equal(sent.length,0);
-  gate.done(undefined,'completed');assert.deepEqual(sent,[{call_id:'later'}]);
-  gate.register('cut');gate.push('cut',{call_id:'cut'});gate.done(undefined,'interrupted');
-  gate.done(undefined,'completed');assert.equal(sent.length,1);
+test('completion arriving just before tool.call is handled without another event',()=>{
+ const sent=[],gate=new ToolResults(frame=>sent.push(frame));gate.started('resp-early');gate.done('resp-early');gate.register('call-late');gate.push('call-late',{call_id:'call-late'});assert.equal(sent.length,1);
 });
-test('normal reply.done without status completes an identified tool reply',()=>{
-  const sent=[];const gate=new ToolResults(frame=>sent.push(frame));
-  gate.register('normal');gate.push('normal',{call_id:'normal'});
-  gate.done('fc-normal');assert.deepEqual(sent,[{call_id:'normal'}]);
+test('legacy completion without an ID releases registered calls and discards interrupted ones',()=>{
+ const sent=[],gate=new ToolResults(frame=>sent.push(frame));gate.register('call');gate.push('call',{call_id:'call'});gate.done(undefined,'completed');assert.equal(sent.length,1);
+ gate.started();gate.register('cut');gate.push('cut',{call_id:'cut'});gate.done(undefined,'interrupted');gate.done(undefined,'completed');assert.equal(sent.length,1);
 });
-test('speech after tool completion holds the result until the next idle window',()=>{
-  const sent=[];const gate=new ToolResults(frame=>sent.push(frame));
-  gate.register('slow');gate.done('fc-slow','completed');gate.started();
-  gate.push('slow',{call_id:'slow'});assert.deepEqual(sent,[]);gate.done('next','completed');assert.deepEqual(sent,[{call_id:'slow'}]);
+test('new speech holds a completed HTTP result until a new idle window',()=>{
+ const sent=[],gate=new ToolResults(frame=>sent.push(frame));gate.started('resp-slow');gate.register('slow');gate.done('resp-slow');gate.started();gate.push('slow',{call_id:'slow'});assert.equal(sent.length,0);gate.started('resp-next');gate.done('resp-next');assert.equal(sent.length,1);
 });
 test('production playback bounds jitter buffering and fades interruptions without clicks',async()=>{
   globalThis.sampleRate=48000;

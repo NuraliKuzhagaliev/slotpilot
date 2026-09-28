@@ -36,7 +36,7 @@ export class VoiceController {
     cut(source) { if (this.replyId)
         this.suppressed.add(this.replyId); this.dropAudio = true; this.audio?.clear(); this.playing = false; this.emit('state', 'listening'); this.event(`playback.cleared.${source}`); }
     setVolume(value) { this.volume = Math.max(.2, Math.min(.9, Number.isFinite(value) ? value : .55)); this.audio?.setVolume?.(this.volume); }
-    async start() {
+    async start({ microphone = true } = {}) {
         if (this.active)
             return;
         this.active = true;
@@ -55,6 +55,7 @@ export class VoiceController {
         this.waitingSince = null;
         this.speechActive = false;
         this.replyActive = false;
+        this.textPending = false;
         this.toolBusy = 0;
         this.syncBusy = 0;
         this.recoveryAttempted = false;
@@ -106,7 +107,7 @@ export class VoiceController {
             void this.stop();
         } });
         try {
-            const [, token] = await Promise.all([this.audio.open(), api('/api/voice/token', { consent: true })]);
+            const [, token] = await Promise.all([this.audio.open({ microphone }), api('/api/voice/token', { consent: true })]);
             if (g !== this.generation)
                 return;
             this.audio.setVolume?.(this.volume);
@@ -162,6 +163,7 @@ export class VoiceController {
                     this.event('speech.stopped');
                 }
                 if (t === 'reply.started') {
+                    this.textPending = false;
                     this.replyActive = true;
                     this.lastEvent = t;
                     this.results.started(e.reply_id);
@@ -195,8 +197,10 @@ export class VoiceController {
                         this.results.cancel(e.reply_id);
                         return;
                     }
-                    if (e.reply_id && this.replyId && e.reply_id !== this.replyId && !e.reply_id.startsWith('fc-'))
+                    if (e.reply_id && this.replyId && e.reply_id !== this.replyId) {
+                        this.results.done(e.reply_id, e.status);
                         return;
+                    }
                     if (!e.reply_id || e.reply_id === this.replyId)
                         this.replyActive = false;
                     this.lastEvent = t;
@@ -209,7 +213,7 @@ export class VoiceController {
                         if (!e.reply_id || e.reply_id === this.replyId)
                             this.audio.finishReply();
                         this.results.done(e.reply_id, e.status);
-                        if (this.replyHadText && !this.replyHadAudio && !this.dropAudio && e.reply_id === this.replyId && !e.reply_id?.startsWith('fc-')) {
+                        if (this.replyHadText && !this.replyHadAudio && !this.dropAudio && e.reply_id === this.replyId && !this.results.hasReply(e.reply_id)) {
                             this.emit('error', 'The voice service sent text without audio. Please speak again.');
                             this.event('reply.missing-audio');
                         }
@@ -234,10 +238,10 @@ export class VoiceController {
                     }
                 }
                 if (t === 'tool.call' && !this.seen.has(e.call_id)) {
-                    this.event('tool.call', { name: e.name, callId: e.call_id });
+                    this.event('tool.call', { name: e.name, callId: e.call_id, replyId: e.reply_id ?? this.replyId });
                     this.seen.add(e.call_id);
                     this.toolBusy++;
-                    this.results.register(e.call_id);
+                    this.results.register(e.call_id, e.reply_id ?? this.replyId);
                     if (e.name === 'update_request')
                         this.deferTranscriptPatches();
                     const epoch = this.epoch;
@@ -282,7 +286,8 @@ export class VoiceController {
                         }
                         catch (error) {
                             const code = error.code ?? 'CONNECTION_ERROR';
-                            result = { ok: false, error: { code, message: error.message } };
+                            const saved = this.c.snapshot();
+                            result = { ok: false, error: { code, message: error.message }, request: saved?.request, search: saved?.search };
                             if (code === 'VALIDATION_ERROR')
                                 this.event('tool.validation-error');
                             if (code === 'STALE_REQUEST') {
@@ -351,6 +356,28 @@ export class VoiceController {
             this.emit('error', e.name === 'NotAllowedError' ? 'Allow microphone access, then try again.' : e.message);
             await this.stop();
         }
+    }
+    submitText(raw) {
+        const text = typeof raw === 'string' ? raw.trim() : '';
+        if (!this.active || !this.ready || !text || text.length > 500) return false;
+        if (this.textPending || this.replyActive || this.playing || this.toolBusy || this.syncBusy || this.results.pending.length) return false;
+        const id = crypto.randomUUID();
+        this.epoch++;
+        this.confirmationRef = null;
+        this.results.started();
+        this.speechStopped = this.waitingSince = performance.now();
+        this.finalTurn = true;
+        this.textPending = true;
+        this.recoveryAttempted = false;
+        this.emit('transcript', { id: `user:${id}`, speaker: 'user', text, final: true });
+        this.event('text.submitted');
+        // Typed messages use the same provider/model/tools; they do not fabricate
+        // microphone transcripts or voice-confirmation evidence.
+        this.send({ type: 'conversation.message', role: 'user', content: text });
+        this.send({ type: 'reply.create' });
+        this.rememberTranscript(text, id, this.generation);
+        this.emit('state', 'thinking');
+        return true;
     }
     rememberTranscript(text, id, g) { const key = `${id}:${text}`; if (this.seenTranscripts.has(key))
         return; this.seenTranscripts.add(key); if (this.seenTranscripts.size > 100)
