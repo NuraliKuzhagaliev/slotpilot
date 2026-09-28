@@ -12,6 +12,7 @@ test('voice prompt stays compact and preserves natural date/time and booking saf
   assert.match(session.system_prompt, new RegExp(`outside the ${RULES.horizonDays}-day booking horizon`));
   const updateTool=session.tools.find(tool=>tool.name==='update_request');
   assert.match(updateTool?.description??'', /Call immediately/);
+  assert.equal(updateTool?.timeout_seconds,12);
   assert.match(session.system_prompt, /middle = 11–20/);
   assert.match(session.system_prompt, /allowedDateRange/);
   assert.match(session.system_prompt, /separate final confirmation/);
