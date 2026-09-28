@@ -1,9 +1,9 @@
-// A tool result can be sent only after the reply belonging to that call finishes.
-// A previous reply.done is not permission to answer a later tool.call.
+// AssemblyAI accepts results in the idle window following reply.done. Keep a
+// completed call's result across new speech, but do not send during that speech.
 export class ToolResults {
   constructor(send) { this.send = send; this.clear(); }
-  clear() { this.pending = []; this.completed = new Set(); this.cancelled = new Set(); this.observed = new Set(); }
-  started() { /* A new utterance does not revoke an unfinished tool call. */ }
+  clear() { this.pending = []; this.completed = new Set(); this.cancelled = new Set(); this.observed = new Set(); this.idle = false; this.activeReply = null; }
+  started(replyId) { this.idle = false; this.activeReply = replyId ?? null; }
   register(callId) { this.observed.add(callId); }
   cancel(replyId) {
     if (typeof replyId !== 'string' || !replyId.startsWith('fc-')) return;
@@ -12,6 +12,7 @@ export class ToolResults {
     this.observed.delete(callId); this.pending = this.pending.filter(p => p.callId !== callId);
   }
   done(replyId, status) {
+    const current = !this.activeReply || !replyId || this.activeReply === replyId;
     if (typeof replyId === 'string' && replyId.startsWith('fc-')) {
       const callId = replyId.slice(3);
       if (status !== 'interrupted' && !this.cancelled.has(callId)) this.completed.add(callId);
@@ -26,12 +27,12 @@ export class ToolResults {
       }
       this.observed.clear();
     }
+    if (current) { this.activeReply = null; this.idle = status !== 'interrupted'; }
     this.flush();
   }
   push(callId, frame) { if (this.cancelled.has(callId)) return; this.pending.push({ callId, frame }); this.flush(); }
   flush() {
-    // Completion is tied to the call, so later speech cannot revoke a reply
-    // already completed while its HTTP request was still in flight.
+    if (!this.idle) return;
     this.pending = this.pending.filter(p => {
       if (!this.completed.has(p.callId)) return true;
       this.completed.delete(p.callId); this.send(p.frame); return false;
