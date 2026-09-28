@@ -36,10 +36,10 @@ test('normal reply.done without status completes an identified tool reply',()=>{
   gate.register('normal');gate.push('normal',{call_id:'normal'});
   gate.done('fc-normal');assert.deepEqual(sent,[{call_id:'normal'}]);
 });
-test('speech starting after tool reply completion does not strand a later HTTP result',()=>{
+test('speech after tool completion holds the result until the next idle window',()=>{
   const sent=[];const gate=new ToolResults(frame=>sent.push(frame));
   gate.register('slow');gate.done('fc-slow','completed');gate.started();
-  gate.push('slow',{call_id:'slow'});assert.deepEqual(sent,[{call_id:'slow'}]);
+  gate.push('slow',{call_id:'slow'});assert.deepEqual(sent,[]);gate.done('next','completed');assert.deepEqual(sent,[{call_id:'slow'}]);
 });
 test('production playback bounds jitter buffering and fades interruptions without clicks',async()=>{
   globalThis.sampleRate=48000;
