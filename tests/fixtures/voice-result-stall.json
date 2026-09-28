@@ -1,0 +1,110 @@
+{
+  "description": "Anonymized event ordering from user incident 2026-09-28. No transcripts/audio/session IDs.",
+  "events": [
+    {
+      "ms": 0,
+      "type": "reply.started",
+      "replyId": "resp_0"
+    },
+    {
+      "ms": 3815,
+      "type": "reply.done.completed",
+      "replyId": "resp_0"
+    },
+    {
+      "ms": 8974,
+      "type": "reply.started",
+      "replyId": "resp_1"
+    },
+    {
+      "ms": 19257,
+      "type": "reply.done.completed",
+      "replyId": "resp_1"
+    },
+    {
+      "ms": 24064,
+      "type": "reply.started",
+      "replyId": "resp_2"
+    },
+    {
+      "ms": 35146,
+      "type": "reply.done.completed",
+      "replyId": "resp_2"
+    },
+    {
+      "ms": 35741,
+      "type": "reply.started",
+      "replyId": "resp_3"
+    },
+    {
+      "ms": 40865,
+      "type": "tool.call",
+      "callId": "call_4"
+    },
+    {
+      "ms": 41097,
+      "type": "reply.done.completed",
+      "replyId": "resp_3"
+    },
+    {
+      "ms": 42009,
+      "type": "tool.result.queued",
+      "callId": "call_4"
+    },
+    {
+      "ms": 49353,
+      "type": "reply.started",
+      "replyId": "resp_5"
+    },
+    {
+      "ms": 53099,
+      "type": "tool.call",
+      "callId": "call_6"
+    },
+    {
+      "ms": 53325,
+      "type": "reply.done.completed",
+      "replyId": "resp_5"
+    },
+    {
+      "ms": 54025,
+      "type": "tool.result.queued",
+      "callId": "call_6"
+    },
+    {
+      "ms": 65106,
+      "type": "reply.started",
+      "replyId": "resp_7"
+    },
+    {
+      "ms": 72166,
+      "type": "reply.done.completed",
+      "replyId": "resp_7"
+    },
+    {
+      "ms": 75289,
+      "type": "reply.started",
+      "replyId": "resp_8"
+    },
+    {
+      "ms": 82853,
+      "type": "tool.call",
+      "callId": "call_9"
+    },
+    {
+      "ms": 83075,
+      "type": "reply.done.completed",
+      "replyId": "resp_8"
+    },
+    {
+      "ms": 84009,
+      "type": "tool.result.queued",
+      "callId": "call_9"
+    },
+    {
+      "ms": 94857,
+      "type": "reply.started",
+      "replyId": "resp_10"
+    }
+  ]
+}

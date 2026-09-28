@@ -3,10 +3,11 @@ import assert from 'node:assert/strict';
 import { bookingSession } from '../agents/booking.ts';
 import { createDraft } from '../src/server/domain/requests.ts';
 import { RULES } from '../src/contracts/domain.ts';
+import { exportToolInputSchemas, parseToolArguments } from '../src/contracts/tools.ts';
 
 test('voice prompt stays compact and preserves natural date/time and booking safety rules', () => {
   const session = bookingSession('2026-09-24T10:00:00.000Z', createDraft('request-12345678', 'user-12345678', 'slotpilot-demo'));
-  assert.ok(session.system_prompt.length < 5000, `prompt has ${session.system_prompt.length} characters`);
+  assert.ok(session.system_prompt.length < 5600, `prompt has ${session.system_prompt.length} characters`);
   assert.match(session.system_prompt, /after lunch 13:00–17:00/);
   assert.match(session.system_prompt, /"Afternoon" is a complete 12:00–17:00/);
   assert.match(session.system_prompt, new RegExp(`outside the ${RULES.horizonDays}-day booking horizon`));
@@ -14,12 +15,23 @@ test('voice prompt stays compact and preserves natural date/time and booking saf
   assert.match(updateTool?.description??'', /Call immediately/);
   assert.equal(updateTool?.timeout_seconds,12);
   assert.match(session.system_prompt, /middle = 11–20/);
-  assert.match(session.system_prompt, /allowedDateRange/);
+  assert.match(session.system_prompt, /allowedDates/);
   assert.match(session.system_prompt, /separate final confirmation/);
   assert.equal('turn_detection' in session.input, false, 'use AssemblyAI adaptive semantic turn detection');
   assert.equal(session.input.transcription_mode, 'min_latency');
   assert.deepEqual(session.input.language_codes, ['en']);
   assert.ok(session.input.transcription_prompt.length <= 1750);
   assert.match(session.input.transcription_prompt, /Wheel alignment/);
-  assert.match(session.system_prompt, /under 30 words/);
+  assert.match(session.system_prompt, /under 20 words/);
+});
+
+test('voice update schema uses one patch representation and preserves the canonical HTTP contract',()=>{
+ const before=structuredClone(exportToolInputSchemas());
+ const session=bookingSession('2026-09-24T10:00:00.000Z',createDraft('request-12345678','user-12345678','slotpilot-demo'));
+ const tool=session.tools.find(t=>t.name==='update_request')!;
+ const properties=(tool.parameters as {properties:{patch:{properties:Record<string,unknown>}}}).properties.patch.properties;
+ for(const field of ['addServiceIds','removeServiceIds','allowedDateRange'])assert.equal(field in properties,false);
+ for(const field of ['serviceIds','allowedDates','arrivalNotBefore','arrivalNotAfter'])assert.equal(field in properties,true);
+ assert.deepEqual(exportToolInputSchemas(),before);
+ assert.deepEqual(parseToolArguments('update_request',{patch:{serviceIds:['brake-check','tire-service'],allowedDates:['2026-10-15'],arrivalNotBefore:'12:00',arrivalNotAfter:'17:00'},expectedRequestVersion:17}).patch.serviceIds,['brake-check','tire-service']);
 });

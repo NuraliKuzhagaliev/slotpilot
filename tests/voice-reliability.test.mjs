@@ -14,7 +14,7 @@ test('an old tool completion cannot open the window while a newer reply is activ
 });
 test('interrupting a newer reply retains an earlier committed tool result for the next idle window', () => {
   const sent = [], gate = new ToolResults(frame => sent.push(frame));
-  gate.done('fc-saved', 'completed'); gate.started('new');
+  gate.started('resp-saved'); gate.register('saved'); gate.done('resp-saved', 'completed'); gate.started('new');
   gate.push('saved', { call_id: 'saved' }); gate.done('new', 'interrupted');
   assert.equal(sent.length, 0);
   gate.started('answer'); gate.done('answer', 'completed');

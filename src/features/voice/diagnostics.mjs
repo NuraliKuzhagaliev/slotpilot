@@ -12,5 +12,5 @@ export function diagnosticEvent(type, detail = {}, now = new Date()) {
   return event;
 }
 export function diagnosticExport(events) {
-  return { schemaVersion: 1, clientVersion: 'voice-queue-v2', exportedAt: new Date().toISOString(), events: events.slice(-400).map(e => diagnosticEvent(e.type, e, new Date(e.at))) };
+  return { schemaVersion: 1, clientVersion: 'voice-opaque-replies-v3', exportedAt: new Date().toISOString(), events: events.slice(-400).map(e => diagnosticEvent(e.type, e, new Date(e.at))) };
 }
