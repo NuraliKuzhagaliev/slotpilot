@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, CalendarCheck2, CarFront, Check, Clock3, Headphones, ShieldCheck, Wrench } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, CalendarCheck2, CarFront, Check, Clock3, Download, Headphones, ShieldCheck, Wrench } from 'lucide-react';
 
 const steps = [
   { number: '01', title: 'Tell us about the visit', copy: 'Choose services and your demo vehicle, or describe what you need to the assistant.' },
@@ -22,7 +22,7 @@ export default function Home() {
           <span className="landing-kicker"><span className="landing-kicker-dot"/> A clearer way to plan car care</span>
           <h1 id="landing-title">Your next workshop visit, <em>beautifully sorted.</em></h1>
           <p>Meet a smarter way to explore services, find a time and review every detail. SlotPilot guides you from the first question to a clear plan.</p>
-          <div className="landing-hero-actions"><Link className="landing-button landing-button-primary" href="/book#assistant">Plan my visit <ArrowUpRight size={18}/></Link><a className="landing-button landing-button-ghost" href="#how-it-works">See how it works <ArrowRight size={18}/></a></div>
+          <div className="landing-hero-actions"><Link className="landing-button landing-button-primary" href="/book#assistant">Plan my visit <ArrowUpRight size={18}/></Link><a className="landing-button landing-button-ghost" href="#how-it-works">See how it works <ArrowRight size={18}/></a><a className="landing-button landing-button-ghost" href="https://github.com/NuraliKuzhagaliev/SlotPilot-app/releases/download/v0.3.2/SlotPilot-0.3.2-Setup-x64.exe" aria-label="Download SlotPilot installer for Windows x64">Download for Windows <Download size={18} aria-hidden="true"/></a></div>
           <div className="landing-hero-proof"><span><Check size={15}/> Clear service options</span><span><Check size={15}/> Times that fit your day</span><span><Check size={15}/> You confirm the plan</span></div>
         </div>
         <div className="landing-image-caption"><span className="landing-caption-line"/> ONE VISIT · ONE TECHNICIAN · ONE BAY</div>
