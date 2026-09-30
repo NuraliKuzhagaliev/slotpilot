@@ -1,37 +1,37 @@
-# SlotPilot · основной веб-проект
+# SlotPilot · Main Web Application
 
-Голосовой администратор демонстрационного автосервиса: услуги, ограничения, подбор мастера и поста, отдельное подтверждение и запись в PostgreSQL. Интерфейс и голос — английские. Часовой пояс филиалов — Asia/Almaty.
+A voice administrator for a demo car service workshop: services, constraints, mechanic and service bay selection, separate confirmation, and booking storage in PostgreSQL. The interface and voice interactions are in English. Branch timezone: Asia/Almaty.
 
-## Честный статус
+## Current Status
 
-Это основной проект вместо прежнего standalone probe. Написаны клиентский интерфейс, серверные операции P0/P1, PostgreSQL-миграция, голосовой адаптер, admin/demo. Подбор работает без подключения базы в **явно обозначенном режиме preview**, который ничего не сохраняет.
+This is the main application, replacing the earlier standalone probe. The client interface, P0/P1 server operations, PostgreSQL migration, voice adapter, and admin/demo features have been implemented. Scheduling also works without a database connection in an **explicitly labelled preview mode** that does not save anything.
 
-На `main` (`a72386d`, после PR [#9](https://github.com/NuraliKuzhagaliev/slotpilot/pull/9) и [#10](https://github.com/NuraliKuzhagaliev/slotpilot/pull/10)) повторно проверены 234/234 автоматических теста и TypeScript. Обе production-сборки (Next.js и Vinext) и браузерный preview описаны в результатах PR #10; источники и границы проверки — в [VERIFICATION_RU.md](docs/VERIFICATION_RU.md).
+On `main` (`a72386d`, after PRs [#9](https://github.com/NuraliKuzhagaliev/slotpilot/pull/9) and [#10](https://github.com/NuraliKuzhagaliev/slotpilot/pull/10)), 234/234 automated tests and TypeScript checks were rerun successfully. Both production builds (Next.js and Vinext) and the browser preview are documented in the results of PR #10; evidence and verification scope are recorded in [VERIFICATION_RU.md](docs/VERIFICATION_RU.md).
 
-**Живая проверка голосового ИИ-ассистента пройдена:** 30 сентября 2026 пользователь лично проверил текущую версию SlotPilot и подтвердил, что голос и физический микрофон работают хорошо. Это подтверждение пользователя по результатам реального использования. Миграция применена к настоящей Supabase; конкурентные транзакции, исключение пересечений, откат и изоляция окружений проверены ранее.
+**Live voice assistant verification passed:** on September 30, 2026, the project owner personally tested the current version of SlotPilot and confirmed that voice interactions and the physical microphone work well. This confirmation comes from the owner's real use of the application. The migration has been applied to a real Supabase database; concurrent transactions, prevention of overlapping bookings, rollback, and environment isolation were verified earlier.
 
-Публичный Vercel: https://slotpilot-beta.vercel.app .
+Public Vercel deployment: https://slotpilot-beta.vercel.app .
 
-Создан бесплатный Supabase-проект SlotPilot в Lord Org (Frankfurt): `lylcxxdrpralrstxzuct`. Миграция применена; серверные секреты базы и тестового входа настроены в Sites. Для собственной копии серверный `ASSEMBLYAI_API_KEY` задаётся по инструкции ниже.
+A free SlotPilot Supabase project was created in Lord Org (Frankfurt): `lylcxxdrpralrstxzuct`. The migration has been applied; server secrets for the database and test sign-in are configured in Sites. For your own copy, configure the server-side `ASSEMBLYAI_API_KEY` using the instructions below.
 
-## Десктопное приложение
+## Desktop Application
 
-Автор проекта также создал десктопное приложение SlotPilot. Его загрузка запланирована в отдельный репозиторий: [SlotPilot-app](https://github.com/NuraliKuzhagaliev/SlotPilot-app).
+The project owner has also created a SlotPilot desktop application. It is planned to be uploaded to a separate repository: [SlotPilot-app](https://github.com/NuraliKuzhagaliev/SlotPilot-app).
 
-## Запуск на Windows
+## Running on Windows
 
-Распакуйте в отдельную папку. Не удаляйте предыдущую рабочую версию. В VS Code откройте папку с этим README и package.json.
+Extract the project into a separate folder. Keep your previous working version. In VS Code, open the folder containing this README and package.json.
 
-Node.js 22.16+; у пользователя 22.20 подходит. В PowerShell:
+Node.js 22.16+ is required; the owner's Node.js 22.20 is suitable. In PowerShell:
 
 ```powershell
 npx.cmd --yes pnpm@11.25.0 install --frozen-lockfile
 npm.cmd run setup
 ```
 
-Чтобы сохранить свой ранее введённый ключ и пароли, можно **до setup** скопировать старый `.env.local` в новую папку. Setup допишет только отсутствующие строки; существующие значения и ключ не перезаписывает. Не загружайте этот файл в GitHub и не присылайте его в чат.
+To preserve your existing key and passwords, you can copy your old `.env.local` into the new folder **before running setup**. Setup only adds missing entries; it does not overwrite existing values or keys. Do not upload this file to GitHub or send it in chat.
 
-В `.env.local` заполните:
+Fill in the following values in `.env.local`:
 
 ```env
 ASSEMBLYAI_API_KEY=
@@ -39,46 +39,46 @@ SUPABASE_URL=
 SUPABASE_SECRET_KEY=
 ```
 
-Setup генерирует только SESSION_SECRET. Заполните его, если он остался пустым; нужно не менее 32 символов. Пароли пользователей создаются в Supabase Auth, отдельного демо-пароля администратора нет.
+Setup only generates SESSION_SECRET. Set it manually if it is still empty; it must contain at least 32 characters. User passwords are managed in Supabase Auth; there is no separate demo administrator password.
 
-Затем:
+Then run:
 
 ```powershell
 npm.cmd run doctor
 npm.cmd run dev:next
 ```
 
-Откройте http://localhost:3000. В этой версии `dev:next` запускает обычный Next.js. `dev` / `build` сохранены для размещения через Sites (Vinext); они не запускают старый probe.
+Open http://localhost:3000. In this version, `dev:next` runs standard Next.js. `dev` / `build` are retained for hosting through Sites (Vinext); they do not run the old probe.
 
-Войдите по email и паролю учётной записи Supabase Auth. Выбора роли или отдельного логина «admin» нет. Обычная регистрация даёт доступ клиента; для `/admin` и `/demo` владелец проекта должен назначить аккаунту `{"role":"admin"}` в **Supabase → Authentication → Users → App Metadata**. Затем выйдите и войдите снова. Не задавайте роль через User Metadata и не добавляйте поле роли в публичную форму регистрации.
+Sign in with the email and password of a Supabase Auth account. There is no role selector or separate “admin” login. Standard registration grants client access; for `/admin` and `/demo`, the project owner must assign `{"role":"admin"}` to the account in **Supabase → Authentication → Users → App Metadata**. Then sign out and sign in again. Do not assign the role through User Metadata or add a role field to the public registration form.
 
-**Перед включением нового входа на Vercel:** в Supabase Authentication → URL Configuration задайте Site URL `https://slotpilot-beta.vercel.app` и разрешённый Redirect URL `https://slotpilot-beta.vercel.app/`. Для локального теста также добавьте `http://localhost:3000/`. В Supabase Authentication → SMTP Settings подключите собственный SMTP: встроенный SMTP отправляет письма лишь участникам проекта, поэтому без него случайный посетитель не сможет подтвердить адрес и восстановить пароль. Если используете другой проект Supabase, добавьте серверную переменную `SUPABASE_PUBLISHABLE_KEY` из API Keys. Секретный ключ никогда не передавайте в браузер.
+**Before enabling the new sign-in flow on Vercel:** in Supabase Authentication → URL Configuration, set the Site URL to `https://slotpilot-beta.vercel.app` and allow the Redirect URL `https://slotpilot-beta.vercel.app/`. For local testing, also add `http://localhost:3000/`. In Supabase Authentication → SMTP Settings, connect your own SMTP service: the built-in SMTP only sends emails to project members, so other visitors will not be able to verify their email or reset their password without custom SMTP. If you use a different Supabase project, add the server variable `SUPABASE_PUBLISHABLE_KEY` from API Keys. Never expose the secret key to the browser.
 
-## База Supabase
+## Supabase Database
 
-Для опубликованного приложения база уже создана и настроена. Инструкция ниже — для собственной локальной копии; используйте отдельный DEMO_NAMESPACE и только вымышленные данные.
+The database for the deployed application has already been created and configured. The instructions below are for your own local copy; use a separate DEMO_NAMESPACE and fictional data only.
 
-1. В SQL Editor выполните `supabase/migrations/001_slotpilot.sql` целиком.
-2. URL проекта и Secret API key (старый SUPABASE_SERVICE_ROLE_KEY тоже поддерживается) внесите только в `.env.local`/серверные секреты хостинга.
-3. Запустите `npm.cmd run doctor`, затем `npm.cmd run test:db`.
+1. Run the entire `supabase/migrations/001_slotpilot.sql` file in the SQL Editor.
+2. Store the project URL and Secret API key (the legacy SUPABASE_SERVICE_ROLE_KEY is also supported) only in `.env.local` or the hosting platform's server secrets.
+3. Run `npm.cmd run doctor`, followed by `npm.cmd run test:db`.
 
-`test:db` создаёт уникальные namespaces `slotpilot-test-*`, проверяет настоящее ограничение пересечений, две конкурентные записи с одной ревизией, откат транзакции и независимость namespaces. Затем очищает тестовые ресурсы; пустые тестовые документы остаются. Рабочий namespace не меняется. При отсутствии подключения команда завершается с кодом 2 и сообщает BLOCKED — не выдаёт mock за настоящую БД.
+`test:db` creates unique `slotpilot-test-*` namespaces and checks the real overlap constraint, two concurrent writes against the same revision, transaction rollback, and namespace independence. It then cleans up test resources; empty test documents remain. The working namespace is not changed. Without a database connection, the command exits with code 2 and reports BLOCKED rather than presenting a mock as a real database.
 
-Каталог и воспроизводимая начальная занятость генерируются одним прежним модулем `demo-fixtures.ts`, а все записи/действия/согласия сохраняются в PostgreSQL. При подтверждении реальная занятость повторно проверяется сервером.
+The catalog and reproducible initial occupancy are generated by the existing `demo-fixtures.ts` module, while all bookings, actions, and consent records are stored in PostgreSQL. The server checks actual availability again at confirmation.
 
-## Основной показ
+## Main Demo
 
-1. Выберите Centre, начните разговор на английском. Согласитесь на передачу аудио AssemblyAI.
+1. Select Centre and start a conversation in English. Consent to sharing audio with AssemblyAI.
 2. “I need an oil change tomorrow for a petrol sedan. I can arrive after two. My budget is forty thousand tenge.”
-3. Ожидается Centre 15:00–15:45, 15 000 KZT.
-4. Перебейте: “Wait, add a brake inspection and computer diagnostics. I need the car ready by four.”
-5. 120 минут и 37 000 KZT; Центр не подходит, Север 14:00–16:00 предложен как изменение условий.
-6. Разрешите рассмотреть North. Затем отдельно подтвердите полные детали визита.
-7. Проверьте сохранённую запись, перезагрузите страницу, откройте `/admin` в другом профиле.
+3. Expected result: Centre, 15:00–15:45, 15,000 KZT.
+4. Interrupt: “Wait, add a brake inspection and computer diagnostics. I need the car ready by four.”
+5. The total is 120 minutes and 37,000 KZT; Centre cannot meet the constraints, so North, 14:00–16:00, is offered as a change to the conditions.
+6. Allow North to be considered. Then separately confirm the complete visit details.
+7. Check the saved booking, reload the page, and open `/admin` in another browser profile.
 
-Альтернатива голосу — форма, использующая тот же серверный алгоритм и операции. После подготовки кнопка Confirm подтверждает точный снимок. Простое “да, но…” не даёт согласия. В голосе принимается только узкий набор завершённых однозначных английских фраз; при неоднозначности используйте кнопку.
+The form is an alternative to voice and uses the same server algorithm and operations. After preparation, the Confirm button confirms the exact booking snapshot. A simple “yes, but…” does not count as consent. Voice confirmation accepts only a narrow set of complete, unambiguous English phrases; use the button if the response is ambiguous.
 
-## Тесты и сборка
+## Tests and Build
 
 ```powershell
 npm.cmd test
@@ -89,8 +89,8 @@ npm.cmd run test:db
 npm.cmd run build:next
 ```
 
-Существующие тесты Node сохранены; новые проверки используют тот же runner. Vitest/Playwright suites ещё не добавлены. В PR #10 браузерный preview проверен интерактивно: главная, переход к `/book#assistant` и три варианта подбора. Voice-stall regression из PR #9 проверяется replay обезличенного инцидента и mock-тестами контроллера/аудио. Отдельно 30 сентября 2026 пользователь успешно проверил живого голосового ИИ-ассистента и физический микрофон.
+The existing Node tests have been retained; new checks use the same runner. Vitest/Playwright suites have not yet been added. In PR #10, the browser preview was tested interactively: the landing page, navigation to `/book#assistant`, and three scheduling options. The voice-stall regression from PR #9 is covered by a replay of an anonymized incident and mock controller/audio tests. Separately, on September 30, 2026, the project owner successfully tested the live voice assistant and physical microphone.
 
-Подробности: [проверки](docs/VERIFICATION_RU.md), [бесплатное размещение](docs/DEPLOYMENT_RU.md), [архитектура](docs/ARCHITECTURE_RU.md), [критерии](docs/IMPLEMENTATION_STATUS_RU.md), [границы команды](docs/TEAM_OWNERSHIP_RU.md).
+Further details: [verification](docs/VERIFICATION_RU.md), [free hosting](docs/DEPLOYMENT_RU.md), [architecture](docs/ARCHITECTURE_RU.md), [criteria](docs/IMPLEMENTATION_STATUS_RU.md), and [team ownership](docs/TEAM_OWNERSHIP_RU.md).
 
-`npm run test:integration` проверяет настоящие HTTP route handlers с Supabase, без mock БД. По умолчанию обработчики вызываются в процессе Node; для HTTP-проверки локального сервера задайте SLOTPILOT_TEST_BASE_URL. Обязателен отдельный DEMO_NAMESPACE=slotpilot-test-...: тест создаёт, переносит, отменяет и сбрасывает только тестовые данные.
+`npm run test:integration` checks real HTTP route handlers with Supabase, without a mock database. By default, handlers are invoked within the Node process; set SLOTPILOT_TEST_BASE_URL to test a local server over HTTP. A separate DEMO_NAMESPACE=slotpilot-test-... is required: the test creates, reschedules, cancels, and resets test data only.
