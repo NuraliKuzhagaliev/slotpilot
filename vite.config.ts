@@ -64,5 +64,10 @@ export default defineConfig(async () => {
         config: localBindingConfig,
       }),
     ],
+    build: {
+      rollupOptions: {
+        external: ["@vercel/analytics/next"],
+      },
+    },
   };
 });
