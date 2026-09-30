@@ -1,4 +1,4 @@
-# SlotPilot · Main Web Application
+# SlotPilot · Web Application
 
 A voice administrator for a demo car service workshop: services, constraints, mechanic and service bay selection, separate confirmation, and booking storage in PostgreSQL. The interface and voice interactions are in English. Branch timezone: Asia/Almaty.
 
