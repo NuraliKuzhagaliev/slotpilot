@@ -53,6 +53,7 @@ export class VoiceController {
         this.confirmationRef = null;
         this.speechStopped = null;
         this.lastSaved = null;
+        this.lastTranscriptSave = null;
         this.waitingSince = null;
         this.speechActive = false;
         this.replyActive = false;
@@ -272,6 +273,17 @@ export class VoiceController {
                             }
                             ;
                             const current = this.c.snapshot()?.request;
+                            const saved = this.lastTranscriptSave;
+                            const followsOwnTranscript = saved && current && Number.isSafeInteger(current.stateRevision) &&
+                                saved.generation === g && saved.epoch === epoch && saved.manualVersion === this.manualVersion &&
+                                saved.requestId === current.requestId && saved.requestVersion === current.requestVersion &&
+                                saved.stateRevision === current.stateRevision && args?.expectedRequestVersion === saved.previousVersion;
+                            // The transcript fallback may save before the model emits its tool call.
+                            // Only these reversible tools may catch up to our own save in the same turn.
+                            if (followsOwnTranscript && ['update_request', 'find_options'].includes(e.name)) {
+                                args = { ...args, expectedRequestVersion: current.requestVersion };
+                                this.event('tool.transcript-version-current', { callId: e.call_id });
+                            }
                             if (e.name === 'update_request' && args?.patch && args.expectedRequestVersion === current?.requestVersion) {
                                 args = { ...args, patch: this.mergeTurnPatch(args.patch, current, g, epoch) };
                             }
@@ -444,6 +456,15 @@ export class VoiceController {
             if (record.g === this.generation) {
                 this.emit('updateSnapshot', result);
                 this.lastSaved = result;
+                this.lastTranscriptSave = {
+                    generation: record.g,
+                    epoch: record.epoch,
+                    manualVersion: record.manualVersion,
+                    requestId: request.requestId,
+                    previousVersion: request.requestVersion,
+                    requestVersion: result.request?.requestVersion,
+                    stateRevision: result.request?.stateRevision,
+                };
                 if (refresh) this.refreshPrompt(result.request);
                 this.event('transcript.saved');
             }

@@ -108,6 +108,27 @@ test('a late final transcript is saved before the model receives availability',a
   assert.equal(payload.data.search.options[0].dropOffLocal,'15:00');
  }finally{await h.close()}
 });
+test('a model update fills additional details after the same turn transcript already saved',async()=>{
+ const calls=[];
+ const h=await harness(async input=>{
+  calls.push(input);
+  const requestVersion=input.arguments.expectedRequestVersion+1;
+  return {ok:true,request:{requestId:'r1',requestVersion,stateRevision:requestVersion,
+   constraints:{serviceIds:[],...input.arguments.patch}},data:{search:{options:[]}}};
+ });
+ try{
+  h.ws.receive({type:'transcript.user',item_id:'same-turn',text:'Tomorrow.'});
+  h.c.flushTranscriptPatches();
+  await h.c.chain;
+  h.ws.receive({type:'reply.started',reply_id:'provider-update'});
+  h.ws.receive({type:'tool.call',call_id:'model-adds-budget',name:'update_request',arguments:{patch:{maxBudgetKzt:27000},expectedRequestVersion:1}});
+  h.ws.receive({type:'reply.done',reply_id:'provider-update',status:'completed'});
+  await h.c.chain;
+  assert.equal(calls.length,2);
+  assert.equal(calls[1].arguments.expectedRequestVersion,2);
+  assert.equal(JSON.parse(h.sent.find(e=>e.type==='tool.result').result).currentRequest.requestVersion,3);
+ }finally{await h.close()}
+});
 test('mock: stale tool response gives the model the current request version',async()=>{const h=await harness(async()=>({ok:true}));const original=globalThis.fetch;try{globalThis.fetch=(path,init)=>path==='/api/tools'?Promise.resolve(Response.json({error:{code:'STALE_REQUEST',message:'Read the current request.'}},{status:409})):path==='/api/requests'?Promise.resolve(Response.json({request:{requestId:'r1',requestVersion:4,constraints:{allowedDates:['2026-10-15']},stage:'collecting'}})):original(path,init);h.ws.receive({type:'tool.call',call_id:'stale',name:'find_options',arguments:{expectedRequestVersion:1}});h.ws.receive({type:'reply.done',reply_id:'fc-stale',status:'completed'});await tick();await tick();const result=JSON.parse(h.sent.find(e=>e.type==='tool.result')?.result??'null');assert.equal(result.error.code,'STALE_REQUEST');assert.equal(result.currentRequest.requestVersion,4);assert.equal(h.state.request.requestVersion,4)}finally{globalThis.fetch=original;await h.close()}});
 
  test('mock: a slow model update cannot race the final-transcript fallback',async()=>{
