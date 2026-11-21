@@ -93,4 +93,8 @@ The existing Node tests have been retained; new checks use the same runner. Vite
 
 Further details: [verification](docs/VERIFICATION_RU.md), [free hosting](docs/DEPLOYMENT_RU.md), [architecture](docs/ARCHITECTURE_RU.md), [criteria](docs/IMPLEMENTATION_STATUS_RU.md), and [team ownership](docs/TEAM_OWNERSHIP_RU.md).
 
-`npm run test:integration` checks real HTTP route handlers with Supabase, without a mock database. By default, handlers are invoked within the Node process; set SLOTPILOT_TEST_BASE_URL to test a local server over HTTP. A separate DEMO_NAMESPACE=slotpilot-test-... is required: the test creates, reschedules, cancels, and resets test data only.
+`npm run test:integration` checks the real route handlers against Supabase in process. Configure the server-side Supabase URL, key and session secret and provide three confirmed test accounts via `SLOTPILOT_TEST_CLIENT_EMAIL` / `_PASSWORD`, `SLOTPILOT_TEST_OTHER_CLIENT_EMAIL` / `_PASSWORD` and `SLOTPILOT_TEST_ADMIN_EMAIL` / `_PASSWORD`. The administrator must have `role: admin` in Supabase App Metadata. Use a test project when possible. The runner picks a new `slotpilot-test-…` namespace for every run, including reset, and returns exit code 2 if configuration is missing.
+
+On Windows, `npm run build:next` uses Webpack by default. Use `npm run build:next -- --turbopack` to explicitly test Turbopack. The separate `npm run build` still validates Vinext.
+
+Password reset emails return to the existing allowed site root. It forwards a recovery fragment to `/book`, where the app removes the fragment and displays the reset form. Supabase's sender configuration and email delivery still need a mailbox check.
