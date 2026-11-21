@@ -4,7 +4,18 @@ import assert from 'node:assert/strict';
 import { VoiceController, api } from '../src/features/voice/controller.mjs';
 import { BrowserAudio } from '../src/features/voice/audio.mjs';
 import { voiceToolPayload } from '../src/features/voice/tool-payload.mjs';
-test('voice payload preserves exact business results and version without duplicate UI history',()=>{const data={actionId:'action',snapshot:{totalPriceKzt:23000,startAt:'2026-09-25T04:00:00Z'},confirmation:'Read every detail and ask for confirmation'};const response={ok:true,data,bookings:[{bookingId:'saved',bookingVersion:2,status:'confirmed',snapshot:data.snapshot,ownerId:'owner'}],request:{requestId:'request',requestVersion:7,constraints:{vehicleId:'sedan-petrol'},stage:'awaiting_confirmation'},events:Array(100).fill({type:'old-event'}),search:{options:Array(10).fill(data)}};const compact=voiceToolPayload(response);assert.deepEqual(compact.data,data);assert.deepEqual(compact.bookings,[{bookingId:'saved',bookingVersion:2,status:'confirmed',snapshot:data.snapshot}]);assert.equal(compact.currentRequest.requestVersion,7);assert.ok(JSON.stringify(compact).length<JSON.stringify(response).length/2);assert.deepEqual(voiceToolPayload({ok:false,error:{code:'STALE_REQUEST'}}).error,{code:'STALE_REQUEST'})});
+test('voice payload uses workshop time without exposing UTC times to the model',()=>{
+ const snapshot={totalPriceKzt:15000,startAt:'2026-11-23T10:00:00Z',readyAt:'2026-11-23T10:45:00Z'};
+ const data={actionId:'action',snapshot,confirmation:'Read every detail'};
+ const response={ok:true,data,bookings:[{bookingId:'saved',bookingVersion:2,status:'confirmed',snapshot,ownerId:'owner'}],request:{requestId:'request',requestVersion:7,constraints:{vehicleId:'sedan-petrol'},stage:'awaiting_confirmation'},events:Array(100).fill({type:'old-event'})};
+ const local={totalPriceKzt:15000,dropOffLocal:'15:00',readyLocal:'15:45',timeZone:'Asia/Almaty'};
+ const compact=voiceToolPayload(response);
+ assert.deepEqual(compact.data,{...data,snapshot:local});
+ assert.deepEqual(compact.bookings,[{bookingId:'saved',bookingVersion:2,status:'confirmed',snapshot:local}]);
+ assert.equal(compact.currentRequest.requestVersion,7);
+ assert.equal(snapshot.startAt,'2026-11-23T10:00:00Z');
+ assert.equal('events' in compact,false);
+});
 const tick=()=>new Promise(r=>setImmediate(r));
 test('production event shape: HTTP validation errors return immediately after the opaque reply ends',async()=>{
  const h=await harness(async()=>({ok:true}));const original=globalThis.fetch;
@@ -74,6 +85,29 @@ test('mock: manual sync retains the base safety prompt',async()=>{const h=await 
 function tomorrowInAlmaty(){const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Almaty',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const get=t=>parts.find(p=>p.type===t).value;return new Date(Date.parse(`${get('year')}-${get('month')}-${get('day')}T00:00:00Z`)+86400000).toISOString().slice(0,10)}
 test('mock: final date is saved and shown even when the voice model never calls a tool',async()=>{const calls=[],day=tomorrowInAlmaty();const h=await harness(async input=>{calls.push(input);return {ok:true,request:{requestId:'r1',requestVersion:2,constraints:{allowedDates:[day],serviceIds:[]},stage:'collecting'}}});try{h.ws.receive({type:'transcript.user.delta',item_id:'date',text:'Tomorrow'});await tick();assert.equal(calls.length,0);h.ws.receive({type:'transcript.user',item_id:'date',text:'Tomorrow.'});await new Promise(r=>setTimeout(r,390));assert.equal(calls.length,1);assert.equal(calls[0].name,'update_request');assert.deepEqual(calls[0].arguments.patch.allowedDates,[day]);assert.deepEqual(h.state.request.constraints.allowedDates,[day]);assert.match(h.sent.filter(e=>e.type==='session.update').at(-1).session.system_prompt,/CURRENT AUTHORITATIVE STATE/)}finally{await h.close()}});
 test('mock: a model update and transcript safety net save the same date only once',async()=>{const calls=[],day=tomorrowInAlmaty();const h=await harness(async input=>{calls.push(input);return {ok:true,request:{requestId:'r1',requestVersion:2,constraints:{allowedDates:[day],serviceIds:[]},stage:'collecting'}}});try{h.ws.receive({type:'transcript.user',item_id:'date',text:'Tomorrow.'});h.ws.receive({type:'tool.call',call_id:'model-date',name:'update_request',arguments:{patch:{allowedDates:[day]},expectedRequestVersion:1}});await tick();await new Promise(r=>setTimeout(r,10));assert.equal(calls.length,1);assert.deepEqual(h.state.request.constraints.allowedDates,[day])}finally{await h.close()}});
+test('a late final transcript is saved before the model receives availability',async()=>{
+ let release;
+ const calls=[];
+ const request={requestId:'r1',requestVersion:2,constraints:{serviceIds:[]}};
+ const h=await harness(async input=>{
+  calls.push(input);
+  if(calls.length===1)return new Promise(resolve=>{release=resolve});
+  return {ok:true,data:{search:{options:[{startAt:'2026-11-23T10:00:00Z',readyAt:'2026-11-23T10:45:00Z'}]}},request:{...request,requestVersion:3,constraints:{...request.constraints,...input.arguments.patch}}};
+ });
+ try{
+  h.ws.receive({type:'reply.started',reply_id:'real-reply'});
+  h.ws.receive({type:'tool.call',call_id:'model-update',name:'update_request',arguments:{patch:{vehicleId:'sedan-petrol'},expectedRequestVersion:1}});
+  await tick();
+  h.ws.receive({type:'transcript.user',item_id:'turn',text:'I can drop it off after 2 PM and need it ready by 4 PM.'});
+  h.ws.receive({type:'reply.done',reply_id:'real-reply',status:'completed'});
+  release({ok:true,data:{search:{options:[]}},request});
+  await h.c.chain;
+  assert.deepEqual(calls[1].arguments.patch,{arrivalNotBefore:'14:00',readyNoLaterThan:'16:00'});
+  const payload=JSON.parse(h.sent.find(e=>e.type==='tool.result').result);
+  assert.equal(payload.currentRequest.requestVersion,3);
+  assert.equal(payload.data.search.options[0].dropOffLocal,'15:00');
+ }finally{await h.close()}
+});
 test('mock: stale tool response gives the model the current request version',async()=>{const h=await harness(async()=>({ok:true}));const original=globalThis.fetch;try{globalThis.fetch=(path,init)=>path==='/api/tools'?Promise.resolve(Response.json({error:{code:'STALE_REQUEST',message:'Read the current request.'}},{status:409})):path==='/api/requests'?Promise.resolve(Response.json({request:{requestId:'r1',requestVersion:4,constraints:{allowedDates:['2026-10-15']},stage:'collecting'}})):original(path,init);h.ws.receive({type:'tool.call',call_id:'stale',name:'find_options',arguments:{expectedRequestVersion:1}});h.ws.receive({type:'reply.done',reply_id:'fc-stale',status:'completed'});await tick();await tick();const result=JSON.parse(h.sent.find(e=>e.type==='tool.result')?.result??'null');assert.equal(result.error.code,'STALE_REQUEST');assert.equal(result.currentRequest.requestVersion,4);assert.equal(h.state.request.requestVersion,4)}finally{globalThis.fetch=original;await h.close()}});
 
  test('mock: a slow model update cannot race the final-transcript fallback',async()=>{

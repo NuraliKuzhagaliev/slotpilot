@@ -1,7 +1,7 @@
 import { diagnosticEvent } from './diagnostics.mjs';
 import { BrowserAudio } from './audio.mjs';
 import { ToolResults } from './tool-results.mjs';
-import { voiceToolPayload } from './tool-payload.mjs';
+import { voiceLocalTimes, voiceToolPayload } from './tool-payload.mjs';
 import { patchAlreadySaved } from './saved-patch.mjs';
 import { transcriptPatch, unsavedTranscriptPatch } from './transcript-patch.mjs';
 export async function api(path, body) {
@@ -40,6 +40,7 @@ export class VoiceController {
         if (this.active)
             return;
         this.active = true;
+        this.microphone = microphone;
         this.ready = false;
         this.sessionEnded = false;
         this.seen.clear();
@@ -56,6 +57,7 @@ export class VoiceController {
         this.speechActive = false;
         this.replyActive = false;
         this.textPending = false;
+        this.typedTurn = false;
         this.toolBusy = 0;
         this.syncBusy = 0;
         this.recoveryAttempted = false;
@@ -143,6 +145,7 @@ export class VoiceController {
                     this.durationTimer = setTimeout(() => void this.stop(), token.maxSessionSeconds * 1000);
                 }
                 if (t === 'input.speech.started') {
+                    this.typedTurn = false;
                     this.speechActive = true;
                     this.finalTurn = false;
                     this.waitingSince = null;
@@ -230,7 +233,7 @@ export class VoiceController {
                         this.rememberTranscript(e.text, e.item_id ?? crypto.randomUUID(), g);
                         const epoch = this.epoch;
                         const action = this.c.snapshot()?.request?.preparedAction;
-                        if (action)
+                        if (action && this.microphone && !this.typedTurn)
                             this.evidenceChain = this.evidenceChain.then(async () => { if (epoch !== this.epoch || g !== this.generation)
                                 return; const ev = await api('/api/evidence', { kind: 'confirmation', actionId: action.actionId, source: 'voice', text: e.text, itemId: e.item_id ?? crypto.randomUUID() }); if (epoch === this.epoch && g === this.generation)
                                 this.confirmationRef = ev.confirmationRef; }).catch(() => { if (g === this.generation)
@@ -269,6 +272,9 @@ export class VoiceController {
                             }
                             ;
                             const current = this.c.snapshot()?.request;
+                            if (e.name === 'update_request' && args?.patch && args.expectedRequestVersion === current?.requestVersion) {
+                                args = { ...args, patch: this.mergeTurnPatch(args.patch, current, g, epoch) };
+                            }
                             // The final transcript may already have saved these exact preferences.
                             // Reuse only a successful, still-current result; never rebase a mutation.
                             if (e.name === 'update_request' && this.lastSaved?.request?.requestId === current?.requestId && this.lastSaved.request.requestVersion === current?.requestVersion && this.lastSaved.request.stateRevision === current?.stateRevision && patchAlreadySaved(args?.patch, current?.constraints)) {
@@ -317,6 +323,15 @@ export class VoiceController {
                             this.event('tool.result.stale');
                             result = { ok: false, error: { code: 'TURN_CHANGED', message: 'The customer spoke while this lookup ran. Re-evaluate the current request.' } };
                         }
+                        if (e.name === 'update_request' && result.ok !== false && epoch === this.epoch) {
+                            // A final transcript can arrive after the provider calls the tool.
+                            // Reconcile it before reporting availability to the model.
+                            for (const record of this.takeTurnPatches(requestId, g, epoch)) {
+                                result = await this.saveTranscriptPatch(record, false) ?? result;
+                            }
+                        }
+                        if (g !== this.generation)
+                            return;
                         this.event('tool.result.queued', { callId: e.call_id });
                         this.results.push(e.call_id, { type: 'tool.result', call_id: e.call_id, result: JSON.stringify(voiceToolPayload(result)), is_error: result.ok === false });
                         if (e.name === 'update_request')
@@ -368,6 +383,7 @@ export class VoiceController {
         this.speechStopped = this.waitingSince = performance.now();
         this.finalTurn = true;
         this.textPending = true;
+        this.typedTurn = true;
         this.recoveryAttempted = false;
         this.emit('transcript', { id: `user:${id}`, speaker: 'user', text, final: true });
         this.event('text.submitted');
@@ -382,7 +398,30 @@ export class VoiceController {
     rememberTranscript(text, id, g) { const key = `${id}:${text}`; if (this.seenTranscripts.has(key))
         return; this.seenTranscripts.add(key); if (this.seenTranscripts.size > 100)
         this.seenTranscripts.delete(this.seenTranscripts.values().next().value); const patch = transcriptPatch(text); const request = this.c.snapshot()?.request; if (!patch || !request)
-        return; const record = { id, key, patch, requestId: request.requestId, g, manualVersion: this.manualVersion, timer: null }; this.pendingPatches.set(key, record); record.timer = setTimeout(() => this.flushTranscriptPatch(key), 350); }
+        return; const record = { id, key, patch, requestId: request.requestId, g, epoch: this.epoch, manualVersion: this.manualVersion, timer: null }; this.pendingPatches.set(key, record); record.timer = setTimeout(() => this.flushTranscriptPatch(key), 350); }
+    takeTurnPatches(requestId, generation, epoch) {
+        const patches = [];
+        for (const [key, record] of this.pendingPatches) {
+            if (record.requestId !== requestId || record.g !== generation || record.epoch !== epoch || record.manualVersion !== this.manualVersion) continue;
+            clearTimeout(record.timer);
+            this.pendingPatches.delete(key);
+            patches.push(record);
+        }
+        return patches;
+    }
+    mergeTurnPatch(modelPatch, current, generation, epoch) {
+        if (typeof modelPatch !== 'object' || Array.isArray(modelPatch)) return modelPatch;
+        const merged = { ...modelPatch };
+        for (const record of this.pendingPatches.values()) {
+            if (record.requestId !== current.requestId || record.g !== generation || record.epoch !== epoch || record.manualVersion !== this.manualVersion) continue;
+            const { patch } = record;
+            for (const [key, value] of Object.entries(patch)) {
+                if (key === 'addServiceIds' && ('serviceIds' in merged || 'removeServiceIds' in merged)) continue;
+                if (!(key in merged)) merged[key] = value;
+            }
+        }
+        return merged;
+    }
     deferTranscriptPatches() { for (const record of this.pendingPatches.values()) {
         clearTimeout(record.timer);
         record.timer = setTimeout(() => this.flushTranscriptPatch(record.key), 1500);
@@ -392,7 +431,7 @@ export class VoiceController {
     flushTranscriptPatch(key) { const record = this.pendingPatches.get(key); if (!record)
         return; clearTimeout(record.timer); this.pendingPatches.delete(key); this.syncBusy++; this.chain = this.chain.then(() => this.saveTranscriptPatch(record)).catch(() => this.event('transcript.sync-failed')).finally(() => { if (record.g === this.generation)
         this.syncBusy--; }); }
-    async saveTranscriptPatch(record) { if (record.g !== this.generation || record.manualVersion !== this.manualVersion)
+    async saveTranscriptPatch(record, refresh = true) { if (record.g !== this.generation || record.epoch !== this.epoch || record.manualVersion !== this.manualVersion)
         return; for (let attempt = 0; attempt < 2; attempt++) {
         const request = this.c.snapshot()?.request;
         if (!request || request.requestId !== record.requestId || request.bookingId)
@@ -405,10 +444,10 @@ export class VoiceController {
             if (record.g === this.generation) {
                 this.emit('updateSnapshot', result);
                 this.lastSaved = result;
-                this.refreshPrompt(result.request);
+                if (refresh) this.refreshPrompt(result.request);
                 this.event('transcript.saved');
             }
-            return;
+            return result;
         }
         catch (error) {
             if (error.code !== 'STALE_REQUEST' || attempt !== 0) {
@@ -429,14 +468,14 @@ export class VoiceController {
         }
     } }
     refreshPrompt(request) { if (!this.active || !this.ready || !request)
-        return; this.send({ type: 'session.update', session: { system_prompt: `${this.basePrompt}\nCURRENT AUTHORITATIVE STATE: ${JSON.stringify({ requestId: request.requestId, requestVersion: request.requestVersion, constraints: request.constraints, stage: request.stage, options: request.options?.map(o => ({ optionId: o.optionId, date: o.date, branchId: o.branchId, startAt: o.startAt, readyAt: o.readyAt, totalPriceKzt: o.totalPriceKzt })) })}. These are saved server facts. Ask only for missing required details; if options exist, offer the first one now. Never claim a booking without confirmation.` } }); }
+        return; this.send({ type: 'session.update', session: { system_prompt: `${this.basePrompt}\nCURRENT AUTHORITATIVE STATE: ${JSON.stringify(voiceLocalTimes({ requestId: request.requestId, requestVersion: request.requestVersion, constraints: request.constraints, stage: request.stage, options: request.options?.map(o => ({ optionId: o.optionId, date: o.date, branchId: o.branchId, startAt: o.startAt, readyAt: o.readyAt, totalPriceKzt: o.totalPriceKzt })) }))}. These are saved server facts. Ask only for missing required details; if options exist, offer the first one now. Never claim a booking without confirmation.` } }); }
     checkResponse() { if (!this.active || !this.ready || this.waitingSince === null || this.speechActive || !this.finalTurn)
         return; const elapsed = performance.now() - this.waitingSince; if (elapsed < 6000 || this.recoveryAttempted || performance.now() - this.responseProgress < 3000)
         return; this.emit('state', 'delayed'); if (this.replyActive || this.toolBusy || this.syncBusy || this.pendingPatches.size || this.results.pending.length)
         return; this.recoveryAttempted = true; this.refreshPrompt(this.c.snapshot()?.request); this.send({ type: 'reply.create', instructions: 'Respond to the latest customer message using the saved visit state. Offer an available option or ask only for a missing required detail. Do not repeat the greeting or request confirmation of preferences already saved. Booking still requires the full readback and separate final consent.' }); this.event('reply.recovery.requested'); }
     sync() { if (!this.active)
         return; this.manualVersion++; for (const record of this.pendingPatches.values())
-        clearTimeout(record.timer); this.pendingPatches.clear(); this.cut('manual-edit'); this.epoch++; this.results.started(); this.confirmationRef = null; const s = this.c.snapshot(); this.send({ type: 'session.update', session: { system_prompt: `${this.basePrompt}\nMANUAL UPDATE: Previous proposals are superseded. CURRENT AUTHORITATIVE STATE: ${JSON.stringify(s?.request)}. Use this latest requestVersion and conditions before recommending anything.` } }); }
+        clearTimeout(record.timer); this.pendingPatches.clear(); this.cut('manual-edit'); this.epoch++; this.results.started(); this.confirmationRef = null; const s = this.c.snapshot(); this.refreshPrompt(s?.request); }
     async stop() { if (!this.active)
         return; this.active = false; this.ready = false; this.generation++; this.epoch++; for (const record of this.pendingPatches.values())
         clearTimeout(record.timer); this.pendingPatches.clear(); this.results.clear(); clearInterval(this.watchdog); clearTimeout(this.durationTimer); clearTimeout(this.connectTimer); const ws = this.socket; this.socket = null; if (this.sessionEnded)

@@ -32,7 +32,7 @@ test('date ranges reject inverted, oversized, and simultaneous list/range inputs
   ]) assert.throws(()=>updateRequest(state,ACTOR,patch,state.requestVersion),{code:'VALIDATION_ERROR'});
 });
 test('legacy stored constraints normalize to an unbounded latest arrival',()=>{
-  const {arrivalNotAfter:_,...legacy}=emptyConstraints();
+  const legacy={...emptyConstraints(),arrivalNotAfter:undefined};
   assert.equal(normalizeConstraints(legacy).arrivalNotAfter,null);
 });
 test('explicit null removes only that nullable restriction', () => {

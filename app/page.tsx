@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, CalendarCheck2, CarFront, Check, Clock3, Download, Headphones, ShieldCheck, Wrench } from 'lucide-react';
+import { RecoveryRedirect } from '@/src/features/booking-ui/RecoveryRedirect';
 
 const steps = [
   { number: '01', title: 'Tell us about the visit', copy: 'Choose services and your demo vehicle, or describe what you need to the assistant.' },
@@ -9,6 +10,7 @@ const steps = [
 
 export default function Home() {
   return <div className="landing-shell">
+    <RecoveryRedirect />
     <header className="landing-header">
       <Link className="brand landing-brand" href="/" aria-label="SlotPilot home"><span className="brand-mark"><Wrench size={19}/></span>SlotPilot<span className="brand-sub">SERVICE CONCIERGE</span></Link>
       <nav aria-label="Main navigation"><a href="#how-it-works">How it works</a><Link href="/book">Book a visit</Link></nav>
